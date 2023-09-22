@@ -13,6 +13,7 @@ type MissingArticle = {
     pageid: number,
     title: string,
     wikidata: string,
+    target : string
 }
 type categoryArray = Array<category>;
 type catID = number | string;
@@ -56,6 +57,7 @@ class Interface {
     csvLink?: HTMLButtonElement;
     wikitextButton ?: HTMLButtonElement;
     articleCount?: HTMLHeadingElement;
+    wikiTextContainer ?: HTMLTextAreaElement
 
     baseURL = new URL(window.location.origin);
     constructor({
@@ -90,6 +92,7 @@ class Interface {
             this.csvLink = document.getElementById("csvLink") as HTMLButtonElement;
             this.wikitextButton = document.getElementById("wikiTextButton") as HTMLButtonElement;
             this.articleCount = document.getElementById("articleCount") as HTMLHeadingElement;
+            this.wikiTextContainer = document.getElementById("wikiText") as HTMLTextAreaElement;
         }
 
 
@@ -236,6 +239,7 @@ class Interface {
         if (this.loaderIcon) {
             this.resultTable?.classList.add("hidden")
             this.loaderIcon.classList.remove("hidden");
+            this.wikiTextContainer?.classList.add("hidden")
         }
         // Submit the task
         const url = new URL("api/task", this.baseURL);
@@ -286,7 +290,14 @@ class Interface {
         console.log(this)
         console.log("Exporting wikitext")
         const wikitext = await this.exportResult("wikitext") as string
-        console.log(wikitext)
+        if(this.wikiTextContainer){
+
+            this.wikiTextContainer.classList.remove("hidden")
+            this.wikiTextContainer.value = wikitext;
+            this.wikiTextContainer.select();
+            document.execCommand("copy");
+        }
+
 
         
     }
@@ -315,8 +326,8 @@ class Interface {
                 <tr data-pageid="${page.pageid}">
                     <td>${serial++}</td>
                     <td>${page.title}</td>
-                    <td></td>
-                    <td></td>
+                    <td>${page.wikidata}</td>
+                    <td>${page.target}</td>
                 </tr>
                 `
 

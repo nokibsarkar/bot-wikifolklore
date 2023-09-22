@@ -42,6 +42,7 @@ class Interface {
             this.csvLink = document.getElementById("csvLink");
             this.wikitextButton = document.getElementById("wikiTextButton");
             this.articleCount = document.getElementById("articleCount");
+            this.wikiTextContainer = document.getElementById("wikiText");
         }
         this.newCategoryButton.onclick = (e) => {
             var _a, _b, _c;
@@ -187,11 +188,12 @@ class Interface {
         });
     }
     submitTask() {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             if (this.loaderIcon) {
                 (_a = this.resultTable) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
                 this.loaderIcon.classList.remove("hidden");
+                (_b = this.wikiTextContainer) === null || _b === void 0 ? void 0 : _b.classList.add("hidden");
             }
             // Submit the task
             const url = new URL("api/task", this.baseURL);
@@ -199,7 +201,7 @@ class Interface {
                 homewiki: this.homewiki,
                 categories: this.manualCategories.map((cat) => cat.title),
                 user: this.user,
-                country: (_b = this.countryInput) === null || _b === void 0 ? void 0 : _b.value,
+                country: (_c = this.countryInput) === null || _c === void 0 ? void 0 : _c.value,
             };
             const response = yield fetch(url.toString(), {
                 method: "POST",
@@ -246,7 +248,12 @@ class Interface {
             console.log(this);
             console.log("Exporting wikitext");
             const wikitext = yield this.exportResult("wikitext");
-            console.log(wikitext);
+            if (this.wikiTextContainer) {
+                this.wikiTextContainer.classList.remove("hidden");
+                this.wikiTextContainer.value = wikitext;
+                this.wikiTextContainer.select();
+                document.execCommand("copy");
+            }
         });
     }
     checkTask() {
@@ -276,8 +283,8 @@ class Interface {
                 <tr data-pageid="${page.pageid}">
                     <td>${serial++}</td>
                     <td>${page.title}</td>
-                    <td></td>
-                    <td></td>
+                    <td>${page.wikidata}</td>
+                    <td>${page.target}</td>
                 </tr>
                 `;
                         }

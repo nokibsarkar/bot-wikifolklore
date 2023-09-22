@@ -60,22 +60,26 @@ def insert_article(pageid, task_id, title, target, wikidata, category):
 def export_to_wikitext(res):
     serial = 1
     content = """
-        {| class="wikitable sortable"
-        |-
-        ! English Title !! Hindi Title !! Category
-        |-
-        """
+{| class="wikitable sortable"
+|-
+! Serial No. !! English Title !! Wikidata !! Hindi Title !! Category 
+|-
+"""
     for row in res:
-        content += f"\n|[[:en:{row['title']}|]] || [[:hi:{row['target']}|]] || [[:en:{row['category']}|]]\n|-"
+        content += f"\n|{serial} || [[:en:{row['title']}|]] || [[:wd:{row['wikidata']}|]] || [[:hi:{row['target']}|]] || [[:en:{row['category']}|]]\n|-"
+        serial += 1
     content += "\n|}"
     return content
 
 
 
 def export_to_csv(res):
-    result = []
+    serial = 1
+    result = ["serial,pageid,english_title,target,wikidata,category"]
     for pageid, task_id, title, target, wikidata, category, created_at in res:
-        result.append(f"{pageid},{task_id},{title},{target},{wikidata},{category},{created_at}")
+        result.append(f"{serial},{pageid},{title},{target},{wikidata},{category}")
+        serial += 1
+        
     return "\n".join(result)
 
 def get_task(task_id):

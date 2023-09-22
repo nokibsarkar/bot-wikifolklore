@@ -11,14 +11,19 @@
             margin-left: auto;
             margin-right: auto;
         }
-        .hidden {
-            display: none !important;
+        #wikiText {
+            width: 100%;
+            height: 500px;
         }
+        
         
         #resultTable {
             border: 1;
             width: 100%;
             text-align: center;
+        }
+        .hidden {
+            display: none !important;
         }
         
     </style>
@@ -73,6 +78,7 @@
     </form>
     <hr/>
     <h2 id="articleCount"></h2>
+    <textarea id="wikiText" class="hidden"></textarea>
     <img src="/static/loading.svg" alt="Loading" id="loader" class="hidden"/>
     <table id="resultTable" class="hidden">
         <caption>
