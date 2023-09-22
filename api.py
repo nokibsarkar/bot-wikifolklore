@@ -71,27 +71,28 @@ def get_task(task_id):
         }).fetchone()
         return res
 def get_task_result(task_id, format='json'):
+    res = None
     with _get_db() as conn:
         res = conn.execute(SQL_GET_ARTICLES_BY_TASK_ID,{
             "task_id": task_id
         })
-        if format == 'json':
-            result = []
-            for pageid, task_id, title, target, wikidata, category, created_at in res:
-                result.append({
-                    "pageid": pageid,
-                    "task_id": task_id,
-                    "title": title,
-                    "target": target,
-                    "wikidata": wikidata,
-                    "category": category,
-                    "created_at": created_at
-                })
-            return result
-        elif format == 'csv':
-            return export_to_csv(res)
-        elif format == 'wikitext':
-            return _export_to_wikitext(res)
+    if format == 'json':
+        result = []
+        for pageid, task_id, title, target, wikidata, category, created_at in res:
+            result.append({
+                "pageid": pageid,
+                "task_id": task_id,
+                "title": title,
+                "target": target,
+                "wikidata": wikidata,
+                "category": category,
+                "created_at": created_at
+            })
+        return result
+    elif format == 'csv':
+        return export_to_csv(res)
+    elif format == 'wikitext':
+        return _export_to_wikitext(res)
 
 
 #---------------------------- Task Related Functions ----------------------------
