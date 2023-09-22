@@ -3,7 +3,16 @@ import time
 import sqlite3
 from settings import *
 from sql import *
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler())
+logger.propagate = False
+# change the formate to include the time
+formatter = logging.Formatter('[%(asctime)s] - %(name)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
+logger.handlers[0].setFormatter(formatter)
 
+logger.info("Logging Started")
 sess = Session()
 sess.headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -99,6 +108,7 @@ def get_task_result(task_id, format='json'):
 
 
 def _extract_page(task_id, category, pages):
+    logger.debug("Extracting Pages")
     for page in pages:
         if "langlinks" not in page:
             wbentity = None
@@ -115,12 +125,14 @@ def _extract_page(task_id, category, pages):
                     "wikidata": wbentity,
                     "category": category
             }
+    logger.debug("Pages Extracted")
 
 def _execute_task(task_id, cats):
-    print("Executing Task", task_id)
+    logger.debug(f"Executing Task {task_id}")
     if type(cats) == str:
         cats = cats.split("|")
     cats = [_normalize_category_name(cat.strip()) for cat in cats]
+    logger.debug("Category Names parsed")
     data = {
         "action": "query",
         "format": "json",
@@ -139,15 +151,20 @@ def _execute_task(task_id, cats):
         "gcmlimit": "max"
     }
     for category in cats:
+        logger.debug(f"Processing {category}")
         data['gcmtitle'] = _normalize_category_name(category)
         has_continue = True
         while has_continue:
             try:
+                logger.debug(f"Sending Request for {category}")
                 res = sess.get(URL, params=data)
+                logger.debug(f"Request Sent for {category}")
                 res = res.json()
-                print("Fetched", category)
+                logger.debug(f"Fetched {category}")
                 if "query"  in res:
+                   logger.debug("Query Found")
                    with _get_db() as conn:
+                        logger.debug(f"Inserting {category}")
                         cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', [])))
                         cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
                             "task_id": task_id,
@@ -157,24 +174,27 @@ def _execute_task(task_id, cats):
                         })
                         cur.close()
                         conn.commit()
+                        logger.debug(f"Inserted {category}")
                 has_continue = "continue" in res
                 if has_continue:
+                    logger.debug("Continue Found")
                     data.update(res['continue'])
-                    print(f"{data.get('continue', 'None')} {data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
+                    logger.debug(f"{data.get('continue', 'None')} {data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
                     time.sleep(1)
             except Exception as e:
-                print("%s" % e)
+                logging.exception(e)
                 with _get_db() as conn:
                     conn.execute("UPDATE `task` SET `status` = 'error' WHERE `id` = :task_id", {
                         "task_id": task_id
                     })
                     conn.commit()
+                return
+    logger.debug("Task Done  task_id")
     with _get_db() as conn:
         conn.execute("UPDATE `task` SET `status` = 'done' WHERE `id` = :task_id", {
             "task_id": task_id
         })
         conn.commit()
-    print("Task Done", task_id)
 
 
 def submit_task(topic_title, cats, home_wiki, country, target_wiki, executor):

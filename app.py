@@ -8,6 +8,8 @@ class TukTukBot(Flask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.executor = Executor(self)
+        # Stop logging
+        self.logger.disabled = True
         init_db()
     def run(self, *args, **kwargs):
         super().run(*args, **kwargs)
