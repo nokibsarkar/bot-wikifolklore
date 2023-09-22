@@ -41,6 +41,7 @@ class Interface {
             this.resultBody = document.getElementById("result");
             this.csvLink = document.getElementById("csvLink");
             this.wikitextButton = document.getElementById("wikiTextButton");
+            this.articleCount = document.getElementById("articleCount");
         }
         this.newCategoryButton.onclick = (e) => {
             var _a, _b, _c;
@@ -256,6 +257,8 @@ class Interface {
             const responseData = yield response.json();
             if (responseData.status === "success") {
                 const task = responseData.data;
+                if (this.articleCount)
+                    this.articleCount.innerHTML = "Total Articles : " + task.article_count;
                 if (task.status === "done") {
                     const result = yield this.exportResult('json');
                     if (this.csvLink) {
@@ -288,7 +291,7 @@ class Interface {
                     (_d = this.loaderIcon) === null || _d === void 0 ? void 0 : _d.classList.remove("hidden");
                     setTimeout(() => {
                         this.checkTask();
-                    }, 5000);
+                    }, 2000);
                 }
             }
         });

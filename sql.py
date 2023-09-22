@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `task` (
     `task_data`	TEXT NOT NULL,
     `home_wiki`    TEXT NOT NULL,
     `target_wiki`    TEXT NOT NULL,
+    `article_count`    INTEGER NOT NULL DEFAULT 0,
     `country`    TEXT NOT NULL,
     FOREIGN KEY(`topic_id`) REFERENCES `topic`(`id`)
 );
@@ -93,3 +94,4 @@ ON
 WHERE
     `topic_category`.`topic_id` = (SELECT `id` FROM `topic` WHERE `title` = :topic_title);
 """
+SQL_TASK_UPDATE_ARTICLE_COUNT = "UPDATE `task` SET `article_count` = `article_count` + :new_added WHERE `id` = :task_id"

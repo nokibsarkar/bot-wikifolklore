@@ -108,7 +108,7 @@ def get_task_result(task_id, format='json'):
             return export_to_wikitext(res)
         
 def _execute_task(task_id, cats):
-    print("Executing Task")
+    print("Executing Task", task_id)
     if type(cats) == str:
         cats = cats.split("|")
     cats = [parse_category_name(cat.strip()) for cat in cats]
@@ -145,27 +145,32 @@ def _execute_task(task_id, cats):
                     data.pop("gcmcontinue", None)
                     data.pop("continue", None)
                     data.pop('wbeucontinue', None)
-                # print(f"{data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
+                print(f"{data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
                 if "query"  in res:
-                    
-                    for page in res["query"]["pages"]:
-                        if "langlinks" not in page:
-                            wbentity = None
-                            if "wbentityusage" in page:
-                                for entity in page["wbentityusage"]:
-                                    if 'S' in page['wbentityusage'][entity]['aspects']:
-                                        wbentity = entity
-                                        break
-                            with get_db() as conn:
-                                conn.execute(SQL_INSERT_ARTICLE, {
-                                    "task_id": task_id,
-                                    "pageid": page['pageid'],
-                                    "title": page['title'],
-                                    "target": "",
-                                    "wikidata": wbentity,
-                                    "category": category
-                                })
-                                conn.commit()
+                    def add():
+                        for page in res["query"]["pages"]:
+                            if "langlinks" not in page:
+                                wbentity = None
+                                if "wbentityusage" in page:
+                                    for entity in page["wbentityusage"]:
+                                        if 'S' in page['wbentityusage'][entity]['aspects']:
+                                            wbentity = entity
+                                            break
+                                yield {
+                                        "task_id": task_id,
+                                        "pageid": page['pageid'],
+                                        "title": page['title'],
+                                        "target": "",
+                                        "wikidata": wbentity,
+                                        "category": category
+                                    }
+                    with get_db() as conn:
+                        cur = conn.executemany(SQL_INSERT_ARTICLE, add())
+                        cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
+                            "task_id": task_id,
+                            "new_added" : cur.rowcount
+                        })
+                        conn.commit()
                 data.pop("gcmcontinue", None)
                 data.pop("continue", None)
                 if has_continue:
@@ -177,6 +182,7 @@ def _execute_task(task_id, cats):
             "task_id": task_id
         })
         conn.commit()
+    print("Task Done", task_id)
 
 
 def submit_task(topic_title, cats, home_wiki, country, target_wiki, executor):

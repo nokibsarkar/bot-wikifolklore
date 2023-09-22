@@ -55,6 +55,7 @@ class Interface {
     submitButton?: HTMLButtonElement;
     csvLink?: HTMLButtonElement;
     wikitextButton ?: HTMLButtonElement;
+    articleCount?: HTMLHeadingElement;
 
     baseURL = new URL(window.location.origin);
     constructor({
@@ -88,6 +89,7 @@ class Interface {
             this.resultBody = document.getElementById("result") as HTMLTableSectionElement;
             this.csvLink = document.getElementById("csvLink") as HTMLButtonElement;
             this.wikitextButton = document.getElementById("wikiTextButton") as HTMLButtonElement;
+            this.articleCount = document.getElementById("articleCount") as HTMLHeadingElement;
         }
 
 
@@ -293,7 +295,9 @@ class Interface {
         const response = await fetch(url.toString());
         const responseData: IResponse = await response.json();
         if (responseData.status === "success") {
-            const task = responseData.data as {id : number, status: string};
+            const task = responseData.data as {id : number, status: string, article_count: number};
+            if(this.articleCount)
+                    this.articleCount.innerHTML = "Total Articles : " + task.article_count;
             if (task.status === "done") {
                 const result = await this.exportResult('json');
                 if(this.csvLink){
@@ -326,7 +330,7 @@ class Interface {
                 this.loaderIcon?.classList.remove("hidden")
                 setTimeout(() => {
                     this.checkTask();
-                }, 5000);
+                }, 2000);
             }
             
         }
