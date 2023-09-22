@@ -140,19 +140,10 @@ def _execute_task(task_id, cats):
             try:
                 res = sess.get(URL, params=data)
                 res = res.json()
-                has_continue = "continue" in res
-                if has_continue:
-                    data["gcmcontinue"] = res["continue"].get("gcmcontinue", None)
-                    data['wbeucontinue'] = res['continue'].get('wbeucontinue', None)
-                    data['continue'] = res["continue"].get('continue', None)
-                else:
-                    data.pop("gcmcontinue", None)
-                    data.pop("continue", None)
-                    data.pop('wbeucontinue', None)
-                print(f"{data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
                 if "query"  in res:
                     def add():
                         for page in res["query"]["pages"]:
+                            print(page['pageid'])
                             if "langlinks" not in page:
                                 wbentity = None
                                 if "wbentityusage" in page:
@@ -175,12 +166,13 @@ def _execute_task(task_id, cats):
                             "new_added" : cur.rowcount
                         })
                         conn.commit()
-                data.pop("gcmcontinue", None)
-                data.pop("continue", None)
+                has_continue = "continue" in res
                 if has_continue:
+                    data.update(res['continue'])
+                    print(f"{data.get('continue', 'None')} {data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
                     time.sleep(1)
             except Exception as e:
-                print(e)
+                print("%s" % e)
     with get_db() as conn:
         conn.execute("UPDATE `task` SET `status` = 'done' WHERE `id` = :task_id", {
             "task_id": task_id
