@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki folklore</title>
+    <style>
+        form {
+            text-align: center;
+            padding: 10px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    This tool is used to generate a list of folklore-related articles for a given country. It is based on the category tree of the home wiki of the user. <br>
+    <form action="interface">
+        {% if no_consent == True %}
+        <input type="checkbox" name="consent" id="consent" required/>
+        <label for="consent">I have read and understood the <a href="https://meta.wikimedia.org/wiki/Wiki_Loves_Folklore/Privacy_policy">privacy policy</a> of this tool.</label>
+        <br>
+        {% endif %}
+        <input type="submit" value="Launch the interface"/>
+    </form>
+</body>
+</html>

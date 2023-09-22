@@ -1,0 +1,1 @@
+tsc --watch --target es6  static/js/*.ts

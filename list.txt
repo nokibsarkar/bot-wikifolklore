@@ -1,0 +1,315 @@
+
+{| class="wikitable sortable"
+|-
+! English Title !! Hindi Title !! Category
+|-
+
+|[[:en:Aatida Amaase|]] || [[:hi:Aatida Amaase|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Ambubachi Mela|]] || [[:hi:Ambubachi Mela|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Arun Shankar|]] || [[:hi:Arun Shankar|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Ashwin Kumar Lakshmikanthan|]] || [[:hi:Ashwin Kumar Lakshmikanthan|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Atla Tadde|]] || [[:hi:Atla Tadde|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Ayya Vaikunda Avataram|]] || [[:hi:Ayya Vaikunda Avataram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Ayyavazhi festivals|]] || [[:hi:Ayyavazhi festivals|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Azhar (actor)|]] || [[:hi:Azhar (actor)|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Balipratipada|]] || [[:hi:Balipratipada|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Bathow Puja|]] || [[:hi:Bathow Puja|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Bhadrotsav of Brahmo Samaj|]] || [[:hi:Bhadrotsav of Brahmo Samaj|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Bhai Phonta|]] || [[:hi:Bhai Phonta|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Bhimana Amavasya|]] || [[:hi:Bhimana Amavasya|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Bhishma Ashtami|]] || [[:hi:Bhishma Ashtami|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Bisu Parba|]] || [[:hi:Bisu Parba|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Chalio|]] || [[:hi:Chalio|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Chandan Yatra|]] || [[:hi:Chandan Yatra|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Chandani Padva|]] || [[:hi:Chandani Padva|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Chatar jatra|]] || [[:hi:Chatar jatra|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Chikhal Kalo|]] || [[:hi:Chikhal Kalo|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Dasara elephants|]] || [[:hi:Dasara elephants|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Deepothsavam|]] || [[:hi:Deepothsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Dhanu (month)|]] || [[:hi:Dhanu (month)|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Dhanurmas|]] || [[:hi:Dhanurmas|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Dhodha|]] || [[:hi:Dhodha|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Dileesh Pothan|]] || [[:hi:Dileesh Pothan|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Dree Festival|]] || [[:hi:Dree Festival|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Durga Ashtami|]] || [[:hi:Durga Ashtami|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Dwarka Divecha|]] || [[:hi:Dwarka Divecha|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Ehan Bhat|]] || [[:hi:Ehan Bhat|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Gajan (festival)|]] || [[:hi:Gajan (festival)|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Ganga Pushkaram|]] || [[:hi:Ganga Pushkaram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Ganga puja|]] || [[:hi:Ganga puja|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Gaura Purnima|]] || [[:hi:Gaura Purnima|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Godavari Maha Pushkaram|]] || [[:hi:Godavari Maha Pushkaram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Golu (festival)|]] || [[:hi:Golu (festival)|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Gorehabba|]] || [[:hi:Gorehabba|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Gowri Habba|]] || [[:hi:Gowri Habba|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Gurshabad|]] || [[:hi:Gurshabad|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Guru Nanak Gurpurab|]] || [[:hi:Guru Nanak Gurpurab|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Harela Mela|]] || [[:hi:Harela Mela|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Harish Khanna (actor)|]] || [[:hi:Harish Khanna (actor)|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Harsh Nayyar|]] || [[:hi:Harsh Nayyar|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Hera Panchami|]] || [[:hi:Hera Panchami|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Hindola|]] || [[:hi:Hindola|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Hobby Dhaliwal|]] || [[:hi:Hobby Dhaliwal|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Imoinu Iratpa|]] || [[:hi:Imoinu Iratpa|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Indra Vila|]] || [[:hi:Indra Vila|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Jyoti Ranjan Nayak|]] || [[:hi:Jyoti Ranjan Nayak|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Kaanum Pongal|]] || [[:hi:Kaanum Pongal|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Kandhei Jatra|]] || [[:hi:Kandhei Jatra|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Kanna Ravi|]] || [[:hi:Kanna Ravi|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Kaveri Pushkaram|]] || [[:hi:Kaveri Pushkaram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Kavish Majumdar|]] || [[:hi:Kavish Majumdar|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Keddaso|]] || [[:hi:Keddaso|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Kherai|]] || [[:hi:Kherai|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Kishan Shrikanth|]] || [[:hi:Kishan Shrikanth|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Kolar Theppothsava|]] || [[:hi:Kolar Theppothsava|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Kottiyoor Vysakha Mahotsavam|]] || [[:hi:Kottiyoor Vysakha Mahotsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Krishna Pushkaralu|]] || [[:hi:Krishna Pushkaralu|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Laksh Chadalavada|]] || [[:hi:Laksh Chadalavada|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Lakshmi Puja|]] || [[:hi:Lakshmi Puja|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Lal Chand Mehra|]] || [[:hi:Lal Chand Mehra|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Linga (actor)|]] || [[:hi:Linga (actor)|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Lingesh|]] || [[:hi:Lingesh|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Lolark Sasthi|]] || [[:hi:Lolark Sasthi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Losoong Festival|]] || [[:hi:Losoong Festival|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Machideva Jayanthi|]] || [[:hi:Machideva Jayanthi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Madikeri Dasara|]] || [[:hi:Madikeri Dasara|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mage Parab|]] || [[:hi:Mage Parab|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Maghi|]] || [[:hi:Maghi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Maghotsab of Brahma Samaj|]] || [[:hi:Maghotsab of Brahma Samaj|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mahamaham|]] || [[:hi:Mahamaham|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Makarasankranti|]] || [[:hi:Makarasankranti|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mandi Shivaratri Fair|]] || [[:hi:Mandi Shivaratri Fair|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mangalore Dasara|]] || [[:hi:Mangalore Dasara|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mantra (actor)|]] || [[:hi:Mantra (actor)|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Mattu Pongal|]] || [[:hi:Mattu Pongal|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Me-Dam-Me-Phi|]] || [[:hi:Me-Dam-Me-Phi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mela Maghi|]] || [[:hi:Mela Maghi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Melā|]] || [[:hi:Melā|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mitrotsavam|]] || [[:hi:Mitrotsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Mohar Singh (dacoit)|]] || [[:hi:Mohar Singh (dacoit)|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Mrinal Dutt|]] || [[:hi:Mrinal Dutt|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Mu Ramaswamy|]] || [[:hi:Mu Ramaswamy|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Nagula Chavithi|]] || [[:hi:Nagula Chavithi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Narmada Pushkaram|]] || [[:hi:Narmada Pushkaram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Nikhil Chavan|]] || [[:hi:Nikhil Chavan|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Onam and Muslims|]] || [[:hi:Onam and Muslims|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:P. Sukumar|]] || [[:hi:P. Sukumar|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Panchalinga Darshana|]] || [[:hi:Panchalinga Darshana|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Panguni Uthiram|]] || [[:hi:Panguni Uthiram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Pargat Diwas|]] || [[:hi:Pargat Diwas|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Partha Sarathi Ray|]] || [[:hi:Partha Sarathi Ray|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Paryaya|]] || [[:hi:Paryaya|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Paush Purnima|]] || [[:hi:Paush Purnima|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Pavleen Gujral|]] || [[:hi:Pavleen Gujral|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Peddagattu jathara|]] || [[:hi:Peddagattu jathara|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Peshwai Procession|]] || [[:hi:Peshwai Procession|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Pili Yesa|]] || [[:hi:Pili Yesa|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Pintu Nanda|]] || [[:hi:Pintu Nanda|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Prashanth Siddi|]] || [[:hi:Prashanth Siddi|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Pratik Sen|]] || [[:hi:Pratik Sen|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Priyakanta Laishram|]] || [[:hi:Priyakanta Laishram|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Pushkaram|]] || [[:hi:Pushkaram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Pusnâ|]] || [[:hi:Pusnâ|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Puthur-Vela|]] || [[:hi:Puthur-Vela|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:R. S. Karthiik|]] || [[:hi:R. S. Karthiik|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:RJ Sarithiran|]] || [[:hi:RJ Sarithiran|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Raja (festival)|]] || [[:hi:Raja (festival)|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Rajesh Madhavan|]] || [[:hi:Rajesh Madhavan|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Rathayatra of Mahesh|]] || [[:hi:Rathayatra of Mahesh|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Ravi Pandey (actor)|]] || [[:hi:Ravi Pandey (actor)|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Riya Shukla|]] || [[:hi:Riya Shukla|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Rukshana Tabassum|]] || [[:hi:Rukshana Tabassum|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Sam Jones (actor)|]] || [[:hi:Sam Jones (actor)|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Sambhav Jain|]] || [[:hi:Sambhav Jain|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Sanjay Vellanki|]] || [[:hi:Sanjay Vellanki|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Saranya Sasi|]] || [[:hi:Saranya Sasi|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Sarasvati Pushkaram|]] || [[:hi:Sarasvati Pushkaram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Satyanath|]] || [[:hi:Satyanath|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Sethubandhanam at Sreeraman Chira Chemmappilly|]] || [[:hi:Sethubandhanam at Sreeraman Chira Chemmappilly|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Shariq Hassan|]] || [[:hi:Shariq Hassan|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Shigmo|]] || [[:hi:Shigmo|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Shine Shetty|]] || [[:hi:Shine Shetty|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Si-Donyi Festival|]] || [[:hi:Si-Donyi Festival|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Siddharth Dhawan|]] || [[:hi:Siddharth Dhawan|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Sindhu Darshan Festival|]] || [[:hi:Sindhu Darshan Festival|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Sirimanothsavam|]] || [[:hi:Sirimanothsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Sitalsasthi|]] || [[:hi:Sitalsasthi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Snana Yatra|]] || [[:hi:Snana Yatra|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Soubin Shahir|]] || [[:hi:Soubin Shahir|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Sri Narayana Jayanthi|]] || [[:hi:Sri Narayana Jayanthi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Srivari Brahmotsavam|]] || [[:hi:Srivari Brahmotsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Suhas|]] || [[:hi:Suhas|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Surya Sreenivas|]] || [[:hi:Surya Sreenivas|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Tej Charanraj|]] || [[:hi:Tej Charanraj|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Thanjavur Chariot festival|]] || [[:hi:Thanjavur Chariot festival|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Thanjavur Muthu Pallakku Festival|]] || [[:hi:Thanjavur Muthu Pallakku Festival|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Theppotsavam|]] || [[:hi:Theppotsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Thiru Edu-Vasippu|]] || [[:hi:Thiru Edu-Vasippu|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Tirumala Shanivaralu|]] || [[:hi:Tirumala Shanivaralu|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Tiruvarur Chariot festival|]] || [[:hi:Tiruvarur Chariot festival|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Ugadi|]] || [[:hi:Ugadi|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Vat Purnima|]] || [[:hi:Vat Purnima|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Vikram Thakor|]] || [[:hi:Vikram Thakor|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Vinod Sagar|]] || [[:hi:Vinod Sagar|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Vizag Prasad|]] || [[:hi:Vizag Prasad|]] || [[:en:Category:Indian_film_actors|]]
+|-
+|[[:en:Yamuna Pushkaram|]] || [[:hi:Yamuna Pushkaram|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Yanam Venkanna Babu Brahmōtsavam|]] || [[:hi:Yanam Venkanna Babu Brahmōtsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Yanam Venkanna Babu Kalyāṇōtsavam|]] || [[:hi:Yanam Venkanna Babu Kalyāṇōtsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Yanam Śrī Rājarājeśwara Kalyāṇōtsavam|]] || [[:hi:Yanam Śrī Rājarājeśwara Kalyāṇōtsavam|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Yaosang|]] || [[:hi:Yaosang|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|[[:en:Zatra|]] || [[:hi:Zatra|]] || [[:en:Category:Religious festivals in India|]]
+|-
+|}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikiloves folklore</title>
+    <script src="/static/js/interface.js"></script>
+    <style>
+        #loader {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hidden {
+            display: none !important;
+        }
+        
+        #resultTable {
+            border: 1;
+            width: 100%;
+            text-align: center;
+        }
+        
+    </style>
+</head>
+<body>
+    <form action="">
+        <label for="topic">Topic : </label>
+        <select
+            name="topic"
+            id="topic"
+            >
+            {% for topic in topics %}
+            <option value="{{topic}}">{{topics[topic]}}</option>
+            {% endfor %}
+        </select><br/>
+        <label for="homewiki">Home wiki : </label>
+        <select
+            name="homewiki"
+            id="homewiki"
+            aria-placeholder="Select"
+            >
+            {% for wiki in wikis %}
+            <option value="{{wiki}}">{{wikis[wiki]}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        
+       
+        <label for="country">Country : </label>
+        <select
+            name="country"
+            id="country"
+            >
+            {% for country in countries %}
+            <option value="{{country}}">{{countries[country]}}</option>
+            {% endfor %}
+        </select>
+        <br/>
+        <fieldset>
+            <legend>Categories</legend>
+        <p>
+            Thie following list is automatically generated from the category tree of the home wiki. You can add or remove categories.
+        </p>
+        <ol id="categoryList">
+        </ol>
+        <input type="text" name="category" id="categoryInput" />
+        <button type="button" id="newCategoryButton">Add</button>
+        <br>
+        
+    </fieldset>
+        <input type="submit" id="submit" value="Submit">
+    </form>
+
+    <img src="/static/loading.svg" alt="Loading" id="loader" class="hidden"/>
+    <table id="resultTable" class="hidden">
+        <caption>
+                <button type="button" id="csvLink">Download CSV</button>
+            <button type="button" id="wikiTextButton">Show Wikitext</button>
+        </caption>
+        <thead>
+            <th>Serial No.</th>
+            <th>English Title</th>
+            <th>Wikidata Item</th>
+            <th>Hindi Title</th>
+        </thead>
+        <tbody id="result">
+
+        </tbody>
+    </table>
+    <script>
+        window.onload = function() {
+            window.interface = new Interface({
+                homewiki: "hi",
+                country: "IN",
+                categories: [{
+                    title: "Indian culture",
+                    subcat : true,
+                    pageid : 1
+                }]
+            });
+        }
+    </script>
+</body>
+</html>
