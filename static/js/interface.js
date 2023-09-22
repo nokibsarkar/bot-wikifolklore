@@ -17,7 +17,7 @@ class Interface {
         this.autoCategories = [];
         this.manualCategories = [];
         this.manualCategoryObject = {};
-        this.baseURL = new URL("http://localhost:5000/");
+        this.baseURL = new URL(window.location.origin);
         this.homewiki = homewiki;
         this.country = country;
         this.user = user;
