@@ -110,7 +110,24 @@ def get_task_result(task_id, format='json'):
             return export_to_csv(res)
         elif format == 'wikitext':
             return export_to_wikitext(res)
-        
+def _extract_page(task_id, category, pages):
+    for page in pages:
+        if "langlinks" not in page:
+            wbentity = None
+            if "wbentityusage" in page:
+                for entity in page["wbentityusage"]:
+                    if 'S' in page['wbentityusage'][entity]['aspects']:
+                        wbentity = entity
+                        break
+            yield {
+                    "task_id": task_id,
+                    "pageid": page['pageid'],
+                    "title": page['title'],
+                    "target": "",
+                    "wikidata": wbentity,
+                    "category": category
+            }
+
 def _execute_task(task_id, cats):
     print("Executing Task", task_id)
     if type(cats) == str:
@@ -140,27 +157,10 @@ def _execute_task(task_id, cats):
             try:
                 res = sess.get(URL, params=data)
                 res = res.json()
+                print("Fetched", category)
                 if "query"  in res:
-                    def add():
-                        for page in res["query"]["pages"]:
-                            print(page['pageid'])
-                            if "langlinks" not in page:
-                                wbentity = None
-                                if "wbentityusage" in page:
-                                    for entity in page["wbentityusage"]:
-                                        if 'S' in page['wbentityusage'][entity]['aspects']:
-                                            wbentity = entity
-                                            break
-                                yield {
-                                        "task_id": task_id,
-                                        "pageid": page['pageid'],
-                                        "title": page['title'],
-                                        "target": "",
-                                        "wikidata": wbentity,
-                                        "category": category
-                                    }
-                    with get_db() as conn:
-                        cur = conn.executemany(SQL_INSERT_ARTICLE, add())
+                   with get_db() as conn:
+                        cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', [])))
                         cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
                             "task_id": task_id,
                             "new_added" : cur.rowcount
@@ -173,6 +173,11 @@ def _execute_task(task_id, cats):
                     time.sleep(1)
             except Exception as e:
                 print("%s" % e)
+                with get_db() as conn:
+                    conn.execute("UPDATE `task` SET `status` = 'error' WHERE `id` = :task_id", {
+                        "task_id": task_id
+                    })
+                    conn.commit()
     with get_db() as conn:
         conn.execute("UPDATE `task` SET `status` = 'done' WHERE `id` = :task_id", {
             "task_id": task_id
@@ -196,16 +201,30 @@ def submit_task(topic_title, cats, home_wiki, country, target_wiki, executor):
         task_id = task.lastrowid
     executor.submit(_execute_task, task_id, cats)
     return task_id
+
+
+
 def get_topic_cats(topic_title):
     with get_db() as conn:
         res = conn.execute(SQL_GET_CATEGORIES_BY_TOPIC_TITLE, {
             "topic_title": topic_title
         })
         return res.fetchall()
+    
+
+
+
+
+
 def parse_category_name(cat : str) -> str:
     if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
         cat = cat[9:]
     return "Category:" + cat
+
+
+
+
+
 def fetch_subcats(cat : str) -> list:
     cat = parse_category_name(cat)
     data = {
@@ -244,7 +263,3 @@ def fetch_subcats(cat : str) -> list:
 
 def fetch_cat_members(task_id, cats : list):
     pass
-
-
-    
-init_db()
