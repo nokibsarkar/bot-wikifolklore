@@ -326,7 +326,7 @@ class Interface {
                 this.loaderIcon?.classList.remove("hidden")
                 setTimeout(() => {
                     this.checkTask();
-                }, 1000);
+                }, 5000);
             }
             
         }

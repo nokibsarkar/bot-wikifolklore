@@ -288,7 +288,7 @@ class Interface {
                     (_d = this.loaderIcon) === null || _d === void 0 ? void 0 : _d.classList.remove("hidden");
                     setTimeout(() => {
                         this.checkTask();
-                    }, 1000);
+                    }, 5000);
                 }
             }
         });

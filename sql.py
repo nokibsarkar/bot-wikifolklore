@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `article` (
     `task_id`	INTEGER NOT NULL,
     `title`	TEXT NOT NULL,
     `target`	TEXT NOT NULL,
-    `wikidata`	TEXT NOT NULL,
+    `wikidata`	TEXT NULL DEFAULT NULL,
     `category`	TEXT NOT NULL,
     `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(`pageid`,`task_id`),
