@@ -56,7 +56,7 @@ class Interface {
     csvLink?: HTMLButtonElement;
     wikitextButton ?: HTMLButtonElement;
 
-    baseURL = new URL("http://localhost:5000/");
+    baseURL = new URL(window.location.origin);
     constructor({
         homewiki = null,
         country = null,
