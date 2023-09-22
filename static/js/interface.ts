@@ -9,6 +9,18 @@ type category = {
     title: string,
     subcat: boolean,
 };
+type Task = {
+    id: number,
+    status: string,
+    homewiki: string,
+    categories: Array<string>,
+    user: string,
+    country: string,
+    article_count: number
+    category_count : number
+    category_done : number
+    last_category : string
+}
 type MissingArticle = {
     pageid: number,
     title: string,
@@ -306,9 +318,9 @@ class Interface {
         const response = await fetch(url.toString());
         const responseData: IResponse = await response.json();
         if (responseData.status === "success") {
-            const task = responseData.data as {id : number, status: string, article_count: number};
+            const task = responseData.data as Task;
             if(this.articleCount)
-                    this.articleCount.innerHTML = "Total Articles : " + task.article_count;
+                    this.articleCount.innerHTML = "Total Articles : " + task.article_count + " | Done : " + task.category_done + " | Last Category : " + task.last_category;
             if (task.status === "done") {
                 const result = await this.exportResult('json');
                 if(this.csvLink){

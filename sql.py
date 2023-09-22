@@ -25,6 +25,9 @@ CREATE TABLE IF NOT EXISTS `task` (
     `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `topic_id`	INTEGER NOT NULL,
     `task_data`	TEXT NOT NULL,
+    `category_count`    INTEGER NOT NULL DEFAULT 0,
+    `category_done`    INTEGER NOT NULL DEFAULT 0,
+    `last_category`    TEXT NULL DEFAULT NULL,
     `home_wiki`    TEXT NOT NULL,
     `target_wiki`    TEXT NOT NULL,
     `article_count`    INTEGER NOT NULL DEFAULT 0,
@@ -49,9 +52,9 @@ INSERT INTO `topic_category` (topic_id, category_id) VALUES (1, 11360135) ON CON
 """
 SQL_CREATE_TASK = """
 INSERT INTO
-    `task` (status, topic_id, task_data, home_wiki, target_wiki, country)
+    `task` (status, topic_id, task_data, home_wiki, target_wiki, country, `category_count`)
 VALUES
-    (:status, (SELECT `id` FROM `topic` WHERE `title` = :topic_title), :task_data, :home_wiki, :target_wiki, :country);
+    (:status, (SELECT `id` FROM `topic` WHERE `title` = :topic_title), :task_data, :home_wiki, :target_wiki, :country, :category_count);
 """
 SQL_GET_TASK = "SELECT * FROM `task` WHERE `id` = :task_id"
 SQL_GET_TASKS = "SELECT * FROM `task`"
@@ -94,4 +97,11 @@ ON
 WHERE
     `topic_category`.`topic_id` = (SELECT `id` FROM `topic` WHERE `title` = :topic_title);
 """
-SQL_TASK_UPDATE_ARTICLE_COUNT = "UPDATE `task` SET `article_count` = `article_count` + :new_added WHERE `id` = :task_id"
+SQL_TASK_UPDATE_ARTICLE_COUNT = """
+UPDATE
+    `task` SET
+        `article_count` = `article_count` + :new_added,
+        `category_done` = `category_done` + :category_done,
+        `last_category` = :last_category
+WHERE `id` = :task_id
+"""

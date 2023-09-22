@@ -265,7 +265,7 @@ class Interface {
             if (responseData.status === "success") {
                 const task = responseData.data;
                 if (this.articleCount)
-                    this.articleCount.innerHTML = "Total Articles : " + task.article_count;
+                    this.articleCount.innerHTML = "Total Articles : " + task.article_count + " | Done : " + task.category_done + " | Last Category : " + task.last_category;
                 if (task.status === "done") {
                     const result = yield this.exportResult('json');
                     if (this.csvLink) {

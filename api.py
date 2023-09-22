@@ -151,8 +151,11 @@ def _execute_task(task_id, cats):
                         cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', [])))
                         cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
                             "task_id": task_id,
-                            "new_added" : cur.rowcount
+                            "new_added" : cur.rowcount,
+                            "category_done" : 1,
+                            "last_category" : category
                         })
+                        cur.close()
                         conn.commit()
                 has_continue = "continue" in res
                 if has_continue:
@@ -183,10 +186,12 @@ def submit_task(topic_title, cats, home_wiki, country, target_wiki, executor):
             "task_data": "|".join(cats),
             "home_wiki": home_wiki,
             "target_wiki": target_wiki,
-            "country": country
+            "country": country,
+            "category_count": len(cats)
         })
         conn.commit()
         task_id = task.lastrowid
+        task.close()
     executor.submit(_execute_task, task_id, cats)
     return task_id
 
