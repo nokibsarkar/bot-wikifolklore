@@ -15,49 +15,31 @@ sess.headers = {
 
 URL = "https://en.wikipedia.org/w/api.php"
 
-def get_db() -> sqlite3.Connection:
+def _get_db() -> sqlite3.Connection:
+    """
+    A function to get the database connection
+    Usually used as a context manager
+    """
     conn = sqlite3.connect(DATABASE_NAME)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+
 def init_db():
-    conn = get_db()
-    conn.executescript(SQL_INIT)
-    conn.commit()
-    conn.close()
-
-
-def get_task(task_id):
-    conn = get_db()
-    res = conn.execute(SQL_GET_TASK, {
-        "task_id": task_id
-    }).fetchone()
-    conn.close()
-    return res
+    """
+    A function to initialize the database.
+    """
+    with _get_db() as conn:
+        conn.executescript(SQL_INIT)
+        conn.commit()
     
 
-def get_tasks():
-    with get_db() as conn:
-        res = conn.execute(SQL_GET_TASKS)
-        return res.fetchall()
-def get_tasks_by_status(status):
-    with get_db() as conn:
-        res = conn.execute(SQL_GET_TASKS_BY_STATUS, {
-            "status": status
-        })
-        return res.fetchall()
-def insert_article(pageid, task_id, title, target, wikidata, category):
-    with get_db() as conn:
-        conn.execute(SQL_INSERT_ARTICLE, {
-            "pageid": pageid,
-            "task_id": task_id,
-            "title": title,
-            "target": target,
-            "wikidata": wikidata,
-            "category": category
-        })
-        conn.commit()
 
-def export_to_wikitext(res):
+def _export_to_wikitext(res):
+    """
+    Export the result set to wikitext
+    """
     serial = 1
     content = """
 {| class="wikitable sortable"
@@ -83,13 +65,13 @@ def export_to_csv(res):
     return "\n".join(result)
 
 def get_task(task_id):
-    with get_db() as conn:
+    with _get_db() as conn:
         res = conn.execute(SQL_GET_TASK, {
             "task_id": task_id
         }).fetchone()
         return res
 def get_task_result(task_id, format='json'):
-    with get_db() as conn:
+    with _get_db() as conn:
         res = conn.execute(SQL_GET_ARTICLES_BY_TASK_ID,{
             "task_id": task_id
         })
@@ -109,7 +91,12 @@ def get_task_result(task_id, format='json'):
         elif format == 'csv':
             return export_to_csv(res)
         elif format == 'wikitext':
-            return export_to_wikitext(res)
+            return _export_to_wikitext(res)
+
+
+#---------------------------- Task Related Functions ----------------------------
+
+
 def _extract_page(task_id, category, pages):
     for page in pages:
         if "langlinks" not in page:
@@ -132,7 +119,7 @@ def _execute_task(task_id, cats):
     print("Executing Task", task_id)
     if type(cats) == str:
         cats = cats.split("|")
-    cats = [parse_category_name(cat.strip()) for cat in cats]
+    cats = [_normalize_category_name(cat.strip()) for cat in cats]
     data = {
         "action": "query",
         "format": "json",
@@ -151,7 +138,7 @@ def _execute_task(task_id, cats):
         "gcmlimit": "max"
     }
     for category in cats:
-        data['gcmtitle'] = parse_category_name(category)
+        data['gcmtitle'] = _normalize_category_name(category)
         has_continue = True
         while has_continue:
             try:
@@ -159,7 +146,7 @@ def _execute_task(task_id, cats):
                 res = res.json()
                 print("Fetched", category)
                 if "query"  in res:
-                   with get_db() as conn:
+                   with _get_db() as conn:
                         cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', [])))
                         cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
                             "task_id": task_id,
@@ -173,12 +160,12 @@ def _execute_task(task_id, cats):
                     time.sleep(1)
             except Exception as e:
                 print("%s" % e)
-                with get_db() as conn:
+                with _get_db() as conn:
                     conn.execute("UPDATE `task` SET `status` = 'error' WHERE `id` = :task_id", {
                         "task_id": task_id
                     })
                     conn.commit()
-    with get_db() as conn:
+    with _get_db() as conn:
         conn.execute("UPDATE `task` SET `status` = 'done' WHERE `id` = :task_id", {
             "task_id": task_id
         })
@@ -188,7 +175,7 @@ def _execute_task(task_id, cats):
 
 def submit_task(topic_title, cats, home_wiki, country, target_wiki, executor):
     task_id = 0
-    with get_db() as conn:
+    with _get_db() as conn:
         task = conn.execute(SQL_CREATE_TASK, {
             "status": "created",
             "topic_title": topic_title,
@@ -205,7 +192,7 @@ def submit_task(topic_title, cats, home_wiki, country, target_wiki, executor):
 
 
 def get_topic_cats(topic_title):
-    with get_db() as conn:
+    with _get_db() as conn:
         res = conn.execute(SQL_GET_CATEGORIES_BY_TOPIC_TITLE, {
             "topic_title": topic_title
         })
@@ -216,7 +203,7 @@ def get_topic_cats(topic_title):
 
 
 
-def parse_category_name(cat : str) -> str:
+def _normalize_category_name(cat : str) -> str:
     if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
         cat = cat[9:]
     return "Category:" + cat
@@ -226,7 +213,7 @@ def parse_category_name(cat : str) -> str:
 
 
 def fetch_subcats(cat : str) -> list:
-    cat = parse_category_name(cat)
+    cat = _normalize_category_name(cat)
     data = {
         "action": "query",
         "format": "json",
@@ -261,5 +248,3 @@ def fetch_subcats(cat : str) -> list:
     return result
 
 
-def fetch_cat_members(task_id, cats : list):
-    pass
