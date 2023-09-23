@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from flask_executor import Executor
-from api import fetch_subcats, submit_task, get_task_result, get_task as fetch_task, init_db, get_topic_cats
+from api2 import fetch_subcats, submit_task, get_task_result, get_task as fetch_task, init_db, get_topic_cats
 from settings import AVAILABLE_COUNTRY, AVAILABLE_WIKI, AVAILABLE_TOPICS
 
 class TukTukBot(Flask):
