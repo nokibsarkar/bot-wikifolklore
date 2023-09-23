@@ -163,8 +163,8 @@ def _execute_task(task_id, cats):
             try:
                 logger.debug(f"Sending Request for {category}")
                 res = sess.get(URL, params=data)
-                logger.debug(f"Request Sent for {category}")
                 res = res.json()
+                logger.debug(f"Request Received for {category}")
                 logger.debug(f"Fetched {category}")
                 if "query"  in res:
                    logger.debug("Query Found")
