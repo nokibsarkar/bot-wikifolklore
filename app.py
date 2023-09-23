@@ -9,7 +9,7 @@ class TukTukBot(Flask):
         super().__init__(*args, **kwargs)
         self.executor = Executor(self)
         # Stop logging
-        self.logger.disabled = True
+        # self.logger.disabled = True
         init_db()
     def run(self, *args, **kwargs):
         super().run(*args, **kwargs)
@@ -91,4 +91,4 @@ def export_task(task_id, format):
             "data": get_task_result(task_id, 'wikitext')
         }
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

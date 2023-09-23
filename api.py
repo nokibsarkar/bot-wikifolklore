@@ -4,9 +4,14 @@ import sqlite3
 from settings import *
 from sql import *
 import logging
-logger = logging.getLogger(__name__)
+logging.basicConfig(filename="benchmark.log",
+                    filemode='a',
+                    format='[%(asctime)s] %(msecs)d %(name)s %(levelname)s %(message)s',
+                    # datefmt='%H:%M:%S',
+                    level=logging.DEBUG)
+logger = logging.getLogger("page.extraction.module")
 logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler())
+logger.addHandler(logging.FileHandler("benchmark.log"))
 logger.propagate = False
 # change the formate to include the time
 formatter = logging.Formatter('[%(asctime)s] - %(name)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
@@ -189,7 +194,7 @@ def _execute_task(task_id, cats):
                     })
                     conn.commit()
                 return
-    logger.debug("Task Done  task_id")
+    logger.debug(f"Task Done  {task_id}")
     with _get_db() as conn:
         conn.execute("UPDATE `task` SET `status` = 'done' WHERE `id` = :task_id", {
             "task_id": task_id

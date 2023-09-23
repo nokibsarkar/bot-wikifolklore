@@ -151,13 +151,13 @@ class Interface {
     async addSubCategories(categories: categoryArray) {
         var subcats: categoryArray = []
         for (let cat of categories) {
+            console.info("Adding subcategories for", cat.title)
             const url = new URL("api/subcat/" + cat.title, this.baseURL);
             const response = await fetch(url.toString());
             const data: IResponse = await response.json();
             subcats = subcats.concat(data.data as categoryArray);
             cat.subcat = false;
         }
-        console.log(subcats)
         this._addCategories(subcats);
         this.render();
     }
@@ -357,5 +357,38 @@ class Interface {
             }
             
         }
+    }
+    async test(machineName: string){
+        
+        if(!machineName){
+            console.log("Machine name is empty. Please provide a machine name as interface.test('machineName')")
+            return false;
+        }
+        const testCase = {
+            'cats' : [
+                'Category:Australian_centenarians',
+                'Category:Australian people',
+                'Category:India'
+            ],
+            country : "IN",
+            user : machineName,
+            homewiki : "hi"
+        }
+        this.homewiki = testCase.homewiki;
+        this.country = testCase.country;
+        this.user = testCase.user;
+        this.manualCategories = [];
+        this.manualCategoryObject = {};
+        this._addCategories(testCase.cats.map((cat) => {
+            return {
+                pageid : Math.round(- Number.MAX_SAFE_INTEGER * Math.random()).toString(),
+                title : cat,
+                subcat : false
+            }
+        }))
+        await this.addSubCategories(this.manualCategories);
+        await this.addSubCategories(this.manualCategories);
+        this.render()
+        await this.submitTask();
     }
 }
