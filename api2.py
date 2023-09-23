@@ -133,7 +133,8 @@ def _extract_page(task_id, category, pages, added):
                     "title": page['title'],
                     "target": "",
                     "wikidata": wbentity,
-                    "category": category
+                    "category": category,
+                    
             }
     logger.debug("Pages Extracted")
 
