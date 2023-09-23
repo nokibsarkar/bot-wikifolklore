@@ -1,3 +1,4 @@
+import os
 from requests import Session
 import time
 import sqlite3
@@ -138,6 +139,7 @@ def _extract_page(task_id, category, pages, added):
     logger.debug("Pages Extracted")
 
 def _execute_task(task_id, cats):
+    os.system(f'echo "Executing task {task_id}" | write nokibsarkar')
     logger.debug(f"Executing Task {task_id}")
     if type(cats) == str:
         cats = cats.split("|")
