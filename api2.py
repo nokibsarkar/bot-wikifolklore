@@ -1,5 +1,5 @@
 from requests import Session
-import time
+import time, csv, io
 import sqlite3
 from settings import *
 from sql import *
@@ -76,14 +76,19 @@ def _export_to_wikitext(res):
 
 
 
+
 def export_to_csv(res):
     serial = 1
-    result = ["serial,pageid,english_title,target,wikidata,category"]
+    headers = "serial", "pageid", "english_title", "target", "wikidata", "category"
+    result = io.StringIO()
+    writer = csv.writer(result, quoting=csv.QUOTE_MINIMAL)
+    writer.writerow(headers)
     for pageid, task_id, title, target, wikidata, category, created_at in res:
-        result.append(f"{serial},{pageid},{title},{target},{wikidata},{category}")
+        writer.writerow([serial, pageid, title, target, wikidata, category])
         serial += 1
-        
-    return "\n".join(result)
+    result.seek(0)
+    result = result.read()
+    return result
 
 def get_task(task_id):
     with _get_db() as conn:
