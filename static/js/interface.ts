@@ -366,8 +366,7 @@ class Interface {
         }
         const testCase = {
             'cats' : [
-                'Category:Australian_centenarians',
-                'Category:Australian people',
+                'Category:Australian centenarians',
                 'Category:India'
             ],
             country : "IN",
@@ -387,7 +386,7 @@ class Interface {
             }
         }))
         await this.addSubCategories(this.manualCategories);
-        await this.addSubCategories(this.manualCategories);
+        // await this.addSubCategories(this.manualCategories);
         this.render()
         await this.submitTask();
     }
