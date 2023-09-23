@@ -39,13 +39,19 @@ def _get_db() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     return conn
 
-
+def get_db2():
+    conn = sqlite3.connect("wiki2.db")
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def init_db():
     """
     A function to initialize the database.
     """
     with _get_db() as conn:
+        conn.executescript(SQL_INIT)
+        conn.commit()
+    with get_db2() as conn:
         conn.executescript(SQL_INIT)
         conn.commit()
     
@@ -87,7 +93,7 @@ def get_task(task_id):
         return res
 def get_task_result(task_id, format='json'):
     res = None
-    with _get_db() as conn:
+    with get_db2() as conn:
         res = conn.execute(SQL_GET_ARTICLES_BY_TASK_ID,{
             "task_id": task_id
         })
@@ -177,9 +183,17 @@ def _execute_task(task_id, cats):
                 logger.debug(f"Request Received for {category}")
                 logger.debug(f"Fetched {category}")
                 if "query"  in res:
-                   logger.debug("Query Found")
-                   result_list.extend(_extract_page(task_id, category, res["query"].get('pages', []), added))
-                
+                    logger.debug("Query Found")
+                    result_list.extend(_extract_page(task_id, category, res["query"].get('pages', []), added))
+                    with _get_db() as conn:
+                        cur = conn.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
+                            "task_id": task_id,
+                            "new_added" : len(res["query"].get('pages', [])),
+                            "category_done" : 1,
+                            "last_category" : category
+                        })
+                        cur.close()
+                        conn.commit()
                 #    with _get_db() as conn:
                 #         logger.debug(f"Inserting {category}")
                 #         result_list.extend(_extract_page(task_id, category, res["query"].get('pages', []), added))
@@ -198,6 +212,7 @@ def _execute_task(task_id, cats):
                 #         cur.close()
                 #         conn.commit()
                 #         logger.debug(f"Inserted {category}")
+                    
                 has_continue = "continue" in res
                 if has_continue:
                     logger.debug("Continue Found")
@@ -213,8 +228,9 @@ def _execute_task(task_id, cats):
                     conn.commit()
                 return
     logger.debug(f"Task Done  {task_id}")
-    with _get_db() as conn:
-        conn.executemany(SQL_INSERT_ARTICLE, result_list)
+    with _get_db() as conn, get_db2() as conn2:
+        conn2.executemany(SQL_INSERT_ARTICLE, result_list)
+        conn2.commit()
         conn.execute("UPDATE `task` SET `status` = 'done' WHERE `id` = :task_id", {
             "task_id": task_id
         })
