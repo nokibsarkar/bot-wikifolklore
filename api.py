@@ -122,6 +122,7 @@ def _extract_page(task_id, category, pages):
                     if 'S' in page['wbentityusage'][entity]['aspects']:
                         wbentity = entity
                         break
+            logger.debug(f"Page {page['title']} is ready to be inserted")
             yield {
                     "task_id": task_id,
                     "pageid": page['pageid'],
