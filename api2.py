@@ -178,14 +178,12 @@ def _execute_task(task_id, cats):
                    with _get_db() as conn:
                         logger.debug(f"Inserting {category}")
                         
-                       # cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', []), added))
-                        sql = (
-                            "INSERT INTO `article` (pageid, task_id, title, target, wikidata, category) VALUES " +
-                             ", ".join(map(lambda row: f"({row['pageid']}, {task_id}, '{row['target']}', '{row['title']}', '{row['wikidata']}', '{row['category']}')",  _extract_page(task_id, category, res["query"].get('pages', []), added)))
-                        )
-                        cur = conn.execute(
-                            sql
-                        )
+                        cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', []), added))
+                        # sql = (
+                        #     "INSERT INTO `article` (pageid, task_id, title, target, wikidata, category) VALUES " +
+                        #      ", ".join(map(lambda row: f"({row['pageid']}, {task_id}, '{row['target']}', '{row['title']}', '{row['wikidata']}', '{row['category']}')",  _extract_page(task_id, category, res["query"].get('pages', []), added)))
+                        # )
+                        # cur = conn.execute(sql)
                         cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
                             "task_id": task_id,
                             "new_added" : cur.rowcount,
