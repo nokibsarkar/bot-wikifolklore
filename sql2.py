@@ -105,3 +105,5 @@ UPDATE
         `last_category` = :last_category
 WHERE `id` = :task_id
 """
+
+SQL_DELETE_UNUSED_ARTICLES = "DELETE FROM `article` WHERE `created_at` < CURRENT_TIMESTAMP - 60*60*24*7;"

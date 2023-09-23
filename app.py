@@ -91,4 +91,4 @@ def export_task(task_id, format):
             "data": get_task_result(task_id, 'wikitext')
         }
 if __name__ == '__main__':
-    app.run()
+    app.run(port=80)
