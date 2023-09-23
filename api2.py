@@ -142,6 +142,7 @@ def _execute_task(task_id, cats):
         cats = cats.split("|")
     added = set()
     cats = [_normalize_category_name(cat.strip()) for cat in cats]
+    cats = [*set(cats)]
     logger.debug("Category Names parsed")
     data = {
         "action": "query",
