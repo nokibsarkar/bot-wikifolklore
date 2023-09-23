@@ -1,4 +1,3 @@
-import os
 from requests import Session
 import time
 import sqlite3
@@ -115,7 +114,7 @@ def get_task_result(task_id, format='json'):
 
 
 def _extract_page(task_id, category, pages, added):
-    logger.debug("Extracting Pages")
+    logger.debug("Extracting Pages from the result set")
     for page in pages:
         if page['pageid'] in added:
             continue
@@ -139,7 +138,6 @@ def _extract_page(task_id, category, pages, added):
     logger.debug("Pages Extracted")
 
 def _execute_task(task_id, cats):
-    os.system(f'echo "Executing task {task_id}" | write nokibsarkar')
     logger.debug(f"Executing Task {task_id}")
     if type(cats) == str:
         cats = cats.split("|")
