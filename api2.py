@@ -35,6 +35,7 @@ def _get_db() -> sqlite3.Connection:
     Usually used as a context manager
     """
     conn = sqlite3.connect(DATABASE_NAME)
+    # conn.set_trace_callback(print)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -176,7 +177,15 @@ def _execute_task(task_id, cats):
                    logger.debug("Query Found")
                    with _get_db() as conn:
                         logger.debug(f"Inserting {category}")
-                        cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', []), added))
+                        
+                       # cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', []), added))
+                        sql = (
+                            "INSERT INTO `article` (pageid, task_id, title, target, wikidata, category) VALUES " +
+                             ", ".join(map(lambda row: f"({row['pageid']}, {task_id}, '{row['target']}', '{row['title']}', '{row['wikidata']}', '{row['category']}')",  _extract_page(task_id, category, res["query"].get('pages', []), added)))
+                        )
+                        cur = conn.execute(
+                            sql
+                        )
                         cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
                             "task_id": task_id,
                             "new_added" : cur.rowcount,
