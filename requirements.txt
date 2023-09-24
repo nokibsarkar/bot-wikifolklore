@@ -1,3 +1,5 @@
 requests
 flask
 flask-executor
+gunicorn[gevent]
+pyjwt

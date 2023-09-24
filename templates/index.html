@@ -20,6 +20,11 @@
         <label for="consent">I have read and understood the <a href="https://meta.wikimedia.org/wiki/Wiki_Loves_Folklore/Privacy_policy">privacy policy</a> of this tool.</label>
         <br>
         {% endif %}
+        {% if user != None %}
+        <p>
+            Logged in as {{ user['username'] }}.
+        </p>
+        {% endif %}
         <input type="submit" value="Launch the interface"/>
     </form>
 </body>

@@ -43,12 +43,18 @@ CREATE TABLE IF NOT EXISTS `article` (
     `wikidata`	TEXT NULL DEFAULT NULL,
     `category`	TEXT NOT NULL,
     `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    --- PRIMARY KEY(`pageid`,`task_id`),
-    -- FOREIGN KEY(`task_id`) REFERENCES `task`(`id`)
+    PRIMARY KEY(`pageid`,`task_id`),
+    FOREIGN KEY(`task_id`) REFERENCES `task`(`id`)
 );
-INSERT INTO `topic` (id, title) VALUES (1, 'folklore/IN'),  (2, 'folklore/BD'), (3, 'folklore/PAK') ON CONFLICT DO NOTHING;
-INSERT INTO `category` (pageid, title) VALUES (11360135, 'Category:Indian folklore') ON CONFLICT DO NOTHING;
-INSERT INTO `topic_category` (topic_id, category_id) VALUES (1, 11360135) ON CONFLICT DO NOTHING;
+CREATE TABLE IF NOT EXISTS `user` (
+    `id` INTEGER PRIMARY KEY,
+    `username` TEXT NOT NULL,
+    `name` TEXT NOT NULL,
+    `rights` JSON DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT TIMESTAMP,
+    `article_count` INTEGER DEFAULT 0,
+    `category_count` INTEGER DEFAULT
+)
 """
 SQL_CREATE_TASK = """
 INSERT INTO
