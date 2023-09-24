@@ -349,8 +349,8 @@ class Interface {
                     this.loaderIcon?.classList.add("hidden")
                 }
             } else {
-                this.resultTable?.classList.add("hidden");
-                this.loaderIcon?.classList.remove("hidden")
+                this.resultTable?.setAttribute("class", "hidden")
+                this.loaderIcon?.setAttribute("class", "")
                 setTimeout(() => {
                     this.checkTask();
                 }, 2000);

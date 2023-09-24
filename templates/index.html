@@ -24,6 +24,14 @@
         <p>
             Logged in as {{ user['username'] }}.
         </p>
+        {% if stats %}
+        <ul>
+            <li>Total Registered user: {{stats['registered_user_count']}}</li>
+            <li>Total Tasks : {{stats['total_tasks']}}</li>
+            <li>Total Articles : {{stats['total_articles_served']}}</li>
+            <li>Total Categories : {{stats['total_categories']}}</li>
+        </ul>
+        {% endif %}
         {% endif %}
         <input type="submit" value="Launch the interface"/>
     </form>

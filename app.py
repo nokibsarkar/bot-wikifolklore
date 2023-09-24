@@ -1,8 +1,16 @@
-from flask import Flask, render_template, request
+# Load .env file first
+from dotenv import load_dotenv
+if not load_dotenv():
+    raise Exception("Failed to load .env file")
+#------------------------------------ .env file loaded------------------------------------
+from flask import Flask, render_template, request, redirect, make_response, Blueprint, g
 from flask_executor import Executor
-from api2 import fetch_subcats, submit_task, get_task_result, get_task as fetch_task, init_db, get_topic_cats
+from api import *
 from settings import AVAILABLE_COUNTRY, AVAILABLE_WIKI, AVAILABLE_TOPICS
-
+NOT_LOGGED_IN_MESSAGE = {
+    "status": "error",
+    "message": "You are not logged in"
+}
 class TukTukBot(Flask):
     executor = None
     def __init__(self, *args, **kwargs):
@@ -10,51 +18,86 @@ class TukTukBot(Flask):
         self.executor = Executor(self)
         # Stop logging
         # self.logger.disabled = True
-        init_db()
-    def run(self, *args, **kwargs):
-        super().run(*args, **kwargs)
+        Server.init()
 
 
         
 app = TukTukBot(__name__)
+api = Blueprint('api', __name__, url_prefix='/api')
 @app.route('/')
 def index():
-    return render_template('index.html')
+    user = User.logged_in_user(request.cookies)
+    stats = None
+    if user:
+        stats = Server.get_stats()
+    return render_template('index.html', user=user, stats=stats)
 @app.route("/interface")
 def interface():
+    if not User.logged_in_user(request.cookies):
+        return redirect(User.generate_login_url( '/interface'))
     return render_template('interface.html', countries=AVAILABLE_COUNTRY, wikis=AVAILABLE_WIKI, topics=AVAILABLE_TOPICS)
-@app.get("/api/subcat/<string:cat>")
+
+@api.before_request
+def before_request():
+    g.user = User.logged_in_user(request.cookies)
+    if not g.user:
+        return NOT_LOGGED_IN_MESSAGE
+
+@api.get("/subcat/<string:cat>")
 def subcat(cat):
     cats = fetch_subcats(cat)
     return {
         "status": "success",
         "data": cats
     }
-
-@app.get("/api/topic/<string:topic>/<string:country>")
+@api.route('/topic')
+def create_topic():
+    if User.has_access(g.user['rights'], User.RIGHTS['topic']) == False:
+        return NOT_LOGGED_IN_MESSAGE
+    with Server.get_parmanent_db() as conn:
+        topic_id = Topic.create(conn, title=request.args.get('title', ''), country='BD')
+    return {
+        "status": "success",
+        "data": {
+            'id' : topic_id
+        }
+    }
+@api.get("/topic/<string:topic>/<string:country>")
 def topic(topic, country):
+    if not User.logged_in_user(request.cookies):
+        return NOT_LOGGED_IN_MESSAGE
     topic_title = f"{topic}/{country}"
-    cats = get_topic_cats(topic_title)
+    cats = []
+    with Server.get_parmanent_db() as conn:
+        cats = Category.get_by_topic_title(conn, topic_title)
     return {
         "status": "success",
         "data": [dict(cat) for cat in cats]
     }
-@app.post("/api/task")
+@api.post("/task")
 def create_task():
+    if User.has_access(g.user['rights'], User.RIGHTS['task']) == False:
+        return NOT_LOGGED_IN_MESSAGE
     data : dict = request.json
     homewiki = data.get('homewiki', 'en')
     country = data.get('country', 'IN')
     topic = data.get('topic', 'folklore')
     topic_title = f"{topic}/{country}"
     cats = data['categories']
-    task_id = submit_task(
-        topic_title=topic_title,
-        cats=cats,
-        home_wiki=homewiki,
-        country=country,
-        target_wiki=homewiki,
-        executor=app.executor
-    )
+    user = g.user
+    task_id = 0
+    with Server.get_parmanent_db() as conn:
+        task_id = Task.create(
+            conn,
+            topic_title=topic_title,
+            task_data="|".join(cats),
+            home_wiki=homewiki,
+            target_wiki=homewiki,
+            country=country,
+            category_count=len(cats),
+            submitted_by=user['id'],
+        )
+    app.executor.submit(execute_task, task_id, cats)
     return {
         "status": "success",
         "data": {
@@ -62,18 +105,42 @@ def create_task():
             'status' : 'done'
         }
     }
-@app.get("/api/task/<int:task_id>")
+@api.get("/task/<int:task_id>")
 def get_task(task_id):
-    task = fetch_task(task_id)
+    if User.has_access(g.user['rights'], User.RIGHTS['task']) == False:
+        return NOT_LOGGED_IN_MESSAGE
+    with Server.get_parmanent_db() as db:
+        task = Task.get_by_id(db, task_id)
     return {
         "status": "success",
-        "data": dict(task)
+        "data": task and dict(task)
     }
+@api.get('/stats')
+def get_stats():
+    if User.has_access(g.user['rights'], User.RIGHTS['stats']) == False:
+        return NOT_LOGGED_IN_MESSAGE
+    stats = Server.get_stats()
+    return {
+        "status": "success",
+        "data": stats
+    }
+@app.route("/user/login")
+def login():
+    cookie_name, cookie_value, redirect_uri = User.generate_access_token(request.args)
+    response = make_response(redirect(redirect_uri))
+    response.set_cookie(cookie_name, cookie_value)
+    return response
+@app.post("/user/logout")
+def logout():
+    cookie_name, cookie_value, redirect_uri = User.logout()
+    response = make_response(redirect(redirect_uri))
+    response.set_cookie(cookie_name, '', expires=0)
+    return response
 
-
-
-@app.get("/api/task/<int:task_id>/export/<string:format>")
+@api.get("/task/<int:task_id>/export/<string:format>")
 def export_task(task_id, format):
+    if User.has_access(g.user['rights'], User.RIGHTS['task']) == False:
+        return NOT_LOGGED_IN_MESSAGE
     assert format in ['json', 'csv', 'wikitext']
     if format == 'json':
         return {
@@ -90,5 +157,8 @@ def export_task(task_id, format):
             "status": "success",
             "data": get_task_result(task_id, 'wikitext')
         }
+    
+
+app.register_blueprint(api)
 if __name__ == '__main__':
     app.run(port=5000)

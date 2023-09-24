@@ -294,8 +294,8 @@ class Interface {
                     }
                 }
                 else {
-                    (_c = this.resultTable) === null || _c === void 0 ? void 0 : _c.classList.add("hidden");
-                    (_d = this.loaderIcon) === null || _d === void 0 ? void 0 : _d.classList.remove("hidden");
+                    (_c = this.resultTable) === null || _c === void 0 ? void 0 : _c.setAttribute("class", "hidden");
+                    (_d = this.loaderIcon) === null || _d === void 0 ? void 0 : _d.setAttribute("class", "");
                     setTimeout(() => {
                         this.checkTask();
                     }, 2000);

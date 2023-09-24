@@ -3,3 +3,4 @@ flask
 flask-executor
 gunicorn[gevent]
 pyjwt
+python-dotenv

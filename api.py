@@ -1,54 +1,31 @@
 from requests import Session
-import time, csv, io
-import sqlite3
-from settings import *
-from sql import *
-import logging
-logging.basicConfig(filename="benchmark.log",
-                    filemode='a',
-                    format='[%(asctime)s] %(msecs)d %(name)s %(levelname)s %(message)s',
-                    # datefmt='%H:%M:%S',
-                    level=logging.DEBUG)
+import time, csv, io, os, logging
+from models import *
+#---------------------------- Load the constants ----------------------------
+# Assuming .env is loaded already
+BOT_AUTH_TOKEN = os.getenv("BOT_AUTH_TOKEN") # The credentails to request to the API
+
+#---------------------------- Logging ----------------------------
 logger = logging.getLogger("page.extraction.module")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 logger.addHandler(logging.FileHandler("benchmark.log"))
-logger.propagate = False
 # change the formate to include the time
 formatter = logging.Formatter('[%(asctime)s] - %(name)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
 logger.handlers[0].setFormatter(formatter)
+#---------------------------- Logging ----------------------------
 
-logger.info("Logging Started")
+#---------------------------- API Session ----------------------------
 sess = Session()
 sess.headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    "Authorization" : f"Bearer {AUTH_TOKEN}"
+    "User-Agent": "TukTukBot/1.0 (Linux x86_64)",
+    "Authorization" : f"Bearer {BOT_AUTH_TOKEN}"
 }
-
-# sqlite3 row factory
-# sqlite3.Connection.row_factory = sqlite3.Row
-
 URL = "https://en.wikipedia.org/w/api.php"
-
-def _get_db() -> sqlite3.Connection:
-    """
-    A function to get the database connection
-    Usually used as a context manager
-    """
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
+#---------------------------- API Session ----------------------------
 
 
-
-def init_db():
-    """
-    A function to initialize the database.
-    """
-    with _get_db() as conn:
-        conn.executescript(SQL_INIT)
-        conn.commit()
     
-
+#---------------------------- Result Exporting Functions ----------------------------
 
 def _export_to_wikitext(res):
     """
@@ -67,14 +44,15 @@ def _export_to_wikitext(res):
     content += "\n|}"
     return content
 
-
-
 def export_to_csv(res):
+    """
+    Export the result set to csv
+    """
     serial = 1
-    header = ["serial,pageid,english_title,target,wikidata,category"]
+    headers = "serial", "pageid", "english_title", "target", "wikidata", "category"
     result = io.StringIO()
     writer = csv.writer(result, quoting=csv.QUOTE_MINIMAL)
-    writer.writerow(header)
+    writer.writerow(headers)
     for pageid, task_id, title, target, wikidata, category, created_at in res:
         writer.writerow([serial, pageid, title, target, wikidata, category])
         serial += 1
@@ -82,18 +60,11 @@ def export_to_csv(res):
     result = result.read()
     return result
 
-def get_task(task_id):
-    with _get_db() as conn:
-        res = conn.execute(SQL_GET_TASK, {
-            "task_id": task_id
-        }).fetchone()
-        return res
+#---------------------------- Task Related Functions ----------------------------
 def get_task_result(task_id, format='json'):
     res = None
-    with _get_db() as conn:
-        res = conn.execute(SQL_GET_ARTICLES_BY_TASK_ID,{
-            "task_id": task_id
-        })
+    with Server.get_temporary_db() as conn:
+        res = Article.get_all_by_task_id(conn, task_id)
     if format == 'json':
         result = []
         for pageid, task_id, title, target, wikidata, category, created_at in res:
@@ -116,9 +87,12 @@ def get_task_result(task_id, format='json'):
 #---------------------------- Task Related Functions ----------------------------
 
 
-def _extract_page(task_id, category, pages):
-    logger.debug("Extracting Pages")
+def _extract_page(task_id, category, pages, added):
+    logger.debug("Extracting Pages from the result set")
     for page in pages:
+        if page['pageid'] in added:
+            continue
+        added.add(page['pageid'])
         if "langlinks" not in page:
             wbentity = None
             if "wbentityusage" in page:
@@ -133,120 +107,93 @@ def _extract_page(task_id, category, pages):
                     "title": page['title'],
                     "target": "",
                     "wikidata": wbentity,
-                    "category": category
+                    "category": category,
+                    
             }
     logger.debug("Pages Extracted")
 
-def _execute_task(task_id, cats):
-    logger.debug(f"Executing Task {task_id}")
-    if type(cats) == str:
-        cats = cats.split("|")
-    cats = [_normalize_category_name(cat.strip()) for cat in cats]
-    logger.debug("Category Names parsed")
-    data = {
-        "action": "query",
-        "format": "json",
-        "prop": "langlinks|wbentityusage",
-        "wbeuaspect" : "S",
-        "wbeulimit" : "max",
-        "generator": "categorymembers",
-        "formatversion": "2",
-        "llprop": "langname",
-        "lllang": "hi",
-        "llinlanguagecode": "en",
-        "lllimit": "max",
-        "gcmprop": "title",
-        "gcmnamespace": "0",
-        "gcmtype": "page",
-        "gcmlimit": "max"
-    }
-    for category in cats:
-        logger.debug(f"Processing {category}")
-        data['gcmtitle'] = _normalize_category_name(category)
-        has_continue = True
-        while has_continue:
-            try:
-                logger.debug(f"Sending Request for {category}")
-                res = sess.get(URL, params=data)
-                res = res.json()
-                logger.debug(f"Request Received for {category}")
-                logger.debug(f"Fetched {category}")
-                if "query"  in res:
-                   logger.debug("Query Found")
-                   with _get_db() as conn:
-                        logger.debug(f"Inserting {category}")
-                        cur = conn.executemany(SQL_INSERT_ARTICLE, _extract_page(task_id, category, res["query"].get('pages', [])))
-                        cur.execute(SQL_TASK_UPDATE_ARTICLE_COUNT, {
-                            "task_id": task_id,
-                            "new_added" : cur.rowcount,
-                            "category_done" : 1,
-                            "last_category" : category
-                        })
-                        cur.close()
-                        conn.commit()
-                        logger.debug(f"Inserted {category}")
-                has_continue = "continue" in res
-                if has_continue:
-                    logger.debug("Continue Found")
-                    data.update(res['continue'])
-                    logger.debug(f"{data.get('continue', 'None')} {data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
-                    time.sleep(1)
-            except Exception as e:
-                logging.exception(e)
-                with _get_db() as conn:
-                    conn.execute("UPDATE `task` SET `status` = 'error' WHERE `id` = :task_id", {
-                        "task_id": task_id
-                    })
-                    conn.commit()
-                return
-    logger.debug(f"Task Done  {task_id}")
-    with _get_db() as conn:
-        conn.execute("UPDATE `task` SET `status` = 'done' WHERE `id` = :task_id", {
-            "task_id": task_id
-        })
-        conn.commit()
+def execute_task(task_id, cats):
+    try:
+        logger.info(f"Executing Task {task_id}")
+        if type(cats) == str:
+            cats = cats.split("|")
+        added = set()
+        cats = [_normalize_category_name(cat.strip()) for cat in cats]
+        # cats = [*set(cats)]
 
-
-def submit_task(topic_title, cats, home_wiki, country, target_wiki, executor):
-    task_id = 0
-    with _get_db() as conn:
-        task = conn.execute(SQL_CREATE_TASK, {
-            "status": "created",
-            "topic_title": topic_title,
-            "task_data": "|".join(cats),
-            "home_wiki": home_wiki,
-            "target_wiki": target_wiki,
-            "country": country,
-            "category_count": len(cats)
-        })
-        conn.commit()
-        task_id = task.lastrowid
-        task.close()
-    executor.submit(_execute_task, task_id, cats)
-    return task_id
-
-
-
-def get_topic_cats(topic_title):
-    with _get_db() as conn:
-        res = conn.execute(SQL_GET_CATEGORIES_BY_TOPIC_TITLE, {
-            "topic_title": topic_title
-        })
-        return res.fetchall()
-    
-
-
-
+        logger.debug("Category Names parsed")
+        data = {
+            "action": "query",
+            "format": "json",
+            "prop": "langlinks|wbentityusage",
+            "wbeuaspect" : "S",
+            "wbeulimit" : "max",
+            "generator": "categorymembers",
+            "formatversion": "2",
+            "llprop": "langname",
+            "lllang": "hi",
+            "llinlanguagecode": "en",
+            "lllimit": "max",
+            "gcmprop": "title",
+            "gcmnamespace": "0",
+            "gcmtype": "page",
+            "gcmlimit": "max"
+        }
+        for category in cats:
+            logger.debug(f"Processing {category}")
+            data['gcmtitle'] = _normalize_category_name(category)
+            has_continue = True
+            while has_continue:
+                try:
+                    logger.debug(f"Sending Request for {category}")
+                    res = sess.get(URL, params=data)
+                    res = res.json()
+                    logger.debug(f"Request Received for {category}")
+                    logger.debug(f"Fetched {category}")
+                    if "query"  in res:
+                        logger.debug("Query Found")
+                        # result_list.extend()
+                        with Server.get_parmanent_db() as conn, Server.get_temporary_db() as conn2:
+                            new_added = Article.create(conn2, 
+                                _extract_page(task_id, category, res["query"].get('pages', []), added)
+                            )
+                            Task.update_article_count(
+                                conn,
+                                id=task_id,
+                                new_added=new_added,
+                                category_done=1,
+                                last_category=category
+                            )
+                        
+                    has_continue = "continue" in res
+                    if has_continue:
+                        logger.debug("Continue Found")
+                        data.update(res['continue'])
+                        logger.debug(f"{data.get('continue', 'None')} {data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
+                        time.sleep(1)
+                except Exception as e:
+                    logging.exception(e)
+                    with Server.get_parmanent_db() as conn:
+                        Task.update_status(conn, id=task_id, status="failed")
+                    return
+        logger.info(f"Task Done  {task_id}")
+        with Server.get_parmanent_db() as conn:
+            # Article
+            Task.update_status(conn, id=task_id, status="done")
+            User.update_stats(conn, task_id)
+            conn.commit()
+    except Exception as e:
+        logging.error(f"Task Failed {task_id}")
+        logging.exception(e)
+        with Server.get_parmanent_db() as conn:
+            Task.update_status(conn, id=task_id, status="failed")
+            logging.info("Task Failed saved to DB")
 
 
 def _normalize_category_name(cat : str) -> str:
     if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
         cat = cat[9:]
     return "Category:" + cat
-
-
-
-
 
 def fetch_subcats(cat : str) -> list:
     cat = _normalize_category_name(cat)

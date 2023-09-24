@@ -1,17 +1,16 @@
-from sql3 import *
-import sqlite3, time
-import jwt
-CLIENT_APPLICATION_KEY='4e4a6b9d7fff9a6816e28797df9cb9dc'
-CLIENT_APPLICATION_SECRET='797ec86ce03ab879e956a20dccec7fd947830276'
-SECRET = 'secret'
-SQL1_INSERT_USER = "INSERT INTO `user` (`id`, `username`,`rights`) VALUES (:id, :username, :rights)"
-import requests
+from sql import *
+import sqlite3, time, os, jwt, requests
+#---------------------------- LOAD the constants ----------------------------
+VERIFIER_OAUTH_CLIENT_ID        =   os.environ['VERIFIER_OAUTH_CLIENT_ID']
+VERIFIER_OAUTH_CLIENT_SECRET    =   os.environ['VERIFIER_OAUTH_CLIENT_SECRET']
+JWT_SECRET_KEY                  =   os.environ['JWT_SECRET_KEY']
+#---------------------------- LOADED the constants ----------------------------
 class Server:
     PERMANENT_DB = 'data.db'
     TEMPORARY_DB = 'articles.db'
     @staticmethod
     def get_mediawiki_credentials():
-        return CLIENT_APPLICATION_KEY, CLIENT_APPLICATION_SECRET
+        return VERIFIER_OAUTH_CLIENT_ID, VERIFIER_OAUTH_CLIENT_SECRET
     @staticmethod
     def get_parmanent_db():
         conn = sqlite3.connect(Server.PERMANENT_DB)
@@ -32,21 +31,14 @@ class Server:
     @staticmethod
     def get_stats():
         stats = {
-            'registerd_user_count' : 0,
+            'registered_user_count' : 0,
             'total_tasks' : 0,
             'total_articles_served' : 0,
             'total_categories' : 0
         }
         with Server.get_parmanent_db() as conn:
-            user_stats = conn.execute("""
-                                      SELECT
-                                        COUNT(*) AS `registerd_user_count`,
-                                      SUM(`article_count`) AS `total_articles`,
-                                    SUM(`category_count`) AS `total_categories`,
-                                    SUM(`task_count`) AS `total_tasks`
-                                      FROM `user`
-                                      """).fetchone()
-            stats['registerd_user_count'] = user_stats['registerd_user_count']
+            user_stats = conn.execute(SQL1_GET_STATISTICS_FROM_USER).fetchone()
+            stats['registered_user_count'] = user_stats['registered_user_count']
             stats['total_articles_served'] = user_stats['total_articles']
             stats['total_categories'] = user_stats['total_categories']
             stats['total_tasks'] = user_stats['total_tasks']
@@ -67,7 +59,7 @@ class User:
         endpoint = "https://meta.wikimedia.org/w/rest.php/oauth2/authorize"
         params = {
             'response_type' : 'code',
-            'client_id' : CLIENT_APPLICATION_KEY,
+            'client_id' : VERIFIER_OAUTH_CLIENT_ID,
             'state' : redirect_uri,
             'redirect_uri' : 'http://localhost:5000/user/login',
         }
@@ -81,8 +73,8 @@ class User:
         params = {
             'grant_type' : 'authorization_code',
             'code' : code,
-            'client_id' : CLIENT_APPLICATION_KEY,
-            'client_secret' : CLIENT_APPLICATION_SECRET,
+            'client_id' : VERIFIER_OAUTH_CLIENT_ID,
+            'client_secret' : VERIFIER_OAUTH_CLIENT_SECRET,
             'redirect_uri' : 'http://localhost:5000/user/login',
         }
         res = requests.post(endpoint, data=params).json()
@@ -107,7 +99,7 @@ class User:
             'id': user_id,
             'username': username,
             'rights': User.get_by_id(Server.get_parmanent_db().cursor(), user_id)['rights']
-        }, SECRET, algorithm='HS256')
+        }, JWT_SECRET_KEY, algorithm='HS256')
         return COOKIE_NAME, jwt_token, redirect_uri
     @staticmethod
     def logout() -> str:
@@ -118,7 +110,7 @@ class User:
         if auth_cookie is None:
             return None
         try:
-            auth = jwt.decode(auth_cookie, SECRET, algorithms=['HS256'])
+            auth = jwt.decode(auth_cookie, JWT_SECRET_KEY, algorithms=['HS256'])
             return auth
         except:
             return None
