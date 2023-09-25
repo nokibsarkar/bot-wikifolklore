@@ -11,3 +11,11 @@ AVAILABLE_WIKI={
     'bn' : 'Bengali Wikipedia',
     'ur' : 'Urdu Wikipedia'
 }
+NOT_LOGGED_IN_MESSAGE = {
+    "status": "error",
+    "message": "You are not logged in"
+}
+NOT_AUTHORIZED_MESSAGE = {
+    "status": "error",
+    "message": "You are not authorized to perform this action"
+}

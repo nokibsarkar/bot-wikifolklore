@@ -26,7 +26,7 @@ cd $LOCAL_CLONED_DIR
 pip install -r requirements.txt
 deactivate
 EOF
-
+sudo chown -R $USERNAME:$GROUP $CLONED_DIR
 # create a service file
 echo "Creating a service file"
 
@@ -39,7 +39,7 @@ After=network.target
 User=$USERNAME
 WorkingDirectory=$CLONED_DIR
 ExectStartPre="source $VENV_DIR/bin/activate"
-ExecStart=$VENV_DIR/bin/gunicorn --config $CLONED_DIR/gunicorn_config.py app:app
+ExecStart=$VENV_DIR/bin/gunicorn --config $CLONED_DIR/gunicorn.conf.py app:app
 [Install]
 WantedBy=multi-user.target
 EOF

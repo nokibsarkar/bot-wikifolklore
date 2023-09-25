@@ -16,6 +16,13 @@ CREATE TABLE IF NOT EXISTS `topic` (
     `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     `title`	TEXT NOT NULL UNIQUE
 );
+INSERT INTO
+    `topic` (`id`, `title`)
+VALUES
+    (1, 'folklore/IN'),
+    (2, 'folklore/BD'),
+    (3, 'folklore/PAK')
+ ON CONFLICT DO NOTHING;
 
 -- This Table would be used to store the category
 CREATE TABLE IF NOT EXISTS `category` (
