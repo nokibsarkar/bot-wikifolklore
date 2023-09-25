@@ -35,5 +35,10 @@
         {% endif %}
         <input type="submit" value="Launch the interface"/>
     </form>
+    {% if user != None %}
+    <form action="/user/logout" method="post">
+        <input type="submit" value="Logout"/>
+    </form>
+    {% endif %}
 </body>
 </html>
