@@ -3,6 +3,3 @@ workers = 1
 worker_class = 'gevent'
 worker_connections = 1000
 keepalive = 5
-
-# keyfile = 'privkey.pem'
-# certfile = 'cert.pem'
