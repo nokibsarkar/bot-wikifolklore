@@ -110,7 +110,7 @@ def create_topic():
 #------------------------------------ Fetch Topic ------------------------------------
 @api.get("/topic/<string:topic>/<string:country>")
 def topic(topic, country):
-    if User.has_access(g.user['rights'], User.RIGHTS['topic']) == False:
+    if User.has_access(g.user['rights'], User.RIGHTS['task']) == False:
         return NOT_AUTHORIZED_MESSAGE
     topic_title = f"{topic}/{country}"
     cats = []
