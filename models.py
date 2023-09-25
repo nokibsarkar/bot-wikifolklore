@@ -102,6 +102,7 @@ class User:
         jwt_token = jwt.encode({
             'id': user_id,
             'username': username,
+            'exp' : time.time() + 60 * 60 * 24 * 7, # 7 days
             'rights': User.get_by_id(Server.get_parmanent_db().cursor(), user_id)['rights']
         }, JWT_SECRET_KEY, algorithm='HS256')
         return COOKIE_NAME, jwt_token, redirect_uri
