@@ -4,10 +4,14 @@ import sqlite3, time, os, jwt, requests
 VERIFIER_OAUTH_CLIENT_ID        =   os.environ['VERIFIER_OAUTH_CLIENT_ID']
 VERIFIER_OAUTH_CLIENT_SECRET    =   os.environ['VERIFIER_OAUTH_CLIENT_SECRET']
 JWT_SECRET_KEY                  =   os.environ['JWT_SECRET_KEY']
+HOSTNAME                        =   os.getenv('HOSTNAME', 'http://localhost:5000')
 #---------------------------- LOADED the constants ----------------------------
 class Server:
     PERMANENT_DB = 'data.db'
     TEMPORARY_DB = 'articles.db'
+    META_OAUTH_AUTHORIZE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/authorize'
+    META_OAUTH_ACCESS_TOKEN_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/access_token'
+    META_PROFILE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/resource/profile'
     @staticmethod
     def get_mediawiki_credentials():
         return VERIFIER_OAUTH_CLIENT_ID, VERIFIER_OAUTH_CLIENT_SECRET
@@ -56,12 +60,12 @@ class User:
     }
     @staticmethod
     def generate_login_url(redirect_uri='/'):
-        endpoint = "https://meta.wikimedia.org/w/rest.php/oauth2/authorize"
+        endpoint = Server.META_OAUTH_AUTHORIZE_URL
         params = {
             'response_type' : 'code',
             'client_id' : VERIFIER_OAUTH_CLIENT_ID,
             'state' : redirect_uri,
-            'redirect_uri' : 'http://localhost:5000/user/login',
+            'redirect_uri' : f'{HOSTNAME}/user/callback',
         }
         return endpoint + '?' + '&'.join([f"{k}={v}" for k, v in params.items()])
     @staticmethod
@@ -69,19 +73,19 @@ class User:
         COOKIE_NAME = 'auth'
         code = args.get('code', None)
         redirect_uri = args.get('state', None)
-        endpoint = "https://meta.wikimedia.org/w/rest.php/oauth2/access_token"
+        endpoint = Server.META_OAUTH_ACCESS_TOKEN_URL
         params = {
             'grant_type' : 'authorization_code',
             'code' : code,
             'client_id' : VERIFIER_OAUTH_CLIENT_ID,
             'client_secret' : VERIFIER_OAUTH_CLIENT_SECRET,
-            'redirect_uri' : 'http://localhost:5000/user/login',
+            'redirect_uri' : f'{HOSTNAME}/user/callback',
         }
         res = requests.post(endpoint, data=params).json()
         if 'error' in res:
             return COOKIE_NAME, '', '/error?code=' + res['error']
         access_token = res['access_token']
-        endpoint = "https://meta.wikimedia.org/w/rest.php/oauth2/resource/profile"
+        endpoint = Server.META_PROFILE_URL
         profile = requests.get(endpoint, headers={'Authorization': f"Bearer {access_token}"}).json()
         if 'error' in profile:
             return COOKIE_NAME, '', '/error?code=' + profile['error']

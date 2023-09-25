@@ -23,7 +23,6 @@ class TukTukBot(Flask):
 
         
 app = TukTukBot(__name__)
-api = Blueprint('api', __name__, url_prefix='/api')
 @app.route('/')
 def index():
     user = User.logged_in_user(request.cookies)
@@ -36,6 +35,24 @@ def interface():
     if not User.logged_in_user(request.cookies):
         return redirect(User.generate_login_url( '/interface'))
     return render_template('interface.html', countries=AVAILABLE_COUNTRY, wikis=AVAILABLE_WIKI, topics=AVAILABLE_TOPICS)
+@app.route("/user/callback")
+def login():
+    cookie_name, cookie_value, redirect_uri = User.generate_access_token(request.args)
+    response = make_response(redirect(redirect_uri))
+    response.set_cookie(cookie_name, cookie_value)
+    return response
+@app.post("/user/logout")
+def logout():
+    cookie_name, cookie_value, redirect_uri = User.logout()
+    response = make_response(redirect(redirect_uri))
+    response.set_cookie(cookie_name, '', expires=0)
+    return response
+
+
+
+#------------------------------------ API ------------------------------------
+
+api = Blueprint('api', __name__, url_prefix='/api')
 
 @api.before_request
 def before_request():
@@ -124,18 +141,6 @@ def get_stats():
         "status": "success",
         "data": stats
     }
-@app.route("/user/login")
-def login():
-    cookie_name, cookie_value, redirect_uri = User.generate_access_token(request.args)
-    response = make_response(redirect(redirect_uri))
-    response.set_cookie(cookie_name, cookie_value)
-    return response
-@app.post("/user/logout")
-def logout():
-    cookie_name, cookie_value, redirect_uri = User.logout()
-    response = make_response(redirect(redirect_uri))
-    response.set_cookie(cookie_name, '', expires=0)
-    return response
 
 @api.get("/task/<int:task_id>/export/<string:format>")
 def export_task(task_id, format):

@@ -2,6 +2,7 @@
 USERNAME=listgen
 GROUP=nokib-tool
 VENV=venv
+VENV_DIR="/home/$USERNAME/$VENV"
 SERVER_HOST=tools.wikilovesfolklore.org
 GITHUB_REPO="https://github.com/nokibsarkar/bot-wikifolklore"
 LOCAL_CLONED_DIR="listgen"
@@ -18,8 +19,8 @@ su - $USERNAME << EOF
 echo "Cloning the repository"
 git clone $GITHUB_REPO $LOCAL_CLONED_DIR
 # Create a virtual environment
-python3 -m venv $VENV
-source $VENV/bin/activate
+python3 -m venv $VENV_DIR
+source $VENV_DIR/bin/activate
 pip install wheel
 cd $LOCAL_CLONED_DIR
 pip install -r requirements.txt
@@ -37,8 +38,8 @@ After=network.target
 [Service]
 User=$USERNAME
 WorkingDirectory=$CLONED_DIR
-ExectStartPre="source $CLONED_DIR/$VENV/bin/activate"
-ExecStart=gunicorn --config gunicorn_config.py app:app
+ExectStartPre="source $VENV_DIR/bin/activate"
+ExecStart=$VENV_DIR/bin/gunicorn --config $CLONED_DIR/gunicorn_config.py app:app
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -52,15 +53,15 @@ echo "Permission changed"
 
 # Add nginx configuration
 echo "Adding nginx configuration"
-sudo touch /etc/nginx/sites-available/$USERNAME.conf
 sudo cp nginx.conf /etc/nginx/sites-available/$USERNAME.conf
 sudo chmod 666 /etc/nginx/sites-available/$USERNAME.conf
-sudo ln -s /etc/nginx/sites-enabled /etc/nginx/sites-available/$USERNAME.conf
+sudo rm /etc/nginx/sites-enabled/*
+sudo ln -s /etc/nginx/sites-available/$USERNAME.conf /etc/nginx/sites-enabled 
 
 # Enable the service
 echo "Enabling the service"
+sudo systemctl daemon-reload
 sudo systemctl start $SERVICE_FILE_NAME
 sudo systemctl enable $SERVICE_FILE_NAME
 sudo nginx -t
 sudo systemctl restart nginx
-sudo systemctl daemon-reload
