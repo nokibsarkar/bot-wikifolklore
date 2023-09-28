@@ -21,13 +21,13 @@ export default function PrimarySearchAppBar({user, toolName, open, setOpen}) {
 
     const handleProfileMenuOpen = (event) => {
       setAnchorEl(event.currentTarget);
-      setOpen(true);
+      // setOpen(true);
     };
   
   
     const handleMenuClose = () => {
       setAnchorEl(null);
-      setOpen(false);
+      // setOpen(false);
     };
   
     const menuId = 'primary-search-account-menu';

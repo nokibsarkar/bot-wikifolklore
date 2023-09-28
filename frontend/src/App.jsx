@@ -4,8 +4,9 @@ import React from "react";
 import Paper from "@mui/material/Paper";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import AppBar from './AppBar.jsx';
-import AppDrawer from './AppDrawer';
+import AppBar from './Layout/AppBar.jsx';
+import Loading from './Layout/LoadingPage.jsx';
+import AppDrawer from './Layout/AppDrawer';
 import { checkToken, AUTH_COOKIE_NAME } from './utils';
 
 const TukTukBot = React.lazy(() => import('./TukTukBot/TukTukBot.jsx'));
@@ -60,7 +61,7 @@ function App() {
     }}>
       <AppBar {...commonProps} />
       <AppDrawer {...commonProps} components={toolOptions} />
-      <React.Suspense fallback={<div>Loading...</div>}>
+      <React.Suspense fallback={<Loading />}>
         <Tool />
       </React.Suspense>
     </Paper>
