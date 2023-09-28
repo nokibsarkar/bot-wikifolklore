@@ -8,6 +8,15 @@ import AppBar from './Layout/AppBar.jsx';
 import Loading from './Layout/LoadingPage.jsx';
 import AppDrawer from './Layout/AppDrawer';
 import { checkToken, AUTH_COOKIE_NAME } from './utils';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  Link,
+  Routes,
+  Router,
+  BrowserRouter
+} from "react-router-dom";
 
 const TukTukBot = React.lazy(() => import('./TukTukBot/TukTukBot.jsx'));
 function ToolSelector() {
@@ -20,7 +29,74 @@ function ToolSelector() {
       return ['TukTukBot', () => <TukTukBot /> || <div>Unknown tool: {tool}</div>];
   }
 }
-
+const Tools = [
+  {
+    name : 'TukTukBot',
+    icon : null,
+    path : '/tuktukbot',
+    children : [
+      {
+        name : 'Topics',
+        icon : null,
+        path : '/tuktukbot/topic',
+        children : [
+          {
+            name : 'Create',
+            icon : null,
+            path : '/tuktukbot/topic/create'
+          },
+          {
+            name : 'Edit',
+            icon : null,
+            path : '/tuktukbot/topic/:id/edit'
+          },
+          {
+            name : 'View',
+            icon : null,
+            path : '/tuktukbot/topic/:id'
+          },
+          {
+            name : 'List',
+            icon : null,
+            path : '/tuktukbot/topic'
+          }
+        ]
+      },
+      {
+        name : 'Tasks',
+        icon : null,
+        path : '/tuktukbot/task',
+        children : [
+          {
+            name : 'Create',
+            icon : null,
+            path : '/tuktukbot/task/create'
+          },
+          {
+            name : 'Edit',
+            icon : null,
+            path : '/tuktukbot/task/:id/edit'
+          },
+          {
+            name : 'View',
+            icon : null,
+            path : '/tuktukbot/task/:id'
+          },
+          {
+            name : 'List',
+            icon : null,
+            path : '/tuktukbot/task'
+          }
+        ]
+      },
+      {
+        name : 'Settings',
+        icon : null,
+        path : '/tuktukbot/setting'
+      }
+    ]
+  }
+]
 function App() {
   const [user, setUser] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -37,35 +113,33 @@ function App() {
   const [toolName, Tool] = ToolSelector();
   const toolOptions = [
     {
-      text : 'Topics',
-      icon : null,
-      component : null,
-      active : true
+      text: 'Topics',
+      icon: null,
+      component: null,
+      active: true
     }
   ]
   const commonProps = {
     user,
     setUser,
     toolName,
-    setOpen : setDrawerOpen,
+    setOpen: setDrawerOpen,
     open: drawerOpen
   }
   return (
-    <Paper sx={{
-      height: "100%",
-      width: "100%",
-      m: 0,
-      border: 0,
-      outline: 0,
-      position: 'absolute',
-    }}>
-      <AppBar {...commonProps} />
-      <AppDrawer {...commonProps} components={toolOptions} />
-      <React.Suspense fallback={<Loading />}>
-        <Tool />
-      </React.Suspense>
-    </Paper>
-  )
+    <ThemeProvider theme={createTheme()}>
+      <BrowserRouter>
+        <AppBar {...commonProps} />
+        <AppDrawer {...commonProps} components={Tools} />
+        <React.Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/tuktukbot/*" element={<TukTukBot />} />
+          </Routes>
+        </React.Suspense>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
 }
+
 
 export default App;

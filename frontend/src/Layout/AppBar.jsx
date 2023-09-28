@@ -12,96 +12,99 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import { Link } from "react-router-dom";
 
 
 
-export default function PrimarySearchAppBar({user, toolName, open, setOpen}) {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const isMenuOpen = Boolean(anchorEl);
+export default function PrimarySearchAppBar({ user, toolName, open, setOpen }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const isMenuOpen = Boolean(anchorEl);
 
-    const handleProfileMenuOpen = (event) => {
-      setAnchorEl(event.currentTarget);
-      // setOpen(true);
-    };
-  
-  
-    const handleMenuClose = () => {
-      setAnchorEl(null);
-      // setOpen(false);
-    };
-  
-    const menuId = 'primary-search-account-menu';
-    const renderMenu = (
-      <Menu
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        id={menuId}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-      >
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+    // setOpen(true);
+  };
+
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    // setOpen(false);
+  };
+
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
       <MenuItem onClick={handleMenuClose}>
         <ListItemIcon>
-          <SettingsIcon fontSize="small" />
-        </ListItemIcon>
-        Settings
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          <Link to="/tuktukbot/setting">
+          Settings
+        </Link>
       </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={handleMenuClose}>
         <ListItemIcon>
           <LogoutIcon fontSize="small" />
         </ListItemIcon>
-          Logout</MenuItem>
-      </Menu>
-    );
-    
-  
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
+        Logout</MenuItem>
+    </Menu>
+  );
+
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            sx={{ mr: 2 }}
+            onClick={() => setOpen(!open)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
+            {toolName}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: 'flex' }}>
+            <Button
               size="large"
-              edge="start"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
               color="inherit"
-              aria-label="open drawer"
-              sx={{ mr: 2 }}
-              onClick={() => setOpen(!open)}
             >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ display: { xs: 'none', sm: 'block' } }}
-            >
-              {toolName}
-            </Typography>
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: 'flex' }}>
-              <Button
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                {user?.username} &nbsp;
-                <AccountCircle sx={{ml:2}} />
-              </Button>
-            </Box>
-          </Toolbar>
-          {renderMenu}
-        </AppBar>
-      </Box>
-    );
-  }
+              {user?.username} &nbsp;
+              <AccountCircle sx={{ ml: 2 }} />
+            </Button>
+          </Box>
+        </Toolbar>
+        {renderMenu}
+      </AppBar>
+    </Box>
+  );
+}
