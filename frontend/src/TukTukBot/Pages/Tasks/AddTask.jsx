@@ -9,14 +9,23 @@ import ArticleList from "../../components/Articles";
 import Box from "@mui/material/Box"
 import Collapse from "@mui/material/Collapse"
 import AutoComplete from "@mui/material/Autocomplete"
-
+import { useState, useEffect, useCallback } from "react";
 import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
 import { TextField } from "@mui/material";
+import Server from "../../Server.ts";
 const countries = [
     {
         label: 'Bangladesh',
         id: 'BD'
+    },
+    {
+        label: 'India',
+        id: 'IN'
+    },
+    {
+        label: 'Pakistan',
+        id: 'PK'
     }
 ]
 const wiki = [
@@ -29,33 +38,50 @@ const wiki = [
         id: 'ur'
     }
 ]
-function AddTask(props) {
+function AddTask() {
+    const categoryListRef = React.useRef([]);
     const [taskID, setTaskID] = useState(null);
+    const [disabled, setDisabled] = useState(false);
+    const [topic, setTopic] = useState('folklore');
     const [country, setCountry] = useState('IN');
     const [targetwiki, setTargetwiki] = useState('bn');
     const [categoryExpanded, setCategoryExpanded] = useState(true);
-    const [defaultCategories, setDefaultCategories] = useState([
-        {
-            title: 'Hello',
-            id: '90'
-        }
-    ]);
-    React.useEffect(() => {
-        setDefaultCategories([
-            {
-                title: 'Hello',
-                id: '90'
-            }
-        ])
-    }, [country, targetwiki])
-    const submitTask = React.useCallback(() => {
+    const [defaultCategories, setDefaultCategories] = useState([]);
+    useEffect(() => {
+        const countryFound = countries.find(v => v.label == country);
+        // const wikiFound = wiki.find(v => v.label == targetwiki);
+        if (!countryFound)
+            return;
+        setDisabled(true);
+        Server.getCategories({country : countryFound.id, topic})
+        .then(categories => {
+            setDisabled(false);
+            setDefaultCategories(categories)
+        })
+    }, [country, topic])
+    const submitTask = useCallback(() => {
         // submit task logic
+        const categoryList = categoryListRef?.current;
+        if (!categoryList?.length)
+            return;
+        setDisabled(true);
+        Server.submitTask({
+            homewiki: targetwiki,
+            country : country,
+            categories: categoryList,
+            topic: topic
+        }).then(response => {
+            const taskID = response?.id;
+            setTaskID(taskID);
+            console.log(response)
+            setDisabled(false);
+        })
     }, [])
 
     return (
         <Card>
             <CardHeader title="Add Task" action={
-                <Button variant="contained" color="primary" onClick={submitTask}>
+                <Button variant="contained" color="primary" onClick={submitTask} disabled={disabled}>
                     <ListIcon /> Generate List
                 </Button>
             } />
@@ -67,32 +93,34 @@ function AddTask(props) {
                     borderSpacing: 1
                 }}>
                     <AutoComplete
-                        label="Man"
+                        disabled={disabled}
                         sx={{ width: 300 }}
-                        renderInput={props => <TextField {...props} label="Country" onChange={e => e.target.value && setCountry(e.target.value)} />}
+                        renderInput={props => <TextField {...props} label="Country" onSelect={e => e.target.value && setCountry(e.target.value)} />}
                         options={countries}
                     />
                     <AutoComplete
+                        disabled={disabled}
                         sx={{ width: 300 }}
-                        renderInput={props => <TextField {...props} label="Target Wiki" onChange={e => e.target.value && setTargetwiki(e.target.value)} />}
+                        renderInput={props => <TextField {...props} label="Target Wiki" onSelect={e => e.target.value && setTargetwiki(e.target.value)} />}
                         options={wiki}
                     />
-                    <Button variant="contained" onClick={e => setCategoryExpanded(!categoryExpanded)}>
+                    <Button variant="contained" disabled={disabled} onClick={e => setCategoryExpanded(!categoryExpanded)}>
                         Advanced {categoryExpanded ? <CollapseIcon /> : <ExpandedIcon />}
                     </Button>
                 </Box>
 
                 <Collapse in={categoryExpanded}>
                     <CategoryList
-                        categoryListRef={null}
-                        Server={props.Server}
+                        disabled={disabled}
+                        categoryListRef={categoryListRef}
+                        Server={Server}
                         initialCategories={defaultCategories}
                     />
                 </Collapse>
-                <ArticleList
-                    Server={props.Server}
+                {taskID && <ArticleList
+                    Server={Server}
                     taskID={taskID}
-                />
+                />}
             </CardContent>
         </Card>
     );

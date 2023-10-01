@@ -18,6 +18,7 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Collapse from "@mui/material/Collapse"
+import Server from "../Server.ts";
 
 
 import { DataGrid } from '@mui/x-data-grid/DataGrid';
@@ -61,7 +62,6 @@ const WikiTextArticles = ({ data }) => {
 class ArticleList extends React.Component {
     constructor(props) {
         super(props);
-        const { Server } = props
         this.state = {
             data: [],
 
@@ -82,14 +82,10 @@ class ArticleList extends React.Component {
             processedCount: 100
         };
     }
-    checkTaskStatus() {
+    async checkTaskStatus() {
         console.log("Checking status")
-        const task = {
-            status: 'done',
-            last_category: 'Category:L',
-            category_count: 90,
-            article_count: 100
-        }
+        const task = await Server.getTask(this.props.taskID)
+        console.log("Task Status", task)
         if (task.status != 'pending') {
             console.log("Timer Cleared", this.state.statusCheckerTimer)
             this.setState({
@@ -121,7 +117,7 @@ class ArticleList extends React.Component {
         })
 
     }
-    exportCSV() {
+    async exportCSV() {
         const download = (taskID, csv) => {
             const a = document.createElement("a");
             a.download = `results-${taskID}.csv`
@@ -133,7 +129,7 @@ class ArticleList extends React.Component {
         }
         if (!this.state.csv) {
             // fetch CSV
-            const csv = 'HI'
+            const csv = await Server.exportResult(this.props.taskID, 'csv');
             this.setState({
                 csv: csv
             })
@@ -142,7 +138,7 @@ class ArticleList extends React.Component {
         return download(this.props.taskID, this.state.csv)
 
     }
-    exportWikiTextToggle() {
+    async exportWikiTextToggle() {
         if (this.state.showWikiText)
             // hide the wikitext
             this.setState({
@@ -151,9 +147,10 @@ class ArticleList extends React.Component {
         else {
             if (!this.state.wikitext) {
                 // fetch the wikitext
+                const wikitext = await Server.exportResult(this.props.taskID, 'wikitext');
                 this.setState({
                     showWikiText: true,
-                    wikitext: "Sample Wikitext"
+                    wikitext: wikitext
                 })
             }
             else
@@ -162,19 +159,38 @@ class ArticleList extends React.Component {
                 })
         }
     }
-    exportTable() {
-        const cats = [
-            {
-                title: "Cat:^&"
-            }
-        ]
+    async exportTable() {
+       const cats = await Server.exportResult(this.props.taskID, 'json');
         this.setState({
             data: cats,
             json: JSON.stringify(cats)
         })
     }
-    componentDidMount() {
-        this.checkTaskStatus()
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.props.taskID != nextProps.taskID){
+            this.checkTaskStatus();
+            // reset the state
+            this.setState({
+                data: [],
+
+                wikitext: '',
+                showWikiText: false,
+                fetchingWikiText: false,
+
+                csv: null,
+                fetchingCSV: false,
+
+                json: null,
+                fetchingJSON: false,
+
+                statusCheckerTimer: 0,
+
+                articleCount: 0,
+                processedCategory: '',
+                processedCount: 0
+            })
+        }
+        return true;
     }
     render() {
         const Actions = (

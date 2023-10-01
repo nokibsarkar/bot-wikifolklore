@@ -1,4 +1,4 @@
 import { createContext } from "react";
-export const UserContext = createContext(null);
-export const LanguageContext = createContext(null);
-export const CountryContext = createContext(null);
+import Server from "../Server.ts";
+const ServerContext = createContext(Server);
+export default ServerContext;
