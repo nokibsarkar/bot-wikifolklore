@@ -26,7 +26,7 @@ VALUES
 
 -- This Table would be used to store the category
 CREATE TABLE IF NOT EXISTS `category` (
-    `pageid`	INTEGER NOT NULL PRIMARY KEY UNIQUE,
+    `pageid`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `title`	TEXT NOT NULL UNIQUE
 );
 
@@ -96,7 +96,8 @@ SQL1_INSERT_CATEGORY = """
 INSERT INTO
     `category` (pageid, title)
 VALUES
-    (:pageid, :title);
+    (:pageid, :title)
+    ON CONFLICT DO NOTHING;
 """
 SQL1_INSERT_TOPIC_CATEGORY = """
 INSERT INTO
@@ -155,3 +156,20 @@ SELECT
     SUM(`task_count`) AS `total_tasks`
 FROM `user`
     """
+SQL1_UPDATE_TOPIC_CATEGORY_COUNT = """
+UPDATE
+    `topic` SET
+        `category_count` = `category_count` + :category_count
+WHERE `id` = :topic_id
+"""
+SQL1_DELETE_TOPIC_CATEGORY = """
+DELETE FROM `topic_category` WHERE `topic_id` = :topic_id AND `category_id` = :category_id
+"""
+SQL1_GET_COUNTRIES = """
+SELECT DISTINCT
+    `title`
+FROM
+    `topic`
+WHERE
+    `title` LIKE :topic_prefix
+"""

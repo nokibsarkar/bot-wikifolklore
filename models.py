@@ -312,7 +312,11 @@ class Category:
     @staticmethod
     def get_by_topic_id(conn : sqlite3.Cursor, topic_id):
         return conn.execute(SQL1_GET_CATEGORY_BY_TOPIC_ID, {'topic_id': topic_id}).fetchall()
-
+    @staticmethod
+    def normalize_name(cat : str) -> str:
+        if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
+            cat = cat[9:]
+        return "Category:" + cat
 class Topic:
     @staticmethod
     def normalize_title(name, country):
@@ -324,13 +328,12 @@ class Topic:
             'title': title,
             'country': country
         })
-        conn.commit()
         return cur.lastrowid
     @staticmethod
     def get_by_title(conn : sqlite3.Cursor, title : str):
         return conn.execute(SQL1_GET_TOPIC_BY_TITLE, {'title': title}).fetchone()
     @staticmethod
-    def get_by_id(conn : sqlite3.Cursor, id):
+    def get_by_id(conn : sqlite3.Cursor, id) -> dict:
         return conn.execute(SQL1_GET_TOPIC_BY_ID, {'id': id}).fetchone()
     @staticmethod
     def get_all(conn : sqlite3.Cursor):
@@ -338,14 +341,45 @@ class Topic:
     
     @staticmethod
     def add_categories(conn : sqlite3.Cursor, topic_id, categories):
-        category_added = conn.executemany(SQL1_INSERT_CATEGORY, categories).rowcount
-        conn.commit()
+        category_added = conn.executemany(SQL1_INSERT_CATEGORY, map(lambda cat: (cat['id'], cat['title']), categories)).rowcount
         cur = conn.executemany(
             SQL1_INSERT_TOPIC_CATEGORY,
             map(lambda x: {'topic_id': topic_id, 'category_id': x['id']}, categories)
         )
-        Topic.update_category_count(conn, topic_id, cur.rowcount)
-        conn.commit()
         return category_added
-   
+    @staticmethod
+    def remove_categories(conn : sqlite3.Cursor, topic_id, categories):
+        cur = conn.executemany(
+            SQL1_DELETE_TOPIC_CATEGORY,
+            map(lambda x: {'topic_id': topic_id, 'category_id': x['id']}, categories)
+        )
+        return cur.rowcount
+    @staticmethod
+    def update_categories(conn : sqlite3.Cursor, topic_id, categories : list):
+        previous_categories = Category.get_by_topic_id(conn, topic_id)
+        
+        updated_cat_titles = {Category.normalize_name(cat['title']) for cat in categories}
+        previous_categories_title = { Category.normalize_name(x['title']) for x in previous_categories}
+
+        removable_categories = []
+        added_categories = []
+        for cat in categories:
+            if cat['title'] not in previous_categories_title:
+                added_categories.append(cat)
+        for cat in previous_categories:
+            if cat['title'] not in updated_cat_titles:
+                removable_categories.append(cat)
+        if len(removable_categories) > 0:
+            Topic.remove_categories(conn, topic_id, removable_categories)
+        if len(added_categories) > 0:
+            Topic.add_categories(conn, topic_id, added_categories)
+        return len(removable_categories), len(added_categories)
+    @staticmethod
+    def get_countries(conn : sqlite3.Cursor, topic_prefix : str):
+        countries = conn.execute(SQL1_GET_COUNTRIES, [f"{topic_prefix}/%"]).fetchall()
+        return list(map(lambda x: x['title'], countries))
+    # @staticmethod
+    # def update_title(conn : sqlite3.Cursor, topic_id, new_title):
+    #     conn.execute(SQL1_UPDATE_TOPIC_TITLE, {'topic_id': topic_id, 'title': new_title})
+    #     conn.commit()
 
