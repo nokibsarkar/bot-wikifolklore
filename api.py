@@ -168,7 +168,7 @@ def create_task():
     with Server.get_parmanent_db() as conn:
         task_id = Task.create(
             conn,
-            topic_title=topic_title,
+            topic_id=topic_title,
             task_data="|".join(cats),
             home_wiki=homewiki,
             target_wiki=homewiki,

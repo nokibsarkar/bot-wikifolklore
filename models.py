@@ -1,4 +1,5 @@
 from sql import *
+from schema import *
 import sqlite3, time, os, jwt, requests
 #---------------------------- LOAD the constants ----------------------------
 VERIFIER_OAUTH_CLIENT_ID        =   os.environ['VERIFIER_OAUTH_CLIENT_ID']
@@ -33,7 +34,7 @@ class Server:
         with Server.get_temporary_db() as conn:
             conn.executescript(SQL2_INIT)
     @staticmethod
-    def get_stats():
+    def get_stats() -> "dict[str, int]":
         stats = {
             'registered_user_count' : 0,
             'total_tasks' : 0,
@@ -117,7 +118,8 @@ class User:
         try:
             auth = jwt.decode(auth_cookie, JWT_SECRET_KEY, algorithms=['HS256'])
             return auth
-        except:
+        except Exception as e:
+            print(e)
             return None
     @staticmethod
     def rights_to_int(rights):
@@ -222,22 +224,21 @@ class Task:
         'error': 'error'
     }
     @staticmethod
-    def create(conn : sqlite3.Cursor, *, submitted_by : int, topic_title : str, task_data : str, home_wiki : str, target_wiki : str, country : str, category_count : int) -> int:
+    def create(conn : sqlite3.Cursor, *, submitted_by : int, topic_id : int, task_data : str, home_wiki : str, target_wiki : str, country : Country, category_count : int) -> int:
         cur = conn.execute(SQL1_CREATE_TASK, {
-            'status': Task.STATUS['pending'],
-            'topic_title': topic_title,
+            'status': TaskStatus.pending.value,
+            'topic_id': topic_id,
             'task_data': task_data,
             'home_wiki': target_wiki,
             'target_wiki': target_wiki,
-            'country': country,
+            'country': country.value,
             'category_count': category_count,
             'submitted_by': submitted_by
         })
-        conn.commit()
-        return cur.lastrowid
+        return cur.lastrowid or 0
     
     @staticmethod
-    def get_by_id(conn : sqlite3.Cursor, id):
+    def get_by_id(conn : sqlite3.Cursor, id) -> dict:
         res = conn.execute(SQL1_GET_TASK, {'task_id': id})
         k = res.fetchone()
         k = k and dict(k)
@@ -292,20 +293,18 @@ class Category:
     def create(conn : sqlite3.Cursor, *, categories):
         if type(categories) == dict:
             cur = conn.execute(SQL1_INSERT_CATEGORY, categories)
-            conn.commit()
             return cur.lastrowid
         else:
             conn.executemany(SQL1_INSERT_CATEGORY, categories)
-        conn.commit()
     @staticmethod
     def get_by_topic_title(conn : sqlite3.Cursor, topic_title):
         return conn.execute(SQL1_GET_CATEGORIES_BY_TOPIC_TITLE, {'topic_title': topic_title}).fetchall()
     @staticmethod
-    def get_by_pageid(conn : sqlite3.Cursor, pageid):
-        return conn.execute("SELECT * FROM `category` WHERE `pageid` = ?", (pageid,)).fetchone()
+    def get_by_id(conn : sqlite3.Cursor, id):
+        return conn.execute("SELECT * FROM `category` WHERE `id` = ?", (id,)).fetchone()
     @staticmethod
-    def get_by_pageids(conn : sqlite3.Cursor, pageids):
-        return conn.execute("SELECT * FROM `category` WHERE `pageid` IN ({})".format(','.join('?' * len(pageids))), pageids).fetchall()
+    def get_by_ids(conn : sqlite3.Cursor, ids):
+        return conn.execute("SELECT * FROM `category` WHERE `id` IN ({})".format(','.join('?' * len(ids))), ids).fetchall()
     @staticmethod
     def get_by_title(conn : sqlite3.Cursor, title):
         return conn.execute("SELECT * FROM `category` WHERE `title` = ?", (title,)).fetchone()
@@ -319,14 +318,15 @@ class Category:
         return "Category:" + cat
 class Topic:
     @staticmethod
-    def normalize_title(name, country):
+    def normalize_title(name, country : Country):
         name = name.lower()
-        return f"{name}/{country}"
+        return f"{name}/{country.value}"
     @staticmethod
-    def create(conn : sqlite3.Cursor, *, title : str, country : str):
+    def create(conn : sqlite3.Cursor, *, title : str, country : Country):
+        title = Topic.normalize_title(title, country)
         cur = conn.execute(SQL1_INSERT_TOPIC, {
             'title': title,
-            'country': country
+            'country': country.value
         })
         return cur.lastrowid
     @staticmethod
@@ -341,30 +341,30 @@ class Topic:
     
     @staticmethod
     def add_categories(conn : sqlite3.Cursor, topic_id, categories):
-        category_added = conn.executemany(SQL1_INSERT_CATEGORY, map(lambda cat: (cat['pageid'], cat['title']), categories)).rowcount
+        category_added = conn.executemany(SQL1_INSERT_CATEGORY, map(lambda cat: (cat.id, cat.title), categories)).rowcount
         cur = conn.executemany(
             SQL1_INSERT_TOPIC_CATEGORY,
-            map(lambda x: {'topic_id': topic_id, 'category_id': x['pageid']}, categories)
+            map(lambda x: {'topic_id': topic_id, 'category_id': x.id}, categories)
         )
         return category_added
     @staticmethod
     def remove_categories(conn : sqlite3.Cursor, topic_id, categories):
         cur = conn.executemany(
             SQL1_DELETE_TOPIC_CATEGORY,
-            map(lambda x: {'topic_id': topic_id, 'category_id': x['pageid']}, categories)
+            map(lambda x: {'topic_id': topic_id, 'category_id': x['id']}, categories)
         )
         return cur.rowcount
     @staticmethod
-    def update_categories(conn : sqlite3.Cursor, topic_id, categories : list):
+    def update_categories(conn : sqlite3.Cursor, topic_id : int, categories : list[CategoryScheme]):
         previous_categories = Category.get_by_topic_id(conn, topic_id)
         
-        updated_cat_titles = {Category.normalize_name(cat['title']) for cat in categories}
+        updated_cat_titles = {Category.normalize_name(cat.title) for cat in categories}
         previous_categories_title = { Category.normalize_name(x['title']) for x in previous_categories}
 
         removable_categories = []
         added_categories = []
         for cat in categories:
-            if cat['title'] not in previous_categories_title:
+            if cat.title not in previous_categories_title:
                 added_categories.append(cat)
         for cat in previous_categories:
             if cat['title'] not in updated_cat_titles:

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Generic, TypeVar, List,NewType
+from typing import Generic, TypeVar, List, Type, Union
 from datetime import datetime
 from enum import Enum
 class TaskResultFormat(Enum):
@@ -10,17 +10,17 @@ class Country(Enum):
     Bangladesh = "BD"
     India = "IN"
 @dataclass
-class Article:
+class ArticleSceme:
     """
     A class to store the article that was gathered
     """
     id : int = None
     title : str = None
 @dataclass
-class Category(Article):
+class CategoryScheme(ArticleSceme):
     pass
 @dataclass
-class User:
+class UserScheme:
     """
      `id` INTEGER PRIMARY KEY,
     `username` TEXT NOT NULL,
@@ -55,7 +55,7 @@ class TaskCreate:
     """
     submitted_by : int
     topic_id : int
-    task_data : list[Category]
+    task_data : list[CategoryScheme]
     home_wiki : str
     target_wiki : str
     country : Country
@@ -66,12 +66,12 @@ class TaskStatus(Enum):
     done = "done"
     failed = "failed"
 @dataclass
-class Task:
+class TaskScheme:
     id : int
     status : TaskStatus
     category_count : int
     category_done : int
-    last_category : str
+    last_category : str | None
     article_count : int
     submitted_by : int
     topic_id : int
@@ -79,22 +79,36 @@ class Task:
     target_wiki : str
     country : Country
     created_at : datetime
-    
+    task_data : list[CategoryScheme] | None
     pass
 @dataclass
 class TopicCreate:
     country : Country
     title : str 
-    categories : List[Category] = None
+    categories : List[CategoryScheme] | None
 @dataclass
 class TopicUpdate:
-    categories : List[Category]
+    categories : List[CategoryScheme]
 @dataclass
-class Topic:
+class TopicScheme:
     title : str
     country : Country
+    id : int = 0
     pass
-T = TypeVar('T', str, Task, User, Article, Category, Country)
+@dataclass
+class Statistics:
+    """
+    "registered_user_count": 1,
+    "total_tasks": 0,
+    "total_articles_served": 0,
+    "total_categories": 0
+    """
+    registered_user_count : int
+    total_tasks : int
+    total_articles_served : int
+    total_categories : int
+TaskResult = Union[str, List[ArticleSceme]]
+T = TypeVar('T', str, TaskScheme, UserScheme, ArticleSceme, CategoryScheme, Country, TopicScheme, TaskResult, Statistics)
 @dataclass
 class ResponseMultiple(Generic[T]):
     success : bool
@@ -103,4 +117,5 @@ class ResponseMultiple(Generic[T]):
 @dataclass
 class ResponseSingle(Generic[T]):
     success : bool
-    data : T = None
+    data : T | None
+

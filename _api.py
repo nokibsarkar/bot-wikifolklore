@@ -61,11 +61,12 @@ def export_to_csv(res):
     return result
 
 #---------------------------- Task Related Functions ----------------------------
-def get_task_result(task_id, format='json'):
+def get_task_result(task_id, format : TaskResultFormat =TaskResultFormat.json) -> TaskResult:
     res = None
     with Server.get_temporary_db() as conn:
-        res = Article.get_all_by_task_id(conn, task_id)
-    if format == 'json':
+        cur = conn.cursor()
+        res = Article.get_all_by_task_id(cur, task_id)
+    if format == TaskResultFormat.json:
         result = []
         for pageid, task_id, title, target, wikidata, category, created_at in res:
             result.append({
@@ -78,9 +79,9 @@ def get_task_result(task_id, format='json'):
                 "created_at": created_at
             })
         return result
-    elif format == 'csv':
+    elif format == TaskResultFormat.csv:
         return export_to_csv(res)
-    elif format == 'wikitext':
+    elif format == TaskResultFormat.wikitext:
         return _export_to_wikitext(res)
 
 
@@ -221,9 +222,9 @@ def fetch_subcats(cat : str) -> list:
             data.pop("continue", None)
         for category in res["query"]["categorymembers"]:
             result.append({
-                "pageid": category['pageid'],
+                "id": category['pageid'],
                 "title": category['title'],
-                'subcat' : True
+                # 'subcat' : True
             })
         if has_continue:
             print("Sleeping")

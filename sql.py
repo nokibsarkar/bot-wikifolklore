@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- This Table would be used to store the topic 
 CREATE TABLE IF NOT EXISTS `topic` (
     `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `title`	TEXT NOT NULL UNIQUE
+    `title`	TEXT NOT NULL UNIQUE,
+    `country`    TEXT NULL DEFAULT NULL
 );
 INSERT INTO
     `topic` (`id`, `title`)
@@ -26,7 +27,7 @@ VALUES
 
 -- This Table would be used to store the category
 CREATE TABLE IF NOT EXISTS `category` (
-    `pageid`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `title`	TEXT NOT NULL UNIQUE
 );
 
@@ -60,21 +61,21 @@ CREATE TABLE IF NOT EXISTS `topic_category` (
 SQL2_INIT = """
 -- This Table would be used to store the article
 CREATE TABLE IF NOT EXISTS `article` (
-    `pageid`	INTEGER NOT NULL,
+    `id`	INTEGER NOT NULL,
     `task_id`	INTEGER NOT NULL,
     `title`	TEXT NOT NULL,
     `target`	TEXT NOT NULL,
     `wikidata`	TEXT NULL DEFAULT NULL,
     `category`	TEXT NOT NULL,
     `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY(`pageid`,`task_id`)
+    PRIMARY KEY(`id`,`task_id`)
 );
 """
 SQL1_CREATE_TASK = """
 INSERT INTO
     `task` (status, topic_id, task_data, home_wiki, target_wiki, country, `category_count`, `submitted_by`)
 VALUES
-    (:status, (SELECT `id` FROM `topic` WHERE `title` = :topic_title), :task_data, :home_wiki, :target_wiki, :country, :category_count, :submitted_by);
+    (:status, :topic_id, :task_data, :home_wiki, :target_wiki, :country, :category_count, :submitted_by);
 """
 SQL1_GET_TASK = "SELECT * FROM `task` WHERE `id` = :task_id"
 SQL1_GET_TASKS = "SELECT * FROM `task`"
@@ -83,20 +84,20 @@ SQL1_GET_TASKS_BY_STATUS = "SELECT * FROM `task` WHERE `status` = :status"
 SQL1_GET_ARTICLES_BY_TASK_ID = "SELECT * FROM `article` WHERE `task_id` = :task_id ORDER BY `title` ASC"
 SQL1_INSERT_ARTICLE = """
 INSERT INTO
-    `article` (pageid, task_id, title, target, wikidata, category)
+    `article` (id, task_id, title, target, wikidata, category)
 VALUES
-    (:pageid, :task_id, :title, :target, :wikidata, :category)
+    (:id, :task_id, :title, :target, :wikidata, :category)
     ON CONFLICT DO NOTHING;
 """
 SQL1_GET_ARTICLE_BY_PAGE_ID_AND_TASK_ID = """
-SELECT * FROM `article` WHERE `pageid` = :pageid AND `task_id` = :task_id;
+SELECT * FROM `article` WHERE `id` = :id AND `task_id` = :task_id;
 """
 
 SQL1_INSERT_CATEGORY = """
 INSERT INTO
-    `category` (pageid, title)
+    `category` (id, title)
 VALUES
-    (:pageid, :title)
+    (:id, :title)
     ON CONFLICT DO NOTHING;
 """
 SQL1_INSERT_TOPIC_CATEGORY = """
@@ -107,14 +108,14 @@ VALUES
 """
 SQL1_GET_CATEGORIES_BY_TOPIC_TITLE = """
 SELECT
-    `category`.`pageid` AS `pageid`,
+    `category`.`id` AS `id`,
     `category`.`title` AS `title`
 FROM
     `category`
 INNER JOIN
     `topic_category`
 ON
-    `category`.`pageid` = `topic_category`.`category_id`
+    `category`.`id` = `topic_category`.`category_id`
 WHERE
     `topic_category`.`topic_id` = (SELECT `id` FROM `topic` WHERE `title` = :topic_title);
 """
@@ -128,21 +129,21 @@ WHERE `id` = :task_id
 """
 
 SQL1_DELETE_UNUSED_ARTICLES = "DELETE FROM `article` WHERE `created_at` < CURRENT_TIMESTAMP - 60*60*24*7;"
-SQL1_INSERT_TOPIC = "INSERT INTO `topic` (title) VALUES (:title);"
+SQL1_INSERT_TOPIC = "INSERT INTO `topic` (title, `country`) VALUES (:title, :country);"
 SQL1_GET_TOPIC_BY_TITLE = "SELECT * FROM `topic` WHERE `title` = :title;"
 SQL1_GET_TOPIC_BY_ID = "SELECT * FROM `topic` WHERE `id` = :id;"
 SQL1_GET_TOPICS = "SELECT * FROM `topic`;"
 
 SQL1_GET_CATEGORY_BY_TOPIC_ID="""
 SELECT
-    `category`.`pageid` AS `pageid`,
+    `category`.`id` AS `id`,
     `category`.`title` AS `title`
 FROM
     `category`
 INNER JOIN
     `topic_category`
 ON
-    `category`.`pageid` = `topic_category`.`category_id`
+    `category`.`id` = `topic_category`.`category_id`
 WHERE
     `topic_category`.`topic_id` = :topic_id;
 """
