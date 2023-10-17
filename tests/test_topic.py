@@ -11,26 +11,26 @@ test_topic = {
     "prefix" : "folklore",
     "id": 1,
     "categories": [{
-        "id": 1,
+        "pageid": 1,
         "title": "Category Hello"
     }],
     "added_categories" : [
         {
-            "id": 11,
+            "pageid": 11,
             "title": "Category Hello2"
         },
         {
-            "id": 22,
+            "pageid": 22,
             "title": "Category Hello1"
         }
     ],
     "removed_categories" : [
         {
-            "id": 1,
+            "pageid": 1,
             "title": "Category Hello"
         },
         {
-            "id": 22,
+            "pageid": 22,
             "title": "Category Hello"
         }
     ]

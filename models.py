@@ -341,17 +341,17 @@ class Topic:
     
     @staticmethod
     def add_categories(conn : sqlite3.Cursor, topic_id, categories):
-        category_added = conn.executemany(SQL1_INSERT_CATEGORY, map(lambda cat: (cat['id'], cat['title']), categories)).rowcount
+        category_added = conn.executemany(SQL1_INSERT_CATEGORY, map(lambda cat: (cat['pageid'], cat['title']), categories)).rowcount
         cur = conn.executemany(
             SQL1_INSERT_TOPIC_CATEGORY,
-            map(lambda x: {'topic_id': topic_id, 'category_id': x['id']}, categories)
+            map(lambda x: {'topic_id': topic_id, 'category_id': x['pageid']}, categories)
         )
         return category_added
     @staticmethod
     def remove_categories(conn : sqlite3.Cursor, topic_id, categories):
         cur = conn.executemany(
             SQL1_DELETE_TOPIC_CATEGORY,
-            map(lambda x: {'topic_id': topic_id, 'category_id': x['id']}, categories)
+            map(lambda x: {'topic_id': topic_id, 'category_id': x['pageid']}, categories)
         )
         return cur.rowcount
     @staticmethod

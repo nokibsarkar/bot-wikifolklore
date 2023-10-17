@@ -171,5 +171,5 @@ SELECT DISTINCT
 FROM
     `topic`
 WHERE
-    `title` LIKE :topic_prefix
+    `title` LIKE :title_prefix
 """
