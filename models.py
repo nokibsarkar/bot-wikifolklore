@@ -271,6 +271,7 @@ class Task:
         if len(filters) > 0:
             sql += " AND " + " AND ".join(filters)
         sql += " ORDER BY `id` DESC"
+        print(sql)
         return conn.execute(sql, filter_values).fetchall()
     @staticmethod
     def update_status(conn : sqlite3.Cursor, id, status : TaskStatus):

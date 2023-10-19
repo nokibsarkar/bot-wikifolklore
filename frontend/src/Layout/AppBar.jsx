@@ -14,7 +14,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from "react-router-dom";
 
-
+const deleteCookie = (name) => {
+  document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 
 export default function PrimarySearchAppBar({ user, toolName, open, setOpen }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -30,6 +32,10 @@ export default function PrimarySearchAppBar({ user, toolName, open, setOpen }) {
     setAnchorEl(null);
     // setOpen(false);
   };
+  const logout = () => {
+    deleteCookie('auth');
+    window.location.replace('/')
+  }
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -48,15 +54,18 @@ export default function PrimarySearchAppBar({ user, toolName, open, setOpen }) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
+
+
       <MenuItem onClick={handleMenuClose}>
-        <ListItemIcon>
+        <Link to="/tuktukbot/setting">
+          <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
-          <Link to="/tuktukbot/setting">
           Settings
         </Link>
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
+
+      <MenuItem onClick={logout}>
         <ListItemIcon>
           <LogoutIcon fontSize="small" />
         </ListItemIcon>
