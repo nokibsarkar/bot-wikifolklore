@@ -114,8 +114,8 @@ def _extract_page(task_id, category, pages, added):
             }
     logger.debug("Pages Extracted")
 
-def execute_task(task_id, cats, target_wiki : str):
-    target_lang = target_wiki.replace("wiki", "")
+def execute_task(task_id, cats, target_wiki : Language):
+    target_lang = target_wiki.value
     try:
         logger.info(f"Executing Task {task_id}")
         if type(cats) == str:

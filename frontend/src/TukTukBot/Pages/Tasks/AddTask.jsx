@@ -18,15 +18,16 @@ const wiki = []
 for (const [key, value] of Object.entries(Server.languages)) {
     wiki.push({ id: key, label: value })
 }
-wiki.sort((a, b) => a.label.localeCompare(b.label))
+wiki.sort((a, b) => a.label.localeCompare(b.label));
+console.log(wiki)
 function AddTask() {
     const categoryListRef = React.useRef([]);
     const [countries, setCountries] = useState([]);
     const [taskID, setTaskID] = useState(null);
     const [disabled, setDisabled] = useState(false);
     const [topicName, setTopicName] = useState('folklore');
-    const [country, setCountry] = useState('IN');
-    const [targetwiki, setTargetwiki] = useState('hi');
+    const [country, setCountry] = useState('BD');
+    const [targetwiki, setTargetwiki] = useState('');
     const [categoryExpanded, setCategoryExpanded] = useState(true);
     const [categoryFetching, setCategoryFetching] = useState(false);
     const [defaultCategories, setDefaultCategories] = useState([]);
@@ -58,8 +59,11 @@ function AddTask() {
         const categoryList = categoryListRef?.current;
         if (!categoryList?.length)
             return;
-        setDisabled(true);
-        console.log(topicName)
+        
+        console.log(targetwiki, country, categoryList, topicName)
+        if (!targetwiki || !country || !categoryList || !topicName)
+            return;
+            setDisabled(true);
         Server.submitTask({
             target_wiki: targetwiki,
             country: country,
@@ -73,8 +77,7 @@ function AddTask() {
             setDisabled(false);
             setCategoryExpanded(false);
         })
-    }, [])
-
+    }, [targetwiki]);
     return (
         <Card>
             <CardHeader title="Add Task" action={
