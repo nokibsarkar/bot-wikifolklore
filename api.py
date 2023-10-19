@@ -1,233 +1,265 @@
-from requests import Session
-import time, csv, io, os, logging
+from fastapi import Body, APIRouter, Depends, Request, status, HTTPException, BackgroundTasks
+
+from authentication import authenticate
+import logging
+from _api import *
+from schema import *
 from models import *
-#---------------------------- Load the constants ----------------------------
-# Assuming .env is loaded already
-BOT_AUTH_TOKEN = os.getenv("BOT_AUTH_TOKEN") # The credentails to request to the API
+api = APIRouter(prefix="/api", dependencies=[Depends(authenticate)], tags=['api'])
+user_router = APIRouter(prefix="/user", tags=['user'])
+FORBIDDEN_EXCEPTION = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="ISorry, you do not have permission to perform this action",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+BAD_REQUEST_EXCEPTION = lambda a : HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail=str(a),
+)
 
-#---------------------------- Logging ----------------------------
-logger = logging.getLogger("page.extraction.module")
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.FileHandler("benchmark.log"))
-# change the formate to include the time
-formatter = logging.Formatter('[%(asctime)s] - %(name)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
-logger.handlers[0].setFormatter(formatter)
-#---------------------------- Logging ----------------------------
+#------------------------------------ User ------------------------------------
+#------------------------------------ GET User ------------------------------------
+@user_router.get('/me', response_model=ResponseSingle[UserScheme])
+def get_me(req : Request):
+    user_id = req.state.user['id']
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        user = User.get_by_id(cur, user_id)
+    return ResponseSingle[UserScheme](
+        success=True,
+        data=UserScheme(**user)
+    )
 
-#---------------------------- API Session ----------------------------
-sess = Session()
-sess.headers = {
-    "User-Agent": "TukTukBot/1.0 (Linux x86_64)",
-    "Authorization" : f"Bearer {BOT_AUTH_TOKEN}"
-}
-URL = "https://en.wikipedia.org/w/api.php"
-#---------------------------- API Session ----------------------------
-
-
-    
-#---------------------------- Result Exporting Functions ----------------------------
-
-def _export_to_wikitext(res):
+#------------------------------------ Fetch Subcategories ------------------------------------
+@api.get("/subcat/{parent_category}", tags=["subcategory"], response_model=ResponseMultiple[CategoryScheme])
+def subcategories(parent_category : str):
     """
-    Export the result set to wikitext
+    Fetch All the subcategories of a certain category.
     """
-    serial = 1
-    content = """
-{| class="wikitable sortable"
-|-
-! Serial No. !! English Title !! Wikidata !! Hindi Title !! Category 
-|-
-"""
-    for row in res:
-        content += f"\n|{serial} || [[:en:{row['title']}|]] || [[:wd:{row['wikidata']}|]] || [[:hi:{row['target']}|]] || [[:en:{row['category']}|]]\n|-"
-        serial += 1
-    content += "\n|}"
-    return content
+    cats = fetch_subcats(parent_category)
+    return ResponseMultiple[CategoryScheme](
+        success=True,
+        data=[CategoryScheme(**cat) for cat in cats]
+    )
+#------------------------------------ Fetch Subcategories ------------------------------------
 
-def export_to_csv(res):
+
+
+
+#------------------------------------ Create Topic ------------------------------------
+@api.post('/topic', response_model=ResponseSingle[TopicScheme])
+def create_topic(req : Request, topic : TopicCreate = Body(...)):
     """
-    Export the result set to csv
+    Create a topic with categories and country
     """
-    serial = 1
-    headers = "serial", "pageid", "english_title", "target", "wikidata", "category"
-    result = io.StringIO()
-    writer = csv.writer(result, quoting=csv.QUOTE_MINIMAL)
-    writer.writerow(headers)
-    for pageid, task_id, title, target, wikidata, category, created_at in res:
-        writer.writerow([serial, pageid, title, target, wikidata, category])
-        serial += 1
-    result.seek(0)
-    result = result.read()
-    return result
-
-#---------------------------- Task Related Functions ----------------------------
-def get_task_result(task_id, format='json'):
-    res = None
-    with Server.get_temporary_db() as conn:
-        res = Article.get_all_by_task_id(conn, task_id)
-    if format == 'json':
-        result = []
-        for pageid, task_id, title, target, wikidata, category, created_at in res:
-            result.append({
-                "pageid": pageid,
-                "task_id": task_id,
-                "title": title,
-                "target": target,
-                "wikidata": wikidata,
-                "category": category,
-                "created_at": created_at
-            })
-        return result
-    elif format == 'csv':
-        return export_to_csv(res)
-    elif format == 'wikitext':
-        return _export_to_wikitext(res)
-
-
-#---------------------------- Task Related Functions ----------------------------
-
-
-def _extract_page(task_id, category, pages, added):
-    logger.debug("Extracting Pages from the result set")
-    for page in pages:
-        if page['pageid'] in added:
-            continue
-        added.add(page['pageid'])
-        if "langlinks" not in page:
-            wbentity = None
-            if "wbentityusage" in page:
-                for entity in page["wbentityusage"]:
-                    if 'S' in page['wbentityusage'][entity]['aspects']:
-                        wbentity = entity
-                        break
-            logger.debug(f"Page {page['title']} is ready to be inserted")
-            yield {
-                    "task_id": task_id,
-                    "pageid": page['pageid'],
-                    "title": page['title'],
-                    "target": "",
-                    "wikidata": wbentity,
-                    "category": category,
-                    
-            }
-    logger.debug("Pages Extracted")
-
-def execute_task(task_id, cats):
     try:
-        logger.info(f"Executing Task {task_id}")
-        if type(cats) == str:
-            cats = cats.split("|")
-        added = set()
-        cats = [_normalize_category_name(cat.strip()) for cat in cats]
-        # cats = [*set(cats)]
-
-        logger.debug("Category Names parsed")
-        data = {
-            "action": "query",
-            "format": "json",
-            "prop": "langlinks|wbentityusage",
-            "wbeuaspect" : "S",
-            "wbeulimit" : "max",
-            "generator": "categorymembers",
-            "formatversion": "2",
-            "llprop": "langname",
-            "lllang": "hi",
-            "llinlanguagecode": "en",
-            "lllimit": "max",
-            "gcmprop": "title",
-            "gcmnamespace": "0",
-            "gcmtype": "page",
-            "gcmlimit": "max"
-        }
-        for category in cats:
-            logger.debug(f"Processing {category}")
-            data['gcmtitle'] = _normalize_category_name(category)
-            has_continue = True
-            while has_continue:
-                try:
-                    logger.debug(f"Sending Request for {category}")
-                    res = sess.get(URL, params=data)
-                    res = res.json()
-                    logger.debug(f"Request Received for {category}")
-                    logger.debug(f"Fetched {category}")
-                    if "query"  in res:
-                        logger.debug("Query Found")
-                        # result_list.extend()
-                        with Server.get_parmanent_db() as conn, Server.get_temporary_db() as conn2:
-                            new_added = Article.create(conn2, 
-                                _extract_page(task_id, category, res["query"].get('pages', []), added)
-                            )
-                            Task.update_article_count(
-                                conn,
-                                id=task_id,
-                                new_added=new_added,
-                                category_done=1,
-                                last_category=category
-                            )
-                        
-                    has_continue = "continue" in res
-                    if has_continue:
-                        logger.debug("Continue Found")
-                        data.update(res['continue'])
-                        logger.debug(f"{data.get('continue', 'None')} {data.get('gcmcontinue', None)} {data.get('wbeucontinue', None)}")
-                        time.sleep(1)
-                except Exception as e:
-                    logging.exception(e)
-                    with Server.get_parmanent_db() as conn:
-                        Task.update_status(conn, id=task_id, status="failed")
-                    return
-        logger.info(f"Task Done  {task_id}")
+        # if User.has_access(req.state.user['rights'], User.RIGHTS['topic']) == False:
+        #     raise FORBIDDEN_EXCEPTION
+        raw_title = topic.title
+        country = topic.country
+        categories = topic.categories
+        
         with Server.get_parmanent_db() as conn:
-            # Article
-            Task.update_status(conn, id=task_id, status="done")
-            User.update_stats(conn, task_id)
+            cur = conn.cursor()
+            topic_id = Topic.normalize_id(raw_title, country)
+            Topic.create(cur, topic_name=raw_title, country=country)
+            Topic.add_categories(cur, topic_id=topic_id, categories=categories)
             conn.commit()
+            categories = Category.get_by_topic_id(cur, topic_id)
+            new_topic = Topic.get_by_id(cur, topic_id)
+        response = ResponseSingle[TopicScheme](
+            success=True,
+            data=TopicScheme(
+                id = new_topic['id'],
+                title=new_topic['title'],
+                country=new_topic['country']
+            )
+        )
+        return response
     except Exception as e:
-        logging.error(f"Task Failed {task_id}")
         logging.exception(e)
+        raise BAD_REQUEST_EXCEPTION(e)
+#------------------------------------ Create Topic ------------------------------------
+
+#------------------------------------ Update Topic ------------------------------------
+@api.post('/topic/{topic_name}/{country}', response_model=ResponseSingle[TopicScheme])
+def update_topic(topic_name : str, country: Country, req : Request, topic : TopicUpdate = Body(...) ):
+    topic_id = Topic.normalize_id(topic_name, country)
+    try:
+        # if User.has_access(req.state.user['rights'], User.RIGHTS['topic']) == False:
+        #     raise FORBIDDEN_EXCEPTION
+        categories = topic.categories
         with Server.get_parmanent_db() as conn:
-            Task.update_status(conn, id=task_id, status="failed")
-            logging.info("Task Failed saved to DB")
+            cur = conn.cursor()
+            # if title:
+            #     Topic.update_title(conn, topic_id=topic_id, title=title)
+            if categories:
+                added, removed = Topic.update_categories(cur, topic_id=topic_id, categories=categories)
+            conn.commit()
+            updated_topic = Topic.get_by_id(cur, topic_id)
+            # updated_categories = Category.get_by_topic_id(cur, topic_id)
+        return ResponseSingle[TopicScheme](
+            success=True,
+            data=TopicScheme(
+                id = updated_topic['id'],
+                title=updated_topic['title'],
+                country=updated_topic['country']
+            )
+        )
+    except Exception as e:
+        logging.exception(e)
+        raise BAD_REQUEST_EXCEPTION(e)
+#------------------------------------ Update Topic ------------------------------------
+#------------------------------------ Fetch Available Countries ------------------------------------
+@api.get("/topic/{topic_prefix}", response_model=ResponseMultiple[Country])
+def get_countries(topic_prefix : str, req: Request):
+    try:
+        assert "/" not in topic_prefix, "Topic prefix must not contain '/'"
+        if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
+            raise FORBIDDEN_EXCEPTION
+        countries = []
+        with Server.get_parmanent_db() as conn:
+            cur = conn.cursor()
+            countries = Topic.get_countries(cur, topic_prefix)
+        return ResponseMultiple[Country](
+            success=True,
+            data=countries
+        )
+    except Exception as e:
+        logging.exception(e)
+        raise BAD_REQUEST_EXCEPTION(e)
 
 
-def _normalize_category_name(cat : str) -> str:
-    if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
-        cat = cat[9:]
-    return "Category:" + cat
+#------------------------------------ Fetch Topic Categories ------------------------------------
+@api.get("/topic/{topic_name}/{country}/categories", response_model=ResponseMultiple[CategoryScheme])
+def topic_categories(topic_name : str, country : Country, req : Request):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
+        raise FORBIDDEN_EXCEPTION
+    topic_id = Topic.normalize_id(topic_name, country)
+    cats = []
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        cats = Category.get_by_topic_id(cur, topic_id)
+    return ResponseMultiple[CategoryScheme](
+        success=True,
+        data=[CategoryScheme(**cat) for cat in cats]
+    )
+#------------------------------------ Fetch Topic Categories ------------------------------------
 
-def fetch_subcats(cat : str) -> list:
-    cat = _normalize_category_name(cat)
-    data = {
-        "action": "query",
-        "format": "json",
-        "list": "categorymembers",
-        "formatversion": "2",
-        "cmtitle": cat,
-        "cmprop": "ids|title",
-        "cmtype": "subcat",
-        "cmlimit": "max"
-    }
-    has_continue = True
-    result = []
-    while has_continue:
-        res = sess.get(URL, params=data)
-        res = res.json()
-        has_continue = "continue" in res
-        if has_continue:
-            data["cmcontinue"] = res["continue"]["cmcontinue"]
-            data['continue'] = res["continue"]["continue"]
-        else:
-            data.pop("cmcontinue", None)
-            data.pop("continue", None)
-        for category in res["query"]["categorymembers"]:
-            result.append({
-                "pageid": category['pageid'],
-                "title": category['title'],
-                'subcat' : True
-            })
-        if has_continue:
-            print("Sleeping")
-            time.sleep(1)
-    return result
+#------------------------------------ Fetch Tasks ------------------------------------
+@api.get("/task", response_model=ResponseMultiple[TaskScheme])
+def get_tasks(req : Request, status : TaskStatus = Optional, ):
+    user_id = req.state.user['id']
+    tasks = []
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        tasks = Task.get_task_by_user_id(cur, user_id, status=status)
+    return ResponseMultiple[TaskScheme](
+        success=True,
+        data=[TaskScheme(**task) for task in tasks]
+    )
+
+#------------------------------------ Create Task ------------------------------------
+@api.post("/task", response_model=ResponseSingle[TaskScheme])
+def create_task(req : Request, backgroundTasks : BackgroundTasks, task : TaskCreate = Body(...), ):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
+        raise 
+    
+    target_wiki = task.target_wiki
+    country = task.country
+    topic_id = task.topic_id
+    # topic_title = f"{topic_id}/{country}"
+    cats = task.task_data
+    user = req.state.user
+    task_id : int = 0
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        cat_titles = [cat.title for cat in cats]
+        task_id = Task.create(
+            cur,
+            topic_id=topic_id,
+            task_data="|".join(cat_titles),
+            target_wiki=target_wiki,
+            country=country,
+            category_count=len(cat_titles),
+            submitted_by=user['id'],
+        )
+    backgroundTasks.add_task(execute_task, task_id, cat_titles, target_wiki)
+    return ResponseSingle[TaskScheme](
+        success=True,
+        data=TaskScheme(
+            id=task_id,
+            status=TaskStatus.pending,
+            category_count=len(cat_titles),
+            category_done=0,
+            last_category=None,
+            article_count=0,
+            submitted_by=user['id'],
+            topic_id=topic_id,
+            target_wiki=target_wiki,
+            country=country,
+            created_at=datetime.now(),
+            task_data=cats
+        )
+    )
+#------------------------------------ Fetch Task ------------------------------------
+@api.get("/task/{task_id}", response_model=ResponseSingle[TaskScheme])
+def get_task(task_id : int, req : Request):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
+        raise FORBIDDEN_EXCEPTION
+    with Server.get_parmanent_db() as db:
+        cur = db.cursor()
+        task = Task.get_by_id(cur, task_id)
+    return ResponseSingle[TaskScheme](
+        success=True,
+        data=TaskScheme(**task)
+    )
+#------------------------------------ Fetch Task ------------------------------------
 
 
+
+
+
+#------------------------------------ Export Task Result  ------------------------------------
+@api.get("/task/{task_id}/export/{format}", response_model=ResponseSingle[TaskResult])
+def export_task(req : Request, task_id : int, format : TaskResultFormat = TaskResultFormat.json, ):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
+        raise FORBIDDEN_EXCEPTION
+    return ResponseSingle[TaskResult](
+        success=True,
+        data=get_task_result(task_id, format)
+    )
+    
+#------------------------------------ Export Task Result  ------------------------------------
+
+# ------------------------------------ Fetch Public Stats ------------------------------------
+@api.get('/stats', response_model=ResponseSingle[Statistics])
+def get_stats(req : Request):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['stats']) == False:
+        # Give public stats
+        stats = Server.get_stats()
+    else:
+        # Give private stats
+        stats = Server.get_stats()
+    return ResponseSingle[Statistics](
+        success=True,
+        data=Statistics(**stats)
+    )
+# ------------------------------------ Fetch Public Stats ------------------------------------
+
+@api.get('/country', response_model=ResponseSingle[dict[Country, str]])
+def get_country_list():
+    countries = Country.get()
+    return ResponseSingle[dict[Country, str]](
+        success=True,
+        data=countries
+    )
+@api.get('/language', response_model=ResponseSingle[dict[Language, str]])
+def get_language_list():
+    countries = Language.get()
+    return ResponseSingle[dict[Language, str]](
+        success=True,
+        data=countries
+    )
+
+api.include_router(user_router)

@@ -1,4 +1,5 @@
 from sql import *
+from schema import *
 import sqlite3, time, os, jwt, requests
 #---------------------------- LOAD the constants ----------------------------
 VERIFIER_OAUTH_CLIENT_ID        =   os.environ['VERIFIER_OAUTH_CLIENT_ID']
@@ -33,7 +34,7 @@ class Server:
         with Server.get_temporary_db() as conn:
             conn.executescript(SQL2_INIT)
     @staticmethod
-    def get_stats():
+    def get_stats() -> "dict[str, int]":
         stats = {
             'registered_user_count' : 0,
             'total_tasks' : 0,
@@ -69,10 +70,9 @@ class User:
         }
         return endpoint + '?' + '&'.join([f"{k}={v}" for k, v in params.items()])
     @staticmethod
-    def generate_access_token(args) -> (str, str, str):
+    def generate_access_token(code, state) -> (str, str, str):
         COOKIE_NAME = 'auth'
-        code = args.get('code', None)
-        redirect_uri = args.get('state', None)
+        redirect_uri = state
         endpoint = Server.META_OAUTH_ACCESS_TOKEN_URL
         params = {
             'grant_type' : 'authorization_code',
@@ -117,7 +117,8 @@ class User:
         try:
             auth = jwt.decode(auth_cookie, JWT_SECRET_KEY, algorithms=['HS256'])
             return auth
-        except:
+        except Exception as e:
+            print(e)
             return None
     @staticmethod
     def rights_to_int(rights):
@@ -150,7 +151,9 @@ class User:
                 return prev_right_int
         else:
             return User.rights_to_int(grantee_rights)
-        
+    @staticmethod
+    def get_summary(conn : sqlite3.Cursor, user_id):
+        return conn.execute(SQL1_GET_USER_SUMMARY, {'user_id': user_id}).fetchone()
 
     @staticmethod
     def revoke_rights(revoker_rights : dict, revokee_rights : dict, revoked_rights : dict) -> int:
@@ -188,7 +191,7 @@ class User:
         conn.commit()
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id):
-        conn.execute("SELECT * FROM `user` WHERE `id` = ?", (id,))
+        conn.execute("SELECT * FROM `user` WHERE `id` = ? LIMIT 1", (id,))
         return conn.fetchone()
     @staticmethod
     def get_by_username(conn : sqlite3.Cursor, username):
@@ -219,25 +222,25 @@ class Task:
         'pending': 'pending',
         'running': 'running',
         'done': 'done',
-        'error': 'error'
+        'error': 'error',
+        'failed' : 'failed'
     }
     @staticmethod
-    def create(conn : sqlite3.Cursor, *, submitted_by : int, topic_title : str, task_data : str, home_wiki : str, target_wiki : str, country : str, category_count : int) -> int:
+    def create(conn : sqlite3.Cursor, *, submitted_by : int, topic_id : str, task_data : str, target_wiki : Language, country : Country, category_count : int) -> int:
         cur = conn.execute(SQL1_CREATE_TASK, {
-            'status': Task.STATUS['pending'],
-            'topic_title': topic_title,
+            'status': TaskStatus.pending.value,
+            'topic_id': topic_id,
             'task_data': task_data,
-            'home_wiki': target_wiki,
-            'target_wiki': target_wiki,
-            'country': country,
+            # 'home_wiki': target_wiki,
+            'target_wiki': target_wiki.value,
+            'country': country.value,
             'category_count': category_count,
             'submitted_by': submitted_by
         })
-        conn.commit()
-        return cur.lastrowid
+        return cur.lastrowid or 0
     
     @staticmethod
-    def get_by_id(conn : sqlite3.Cursor, id):
+    def get_by_id(conn : sqlite3.Cursor, id) -> dict:
         res = conn.execute(SQL1_GET_TASK, {'task_id': id})
         k = res.fetchone()
         k = k and dict(k)
@@ -250,14 +253,28 @@ class Task:
         return conn.execute(SQL1_GET_TASKS).fetchall()
     
     @staticmethod
-    def get_by_status(conn : sqlite3.Cursor, status : str):
-        return conn.execute(SQL1_GET_TASKS_BY_STATUS, {'status': Task.STATUS[status]}).fetchall()
+    def get_by_status(conn : sqlite3.Cursor, status : TaskStatus):
+        return conn.execute(SQL1_GET_TASKS_BY_STATUS, {'status': status.value}).fetchall()
     @staticmethod
     def get_tasks_by_created_at(conn : sqlite3.Cursor, before):
         return conn.execute("SELECT * FROM `task` WHERE `created_at` < ?", (before,)).fetchall()
     @staticmethod
-    def update_status(conn : sqlite3.Cursor, id, status : str):
-        conn.execute("UPDATE `task` SET `status` = ? WHERE `id` = ?", (Task.STATUS[status], id))
+    def get_task_by_user_id(conn : sqlite3.Cursor, user_id, *, status : TaskStatus = None):
+        filters = []
+        filter_values = {
+            'user_id': user_id,
+        }
+        if status and status is not Optional :
+            filters.append("`status` = :status")
+            filter_values['status'] = status.value
+        sql = "SELECT * FROM `task` WHERE `submitted_by` = :user_id"
+        if len(filters) > 0:
+            sql += " AND " + " AND ".join(filters)
+        sql += " ORDER BY `id` DESC"
+        return conn.execute(sql, filter_values).fetchall()
+    @staticmethod
+    def update_status(conn : sqlite3.Cursor, id, status : TaskStatus):
+        conn.execute("UPDATE `task` SET `status` = ? WHERE `id` = ?", (status.value, id))
         conn.commit()
     @staticmethod
     def update_article_count(conn : sqlite3.Cursor, id, new_added : int, category_done : int, last_category : str):
@@ -292,60 +309,92 @@ class Category:
     def create(conn : sqlite3.Cursor, *, categories):
         if type(categories) == dict:
             cur = conn.execute(SQL1_INSERT_CATEGORY, categories)
-            conn.commit()
             return cur.lastrowid
         else:
             conn.executemany(SQL1_INSERT_CATEGORY, categories)
-        conn.commit()
     @staticmethod
     def get_by_topic_title(conn : sqlite3.Cursor, topic_title):
-        return conn.execute(SQL1_GET_CATEGORIES_BY_TOPIC_TITLE, {'topic_title': topic_title}).fetchall()
+        return conn.execute(SQL1_GET_CATEGORIES_BY_TOPIC_ID, {'topic_title': topic_title}).fetchall()
     @staticmethod
-    def get_by_pageid(conn : sqlite3.Cursor, pageid):
-        return conn.execute("SELECT * FROM `category` WHERE `pageid` = ?", (pageid,)).fetchone()
+    def get_by_id(conn : sqlite3.Cursor, id):
+        return conn.execute("SELECT * FROM `category` WHERE `id` = ?", (id,)).fetchone()
     @staticmethod
-    def get_by_pageids(conn : sqlite3.Cursor, pageids):
-        return conn.execute("SELECT * FROM `category` WHERE `pageid` IN ({})".format(','.join('?' * len(pageids))), pageids).fetchall()
+    def get_by_ids(conn : sqlite3.Cursor, ids):
+        return conn.execute("SELECT * FROM `category` WHERE `id` IN ({})".format(','.join('?' * len(ids))), ids).fetchall()
     @staticmethod
     def get_by_title(conn : sqlite3.Cursor, title):
         return conn.execute("SELECT * FROM `category` WHERE `title` = ?", (title,)).fetchone()
     @staticmethod
-    def get_by_topic_id(conn : sqlite3.Cursor, topic_id):
+    def get_by_topic_id(conn : sqlite3.Cursor, topic_id : str):
         return conn.execute(SQL1_GET_CATEGORY_BY_TOPIC_ID, {'topic_id': topic_id}).fetchall()
-
+    @staticmethod
+    def normalize_name(cat : str) -> str:
+        if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
+            cat = cat[9:]
+        return "Category:" + cat
 class Topic:
     @staticmethod
-    def normalize_title(name, country):
+    def normalize_id(name, country : Country):
         name = name.lower()
-        return f"{name}/{country}"
+        return f"{name}/{country.value}"
     @staticmethod
-    def create(conn : sqlite3.Cursor, *, title : str, country : str):
+    def create(conn : sqlite3.Cursor, *, topic_name : str, country : Country):
+        topic_id = Topic.normalize_id(topic_name, country)
+        topic_title = f"{topic_name} ({country.name.replace('_', ' ')})"
         cur = conn.execute(SQL1_INSERT_TOPIC, {
-            'title': title,
-            'country': country
+            'id' : topic_id, 
+            'title': topic_title,
+            'country': country.value
         })
-        conn.commit()
         return cur.lastrowid
     @staticmethod
-    def get_by_title(conn : sqlite3.Cursor, title : str):
-        return conn.execute(SQL1_GET_TOPIC_BY_TITLE, {'title': title}).fetchone()
-    @staticmethod
-    def get_by_id(conn : sqlite3.Cursor, id):
+    def get_by_id(conn : sqlite3.Cursor, id : str) -> dict:
         return conn.execute(SQL1_GET_TOPIC_BY_ID, {'id': id}).fetchone()
     @staticmethod
     def get_all(conn : sqlite3.Cursor):
         return conn.execute(SQL1_GET_TOPICS).fetchall()
     
     @staticmethod
-    def add_categories(conn : sqlite3.Cursor, topic_id, categories):
-        category_added = conn.executemany(SQL1_INSERT_CATEGORY, categories).rowcount
-        conn.commit()
+    def add_categories(conn : sqlite3.Cursor, topic_id : str, categories : list[CategoryScheme]):
+        category_added = conn.executemany(SQL1_INSERT_CATEGORY, map(lambda cat: (cat.id, cat.title), categories)).rowcount
         cur = conn.executemany(
             SQL1_INSERT_TOPIC_CATEGORY,
+            map(lambda x: {'topic_id': topic_id, 'category_id': x.id}, categories)
+        )
+        return category_added
+    @staticmethod
+    def remove_categories(conn : sqlite3.Cursor, topic_id : str, categories: list[CategoryScheme]):
+        cur = conn.executemany(
+            SQL1_DELETE_TOPIC_CATEGORY,
             map(lambda x: {'topic_id': topic_id, 'category_id': x['id']}, categories)
         )
-        Topic.update_category_count(conn, topic_id, cur.rowcount)
-        conn.commit()
-        return category_added
-   
+        return cur.rowcount
+    @staticmethod
+    def update_categories(conn : sqlite3.Cursor, topic_id : str, categories : list[CategoryScheme]):
+        previous_categories = Category.get_by_topic_id(conn, topic_id)
+        
+        updated_cat_titles = {Category.normalize_name(cat.title) for cat in categories}
+        previous_categories_title = { Category.normalize_name(x['title']) for x in previous_categories}
+
+        removable_categories = []
+        added_categories = []
+        for cat in categories:
+            if cat.title not in previous_categories_title:
+                added_categories.append(cat)
+        for cat in previous_categories:
+            if cat['title'] not in updated_cat_titles:
+                removable_categories.append(cat)
+        if len(removable_categories) > 0:
+            Topic.remove_categories(conn, topic_id, removable_categories)
+        if len(added_categories) > 0:
+            Topic.add_categories(conn, topic_id, added_categories)
+        return len(removable_categories), len(added_categories)
+    @staticmethod
+    def get_countries(conn : sqlite3.Cursor, topic_prefix : str):
+        countries = conn.execute(SQL1_GET_COUNTRIES, [f"{topic_prefix}/%"]).fetchall()
+        return list(map(dict, countries))
+    # @staticmethod
+    # def update_title(conn : sqlite3.Cursor, topic_id, new_title):
+    #     conn.execute(SQL1_UPDATE_TOPIC_TITLE, {'topic_id': topic_id, 'title': new_title})
+    #     conn.commit()
 

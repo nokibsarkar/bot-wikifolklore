@@ -3,28 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wiki folklore</title>
-    <style>
-        form {
-            text-align: center;
-            padding: 10px;
-            margin: 10px;
-        }
-    </style>
+    <title>Wiki Loves Folklore | Dedicated to Folklore</title>
+    <meta name="description" content="Wiki Loves Folklore is an international 
+    photographic contest organized by Wikimedia community to document folk 
+    cultures in different regions of the world."  />
+    <meta name="keywords" content="Wiki Loves Folklore, Wikimedia Commons, Wikimedia Foundation" />
 </head>
 <body>
-    This tool is used to generate a list of folklore-related articles for a given country. It is based on the category tree of the home wiki of the user. <br>
-    <form action="interface">
-        {% if no_consent == True %}
-        <input type="checkbox" name="consent" id="consent" required/>
-        <label for="consent">I have read and understood the <a href="https://meta.wikimedia.org/wiki/Wiki_Loves_Folklore/Privacy_policy">privacy policy</a> of this tool.</label>
-        <br>
-        {% endif %}
-        {% if user != None %}
-        <p>
-            Logged in as {{ user['username'] }}.
-        </p>
-        {% if stats %}
+    This is a list of tools that are developed by/for/under Wiki Loves Folklore Project.
+    In order to access the tools, you need to login with your Wikimedia account.
+    Please click on the following button to login.
+    By Logging in, you agree to the <a href="https://meta.wikimedia.org/wiki/Wiki_Loves_Folklore/Privacy_policy">Privacy Policy</a> of this tool.
+    We are currently working on the following tools:
+    <ul>
+        <li>
+            <p>
+                <a href="/tuktukbot">Wiki Loves Folklore Interface</a> : This tool is used to generate a list of folklore-related articles for a given country. It is based on the category tree of the home wiki of the user.
+            </p>
+        </li>
+    </ul>
+    {% if stats %}
         <ul>
             <li>Total Registered user: {{stats['registered_user_count']}}</li>
             <li>Total Tasks : {{stats['total_tasks']}}</li>
@@ -32,13 +30,5 @@
             <li>Total Categories : {{stats['total_categories']}}</li>
         </ul>
         {% endif %}
-        {% endif %}
-        <input type="submit" value="Launch the interface"/>
-    </form>
-    {% if user != None %}
-    <form action="/user/logout" method="post">
-        <input type="submit" value="Logout"/>
-    </form>
-    {% endif %}
 </body>
 </html>
