@@ -62,7 +62,6 @@ export default function PrimarySearchAppBar({ user, toolName, open, setOpen }) {
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
           Settings
-
         </Link>
       </MenuItem>
 
