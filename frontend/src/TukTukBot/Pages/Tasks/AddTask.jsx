@@ -14,12 +14,7 @@ import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
 import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Server from "../../Server2.ts";
-const wiki = []
-for (const [key, value] of Object.entries(Server.languages)) {
-    wiki.push({ id: key, label: value })
-}
-wiki.sort((a, b) => a.label.localeCompare(b.label));
-console.log(wiki)
+
 function AddTask() {
     const categoryListRef = React.useRef([]);
     const [countries, setCountries] = useState([]);
@@ -32,6 +27,11 @@ function AddTask() {
     const [categoryFetching, setCategoryFetching] = useState(false);
     const [defaultCategories, setDefaultCategories] = useState([]);
     const statusRef = React.useRef(false);
+    const wiki = []
+    for (const [key, value] of Object.entries(Server.languages)) {
+        wiki.push({ id: key, label: value })
+    }
+    wiki.sort((a, b) => a.label.localeCompare(b.label));
     useEffect(() => {
         Server.fetchCountries(topicName).then(countries => {
             setCountries([...countries]);
@@ -59,11 +59,11 @@ function AddTask() {
         const categoryList = categoryListRef?.current;
         if (!categoryList?.length)
             return;
-        
+
         console.log(targetwiki, country, categoryList, topicName)
         if (!targetwiki || !country || !categoryList || !topicName)
             return;
-            setDisabled(true);
+        setDisabled(true);
         Server.submitTask({
             target_wiki: targetwiki,
             country: country,
@@ -129,7 +129,7 @@ function AddTask() {
                 </Box>
 
                 <Collapse in={categoryExpanded}>
-                    {categoryFetching ? <CircularProgress />  : (
+                    {categoryFetching ? <CircularProgress /> : (
                         <CategoryList
                             disabled={disabled}
                             categoryListRef={categoryListRef}

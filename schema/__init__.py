@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Generic, TypeVar, List, Type, Union, Optional
-from datetime import datetime
 from enum import Enum
+from datetime import datetime
 from ._countries import Country
 from ._wiki import Language
 class TaskResultFormat(Enum):
@@ -36,7 +36,7 @@ class UserScheme:
     article_count : int = 0
     category_count : int = 0
     task_count : int = 0
-    created_at : datetime = None
+    created_at : str = None
 @dataclass
 class TaskCreate:
     """
@@ -76,8 +76,8 @@ class TaskScheme:
     topic_id : str
     target_wiki : Language
     country : Country
-    created_at : datetime
-    task_data : list[CategoryScheme] | None
+    created_at : str
+    task_data : list[CategoryScheme] | str | None
     pass
 @dataclass
 class TopicCreate:

@@ -5,7 +5,10 @@ import ListTask from "./Pages/Tasks/ListTask.jsx"
 import Setting from "./Pages/Settings.jsx";
 import DashBoard from "./Pages/Dashboard.jsx";
 import AddTopic from "./Pages/Topics/CreateTopic.jsx";
+import Server from "./Server2.ts"
+Server.init()
 const TukTukBot = () => {
+
     return (
         <Routes>
             <Route path='/topic/*'>

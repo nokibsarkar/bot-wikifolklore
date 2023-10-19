@@ -57,12 +57,23 @@ type CountryEntry = {
     label : string;
     title : string;
 }
-const countries = await fetch("/api/country").then(res => res.json()).then(res => res.data);
-const languages = await fetch("/api/language").then(res => res.json()).then(res => res.data);
+const LANGUAGE_KEY = "tk-lang"
+const COUNTRY_KEY = "tk-country"
 class TukTukBot {
     static baseURL = new URL(window.location.origin);
-    static languages = languages;
-    static countries = countries;
+    static languages : Object | null = null;
+    static countries : Object | null= null;
+    static async init(){
+        if(!TukTukBot.languages || !TukTukBot.countries){
+            if(!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY)){
+                localStorage.setItem(COUNTRY_KEY, JSON.stringify(await fetch("/api/country").then(res => res.json()).then(res => res.data)))
+                localStorage.setItem(LANGUAGE_KEY, JSON.stringify(await fetch("/api/language").then(res => res.json()).then(res => res.data)))
+            }
+            TukTukBot.languages = JSON.parse(localStorage.getItem(LANGUAGE_KEY) || "{}");
+            TukTukBot.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
+        }
+        
+    }
     static async addSubCategories(categories: Category[]) {
         var subcats:Category[] = []
         for (let cat of categories) {
@@ -129,7 +140,7 @@ class TukTukBot {
         const data : APIResponseSingle<TaskResult> = await response.json();
         return data.data;
     }
-    static async getTask(taskID: taskID) {
+    static async getTask(taskID: number) {
         const url = new URL("api/task/" + taskID, TukTukBot.baseURL);
         // console.log(taskID)
         const response = await fetch(url.toString());

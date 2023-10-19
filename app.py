@@ -5,7 +5,7 @@ if not load_dotenv():
 #------------------------------------ .env file loaded------------------------------------
 from settings import *
 from api import api, Server, User
-from fastapi import FastAPI, responses, Request, Response
+from fastapi import FastAPI, responses, Request, staticfiles
 from fastapi.templating import Jinja2Templates
 class TukTukBot(FastAPI):
     """
@@ -28,6 +28,7 @@ class TukTukBot(FastAPI):
 
 app = TukTukBot()
 app.include_router(api)
+app.mount("/static", staticfiles.StaticFiles(directory="static"), name="static")
 
 
 
@@ -57,24 +58,23 @@ def login(code : str, state : str):
 
 #------------------------------------ Logout ------------------------------------
 @app.post("/user/logout", response_class=responses.RedirectResponse)
-def logout():
+async def logout():
     cookie_name, cookie_value, redirect_uri = User.logout()
     return redirect_to(redirect_uri, {
         cookie_name : cookie_value
     })
-@app.get("/tuktukbot", response_class=responses.HTMLResponse)
-async def tuktukbot(req : Request):
+
+@app.get("/tuktukbot/{optional_path:path}", response_class=responses.HTMLResponse)
+async def tuktukbot2(req : Request, optional_path : str = ''):
     user = User.logged_in_user(req.cookies)
     if user is None:
         redirect_uri = User.generate_login_url('/tuktukbot')
         return redirect_to(redirect_uri)
-    return app.templates.TemplateResponse("interface.html", context= {
-        'request' : req,
-        'user' : user,
-        'topics' : AVAILABLE_TOPICS,
-        'countries' : AVAILABLE_COUNTRY,
-        'wikis' : AVAILABLE_WIKI
-    })
+    return responses.FileResponse("static/index.html")
+
+@app.get('/favicon.ico', response_class=responses.RedirectResponse)
+def favicon():
+    return responses.RedirectResponse("/static/favicon.ico")
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="", port=5000)

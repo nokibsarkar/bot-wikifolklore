@@ -191,7 +191,6 @@ class User:
         conn.commit()
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id):
-        print(id)
         conn.execute("SELECT * FROM `user` WHERE `id` = ? LIMIT 1", (id,))
         return conn.fetchone()
     @staticmethod
