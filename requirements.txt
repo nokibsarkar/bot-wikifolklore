@@ -2,4 +2,5 @@ requests
 gunicorn[uvicorn]
 pyjwt
 python-dotenv
-fastapi[uvicorn]
+fastapi
+uvicorn

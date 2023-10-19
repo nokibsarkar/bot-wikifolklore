@@ -25,6 +25,8 @@ def get_me(req : Request):
     with Server.get_parmanent_db() as conn:
         cur = conn.cursor()
         user = User.get_by_id(cur, user_id)
+        if user is None:
+            raise BAD_REQUEST_EXCEPTION("User not found")
     return ResponseSingle[UserScheme](
         success=True,
         data=UserScheme(**user)
