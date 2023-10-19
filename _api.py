@@ -105,15 +105,17 @@ def _extract_page(task_id, category, pages, added):
             yield {
                     "task_id": task_id,
                     "pageid": page['pageid'],
+                    'id' : page['pageid'],
                     "title": page['title'],
-                    "target": "",
+                    "target": page['title'],
                     "wikidata": wbentity,
                     "category": category,
                     
             }
     logger.debug("Pages Extracted")
 
-def execute_task(task_id, cats):
+def execute_task(task_id, cats, target_wiki : str):
+    target_lang = target_wiki.replace("wiki", "")
     try:
         logger.info(f"Executing Task {task_id}")
         if type(cats) == str:
@@ -132,7 +134,7 @@ def execute_task(task_id, cats):
             "generator": "categorymembers",
             "formatversion": "2",
             "llprop": "langname",
-            "lllang": "hi",
+            "lllang": target_lang,
             "llinlanguagecode": "en",
             "lllimit": "max",
             "gcmprop": "title",
@@ -175,19 +177,19 @@ def execute_task(task_id, cats):
                 except Exception as e:
                     logging.exception(e)
                     with Server.get_parmanent_db() as conn:
-                        Task.update_status(conn, id=task_id, status="failed")
+                        Task.update_status(conn, id=task_id, status=TaskStatus.failed)
                     return
         logger.info(f"Task Done  {task_id}")
         with Server.get_parmanent_db() as conn:
             # Article
-            Task.update_status(conn, id=task_id, status="done")
+            Task.update_status(conn, id=task_id, status=TaskStatus.done)
             User.update_stats(conn, task_id)
             conn.commit()
     except Exception as e:
         logging.error(f"Task Failed {task_id}")
         logging.exception(e)
         with Server.get_parmanent_db() as conn:
-            Task.update_status(conn, id=task_id, status="failed")
+            Task.update_status(conn, id=task_id, status=TaskStatus.failed)
             logging.info("Task Failed saved to DB")
 
 

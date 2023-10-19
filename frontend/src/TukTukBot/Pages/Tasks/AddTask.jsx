@@ -12,69 +12,66 @@ import AutoComplete from "@mui/material/Autocomplete"
 import { useState, useEffect, useCallback } from "react";
 import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
-import { TextField } from "@mui/material";
-import Server from "../../Server.ts";
-const countries = [
-    {
-        label: 'Bangladesh',
-        id: 'BD'
-    },
-    {
-        label: 'India',
-        id: 'IN'
-    },
-    {
-        label: 'Pakistan',
-        id: 'PK'
-    }
-]
-const wiki = [
-    {
-        label: 'Hindi Wikipedia',
-        id: 'hi'
-    },
-    {
-        label: 'Urdu Wikipedia',
-        id: 'ur'
-    }
-]
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import Server from "../../Server2.ts";
+const wiki = []
+for (const [key, value] of Object.entries(Server.languages)) {
+    wiki.push({ id: key, label: value })
+}
+wiki.sort((a, b) => a.label.localeCompare(b.label))
 function AddTask() {
     const categoryListRef = React.useRef([]);
+    const [countries, setCountries] = useState([]);
     const [taskID, setTaskID] = useState(null);
     const [disabled, setDisabled] = useState(false);
-    const [topic, setTopic] = useState('folklore');
+    const [topicName, setTopicName] = useState('folklore');
     const [country, setCountry] = useState('IN');
-    const [targetwiki, setTargetwiki] = useState('bn');
+    const [targetwiki, setTargetwiki] = useState('hi');
     const [categoryExpanded, setCategoryExpanded] = useState(true);
+    const [categoryFetching, setCategoryFetching] = useState(false);
     const [defaultCategories, setDefaultCategories] = useState([]);
+    const statusRef = React.useRef(false);
     useEffect(() => {
-        const countryFound = countries.find(v => v.label == country);
-        // const wikiFound = wiki.find(v => v.label == targetwiki);
-        if (!countryFound)
+        Server.fetchCountries(topicName).then(countries => {
+            setCountries([...countries]);
+        })
+    }, [topicName])
+    useEffect(() => {
+        if (!country)
+            return;
+        if (!topicName)
             return;
         setDisabled(true);
-        Server.getCategories({country : countryFound.id, topic})
-        .then(categories => {
-            setDisabled(false);
-            setDefaultCategories(categories)
-        })
-    }, [country, topic])
+        setCategoryFetching(true);
+        Server.getCategories({ country: country, topic: topicName })
+            .then(categories => {
+                setDisabled(false);
+                setDefaultCategories(categories)
+            }).finally(e => {
+                // console.log(e)
+                setDisabled(false);
+                setCategoryFetching(false);
+            })
+    }, [country, topicName]);
     const submitTask = useCallback(() => {
         // submit task logic
         const categoryList = categoryListRef?.current;
         if (!categoryList?.length)
             return;
         setDisabled(true);
+        console.log(topicName)
         Server.submitTask({
-            homewiki: targetwiki,
-            country : country,
+            target_wiki: targetwiki,
+            country: country,
             categories: categoryList,
-            topic: topic
+            topic_id: topicName,
+            task_data: categoryList
         }).then(response => {
             const taskID = response?.id;
             setTaskID(taskID);
-            console.log(response)
+            // console.log(response)
             setDisabled(false);
+            setCategoryExpanded(false);
         })
     }, [])
 
@@ -92,34 +89,57 @@ function AddTask() {
                     flexDirection: 'row',
                     borderSpacing: 1
                 }}>
-                    <AutoComplete
-                        disabled={disabled}
-                        sx={{ width: 300 }}
-                        renderInput={props => <TextField {...props} label="Country" onSelect={e => e.target.value && setCountry(e.target.value)} />}
-                        options={countries}
-                    />
-                    <AutoComplete
-                        disabled={disabled}
-                        sx={{ width: 300 }}
-                        renderInput={props => <TextField {...props} label="Target Wiki" onSelect={e => e.target.value && setTargetwiki(e.target.value)} />}
+                    <FormControl sx={{ width: 300, m: 1 }}>
+                        <InputLabel>Country</InputLabel>
+                        <Select
+                            fullWidth
+                            disabled={disabled}
+                            value={country}
+                            label="Country"
+                            onChange={e => e.target.value && setCountry(e.target.value)}
+                        >
+                            {countries.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                    {/* <AutoComplete
+                        
+                        renderInput={props => <TextField {...props} label="Target Wiki" onSelect={e => console.log(e) || e.target.value && setTargetwiki(e.target.value)} />}
                         options={wiki}
-                    />
-                    <Button variant="contained" disabled={disabled} onClick={e => setCategoryExpanded(!categoryExpanded)}>
+                    /> */}
+                    <FormControl sx={{ width: 300, m: 1 }}>
+                        <InputLabel>Target Wiki</InputLabel>
+                        <Select
+                            fullWidth
+                            disabled={disabled}
+                            // disablePortal
+                            // sx={{ width: 300, m: 2 }}
+                            value={targetwiki}
+                            label="Target Wiki"
+                            onChange={e => e.target.value && setTargetwiki(e.target.value)}
+                        >
+                            {wiki.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                    <Button variant="contained" disabled={disabled} onClick={e => setCategoryExpanded(!categoryExpanded)} size="small">
                         Advanced {categoryExpanded ? <CollapseIcon /> : <ExpandedIcon />}
                     </Button>
                 </Box>
 
                 <Collapse in={categoryExpanded}>
-                    <CategoryList
-                        disabled={disabled}
-                        categoryListRef={categoryListRef}
-                        Server={Server}
-                        initialCategories={defaultCategories}
-                    />
+                    {categoryFetching ? <CircularProgress />  : (
+                        <CategoryList
+                            disabled={disabled}
+                            categoryListRef={categoryListRef}
+                            Server={Server}
+                            initialCategories={defaultCategories}
+                        />
+                    )}
                 </Collapse>
                 {taskID && <ArticleList
                     Server={Server}
                     taskID={taskID}
+                    statusRef={statusRef}
+                    setDisabled={setDisabled}
                 />}
             </CardContent>
         </Card>

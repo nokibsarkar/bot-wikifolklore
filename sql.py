@@ -13,16 +13,16 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 -- This Table would be used to store the topic 
 CREATE TABLE IF NOT EXISTS `topic` (
-    `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `title`	TEXT NOT NULL UNIQUE,
-    `country`    TEXT NULL DEFAULT NULL
+    `id`	VARCHAR(100) NOT NULL PRIMARY KEY,
+    `title`	VARCHAR(95) NOT NULL,
+    `country`    VARCHAR(3) NOT NULL
 );
 INSERT INTO
-    `topic` (`id`, `title`)
+    `topic` (`id`, `title`, `country`)
 VALUES
-    (1, 'folklore/IN'),
-    (2, 'folklore/BD'),
-    (3, 'folklore/PAK')
+    ('folklore/IN', 'Folklore in India', 'India'),
+    ('folklore/BD', 'Folklore in Bangladesh', 'Bangladesh'),
+    ('folklore/PAK', 'Folklore in Pakistan', 'Pakistan')
  ON CONFLICT DO NOTHING;
 
 -- This Table would be used to store the category
@@ -37,12 +37,11 @@ CREATE TABLE IF NOT EXISTS `task` (
     `submitted_by` INTEGER NOT NULL,
     `status`	TEXT NOT NULL,
     `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `topic_id`	INTEGER NOT NULL,
+    `topic_id`	VARCHAR(100) NOT NULL,
     `task_data`	TEXT NOT NULL,
     `category_count`    INTEGER NOT NULL DEFAULT 0,
     `category_done`    INTEGER NOT NULL DEFAULT 0,
     `last_category`    TEXT NULL DEFAULT NULL,
-    `home_wiki`    TEXT NOT NULL,
     `target_wiki`    TEXT NOT NULL,
     `article_count`    INTEGER NOT NULL DEFAULT 0,
     `country`    TEXT NOT NULL,
@@ -52,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `task` (
 );
 -- This Table would be used to store categories for a topic
 CREATE TABLE IF NOT EXISTS `topic_category` (
-    `topic_id`	INTEGER NOT NULL,
+    `topic_id`	VARCHAR(100) NOT NULL,
     `category_id`	INTEGER NOT NULL,
     PRIMARY KEY(`topic_id`,`category_id`)
 );
@@ -73,9 +72,9 @@ CREATE TABLE IF NOT EXISTS `article` (
 """
 SQL1_CREATE_TASK = """
 INSERT INTO
-    `task` (status, topic_id, task_data, home_wiki, target_wiki, country, `category_count`, `submitted_by`)
+    `task` (status, topic_id, task_data, target_wiki, country, `category_count`, `submitted_by`)
 VALUES
-    (:status, :topic_id, :task_data, :home_wiki, :target_wiki, :country, :category_count, :submitted_by);
+    (:status, :topic_id, :task_data, :target_wiki, :country, :category_count, :submitted_by);
 """
 SQL1_GET_TASK = "SELECT * FROM `task` WHERE `id` = :task_id"
 SQL1_GET_TASKS = "SELECT * FROM `task`"
@@ -84,7 +83,7 @@ SQL1_GET_TASKS_BY_STATUS = "SELECT * FROM `task` WHERE `status` = :status"
 SQL1_GET_ARTICLES_BY_TASK_ID = "SELECT * FROM `article` WHERE `task_id` = :task_id ORDER BY `title` ASC"
 SQL1_INSERT_ARTICLE = """
 INSERT INTO
-    `article` (id, task_id, title, target, wikidata, category)
+    `article` (`id`, `task_id`, `title`, target, wikidata, category)
 VALUES
     (:id, :task_id, :title, :target, :wikidata, :category)
     ON CONFLICT DO NOTHING;
@@ -106,7 +105,7 @@ INSERT INTO
 VALUES
     (:topic_id, :category_id);
 """
-SQL1_GET_CATEGORIES_BY_TOPIC_TITLE = """
+SQL1_GET_CATEGORIES_BY_TOPIC_ID = """
 SELECT
     `category`.`id` AS `id`,
     `category`.`title` AS `title`
@@ -117,7 +116,7 @@ INNER JOIN
 ON
     `category`.`id` = `topic_category`.`category_id`
 WHERE
-    `topic_category`.`topic_id` = (SELECT `id` FROM `topic` WHERE `title` = :topic_title);
+    `topic_category`.`topic_id` = :topic_id;
 """
 SQL1_TASK_UPDATE_ARTICLE_COUNT = """
 UPDATE
@@ -129,8 +128,7 @@ WHERE `id` = :task_id
 """
 
 SQL1_DELETE_UNUSED_ARTICLES = "DELETE FROM `article` WHERE `created_at` < CURRENT_TIMESTAMP - 60*60*24*7;"
-SQL1_INSERT_TOPIC = "INSERT INTO `topic` (title, `country`) VALUES (:title, :country);"
-SQL1_GET_TOPIC_BY_TITLE = "SELECT * FROM `topic` WHERE `title` = :title;"
+SQL1_INSERT_TOPIC = "INSERT INTO `topic` (`id`, `title`, `country`) VALUES (:id, :title, :country);"
 SQL1_GET_TOPIC_BY_ID = "SELECT * FROM `topic` WHERE `id` = :id;"
 SQL1_GET_TOPICS = "SELECT * FROM `topic`;"
 
@@ -167,10 +165,16 @@ SQL1_DELETE_TOPIC_CATEGORY = """
 DELETE FROM `topic_category` WHERE `topic_id` = :topic_id AND `category_id` = :category_id
 """
 SQL1_GET_COUNTRIES = """
-SELECT DISTINCT
-    `title`
+SELECT
+    *
 FROM
     `topic`
 WHERE
-    `title` LIKE :title_prefix
+    `id` LIKE :title_prefix
+"""
+SQL1_GET_USER_SUMMARY = """
+SELECT
+    *
+FROM
+    `user`
 """

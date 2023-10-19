@@ -1,14 +1,14 @@
 from dataclasses import dataclass
-from typing import Generic, TypeVar, List, Type, Union
+from typing import Generic, TypeVar, List, Type, Union, Optional
 from datetime import datetime
 from enum import Enum
+from ._countries import Country
+from ._wiki import Language
 class TaskResultFormat(Enum):
     json : str = "json"
     wikitext : str = "wikitext"
     csv : str = "csv"
-class Country(Enum):
-    Bangladesh = "BD"
-    India = "IN"
+
 @dataclass
 class ArticleSceme:
     """
@@ -36,6 +36,7 @@ class UserScheme:
     article_count : int = 0
     category_count : int = 0
     task_count : int = 0
+    created_at : datetime = None
 @dataclass
 class TaskCreate:
     """
@@ -53,11 +54,9 @@ class TaskCreate:
     `article_count`    INTEGER NOT NULL DEFAULT 0,
     `country`    TEXT NOT NULL,
     """
-    submitted_by : int
-    topic_id : int
+    topic_id : str
     task_data : list[CategoryScheme]
-    home_wiki : str
-    target_wiki : str
+    target_wiki : Language
     country : Country
     pass
 class TaskStatus(Enum):
@@ -74,9 +73,8 @@ class TaskScheme:
     last_category : str | None
     article_count : int
     submitted_by : int
-    topic_id : int
-    home_wiki : str
-    target_wiki : str
+    topic_id : str
+    target_wiki : Language
     country : Country
     created_at : datetime
     task_data : list[CategoryScheme] | None
@@ -86,6 +84,8 @@ class TopicCreate:
     country : Country
     title : str 
     categories : List[CategoryScheme] | None
+    id : str | None = None
+    
 @dataclass
 class TopicUpdate:
     categories : List[CategoryScheme]
@@ -93,7 +93,7 @@ class TopicUpdate:
 class TopicScheme:
     title : str
     country : Country
-    id : int = 0
+    id : str
     pass
 @dataclass
 class Statistics:

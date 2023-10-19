@@ -1,5 +1,5 @@
 import Paper from "@mui/material/Paper";
-import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import WaterfallChartIcon from '@mui/icons-material/WaterfallChart';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-import Server from "../Server.ts";
+import Server from "../Server2.ts";
 const Category = ({ category, onRemove, onSubCategory }) => {
     return (
         <ListItem

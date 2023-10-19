@@ -5,7 +5,7 @@ if not load_dotenv():
 #------------------------------------ .env file loaded------------------------------------
 from settings import *
 from api2 import api, Server, User
-from fastapi import FastAPI, responses, Request
+from fastapi import FastAPI, responses, Request, Response
 from fastapi.templating import Jinja2Templates
 class TukTukBot(FastAPI):
     """
@@ -40,9 +40,34 @@ async def home(request : Request):
         'user' : user,
         'stats' : stats
     })
+
+def redirect_to(url, cookies : dict = {}):
+    response = responses.RedirectResponse(
+        url,
+    )
+    for key, value in cookies.items():
+        response.set_cookie(key, value)
+    return response
+@app.get("/user/callback", response_class=responses.RedirectResponse)
+def login(code : str, state : str):
+    cookie_name, cookie_value, redirect_uri = User.generate_access_token(code = code, state = state)
+    return redirect_to(redirect_uri, {
+        cookie_name : cookie_value
+    })
+
+#------------------------------------ Logout ------------------------------------
+@app.post("/user/logout", response_class=responses.RedirectResponse)
+def logout():
+    cookie_name, cookie_value, redirect_uri = User.logout()
+    return redirect_to(redirect_uri, {
+        cookie_name : cookie_value
+    })
 @app.get("/tuktukbot", response_class=responses.HTMLResponse)
 async def tuktukbot(req : Request):
     user = User.logged_in_user(req.cookies)
+    if user is None:
+        redirect_uri = User.generate_login_url('/tuktukbot')
+        return redirect_to(redirect_uri)
     return app.templates.TemplateResponse("interface.html", context= {
         'request' : req,
         'user' : user,
