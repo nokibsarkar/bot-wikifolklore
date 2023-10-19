@@ -1,6 +1,5 @@
 requests
-flask
-flask-executor
-gunicorn[gevent]
+gunicorn[uvicorn]
 pyjwt
 python-dotenv
+fastapi[uvicorn]
