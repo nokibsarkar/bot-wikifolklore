@@ -181,5 +181,50 @@ class TukTukBot {
         const countries = await fetch(url).then(res => res.json())
         return countries.data
     }
+    static searchCategory(callback : (data : Category[]) => void, setSearching : (searching : boolean) => void){
+        let q = "";
+        let queued = false;
+        const interval = 1000;
+        async function _search() {
+            
+            if(q == "") return callback([]);
+            const url = new URL("https://en.wikipedia.org/w/api.php");
+            const params = new URLSearchParams({
+                "action": "query",
+                "format": "json",
+                "list": "prefixsearch",
+                "formatversion": "2",
+                "pssearch": q,
+                "pslimit": "10",
+                "psnamespace": "14",
+                "origin": "*"
+            })
+            url.search = params.toString();
+            const response = await fetch(url.toString());
+            const data = await response.json();
+            const categories = data.query.prefixsearch.map((cat : any) => {
+                return {
+                    id : cat.pageid,
+                    title : cat.title
+                }
+            })
+            queued = false;
+            setSearching(false);
+            return callback(categories);
+        }
+        return function(e : KeyboardEvent){
+            setSearching(true)
+            q = (e?.target as HTMLInputElement)?.value;
+            if(queued == false){
+                // Nothing is queued
+                queued = true;
+                setTimeout(_search, interval)
+            } else {
+                // Something is already queued
+                console.log("Already queued")
+            }
+        }
+
+    }
 }
 export default TukTukBot;

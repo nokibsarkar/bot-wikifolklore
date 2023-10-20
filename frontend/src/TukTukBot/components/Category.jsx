@@ -15,26 +15,25 @@ import Box from '@mui/material/Box';
 import Server from "../Server2.ts";
 const Category = ({ category, onRemove, onSubCategory }) => {
     return (
-        <ListItem
-            secondaryAction={
-                <>
-                    <Button size="small" variant="outlined" color="error" onClick={e => onSubCategory(category?.title)}>
-                        <WaterfallChartIcon />
-                    </Button>
-                    <Button size="small" variant="outlined" color="error" onClick={e => onRemove(category?.title)}>
-                        <DeleteIcon />
-                    </Button>
-                </>
-            }
-        >
+        <ListItem>
             <ListItemText sx={{
                 padding: '5px'
             }} primary={category?.title} />
+            <Button size="small" variant="outlined" color="error" onClick={e => onSubCategory(category?.title)}>
+                <WaterfallChartIcon />
+            </Button>
+            <Button size="small" variant="outlined" color="error" onClick={e => onRemove(category?.title)}>
+                <DeleteIcon />
+            </Button>
         </ListItem>
     )
 }
-const AddCategory = ({onAdd, disabled}) =>{
+const AddCategory = ({ onAdd, disabled }) => {
+    const [searching, setSearching] = React.useState(false);
+    const [categorySuggestions, setCategorySuggestions] = React.useState([]); // [{title: 'cat1'}, {title: 'cat2'}
     const [newCat, setNewCat] = React.useState('');
+    const onInput = React.useCallback(Server.searchCategory(setCategorySuggestions, setSearching), []);
+
     return (
         <Box sx={{
             display: 'flex',
@@ -46,45 +45,53 @@ const AddCategory = ({onAdd, disabled}) =>{
 
         }}>
             <AutoComplete
-                disablePortal
+                // disablePortal
                 id="new-category"
-                options={[]}
+                options={categorySuggestions}
                 disabled={disabled}
                 size="small"
+
+                loading={searching}
+                getOptionLabel={(option) => option?.title || ''}
                 sx={{
                     width: '100%',
-                    maxWidth: '300px',
+                    maxWidth: '400px',
                     marginRight: '10px',
                     marginLeft: '10px'
                 }}
-                renderInput={(params) => <TextField {...params} disabled={disabled} onChange={e => setNewCat(e.target.value)} label="Add Category" />}
+                renderInput={(params) => <TextField
+                    {...params} disabled={disabled}
+                    onInput={onInput}
+                    onSelect={e => setNewCat(e.target.value)}
+                    label="Add Category"
+                />}
             />
             <Button disabled={disabled} variant="contained" color="success" onClick={e => onAdd(newCat) || setNewCat('')} >
-                <AddIcon /> &nbsp; Add
+                <AddIcon />
             </Button>
         </Box>
     )
 }
 const CategoryList = ({ categoryListRef, initialCategories, disabled = false }) => {
     const [categoryObject, setCategoryObject] = React.useState({});// {categoryName: {categoryObject}
-    
+
     const categories = React.useMemo(() => {
         return Object.values(categoryObject);
     }, [categoryObject]);
-    
+
     const [searching, setSearching] = React.useState(false);
     const onRemove = React.useCallback((category) => {
         if (!category)
             return
-        if(!categoryObject[category])
+        if (!categoryObject[category])
             return
         delete categoryObject[category];
-        setCategoryObject({...categoryObject});
+        setCategoryObject({ ...categoryObject });
     }, [categoryObject]);
     const onAdd = React.useCallback((catTitle) => {
         if (!catTitle)
             return
-        if(categoryObject[catTitle])
+        if (categoryObject[catTitle])
             return
         const cat = {
             name: catTitle,
@@ -93,17 +100,17 @@ const CategoryList = ({ categoryListRef, initialCategories, disabled = false }) 
             subcat: false
         };
         categoryObject[catTitle] = cat;
-        setCategoryObject({...categoryObject});
+        setCategoryObject({ ...categoryObject });
     }, [categoryObject]);
     const onSubCategory = React.useCallback((category) => {
         const cat = categoryObject[category];
-        if(!cat)
+        if (!cat)
             return
         Server.addSubCategories([cat]).then(categories => {
             categories.forEach(cat => {
                 categoryObject[cat.title] = cat;
             });
-            setCategoryObject({...categoryObject});
+            setCategoryObject({ ...categoryObject });
         });
     }, [categoryObject]);
     // Populate the categories
@@ -114,7 +121,7 @@ const CategoryList = ({ categoryListRef, initialCategories, disabled = false }) 
     React.useEffect(() => {
         if (!initialCategories?.length)
             return;
-        setCategoryObject(initialCategories?.reduce( (dict, v) => {dict[v.title] = v; return dict}, {}))
+        setCategoryObject(initialCategories?.reduce((dict, v) => { dict[v.title] = v; return dict }, {}))
     }, [initialCategories]);
     return (
         <Paper elevation={0}>

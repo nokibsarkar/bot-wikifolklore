@@ -23,9 +23,9 @@ import Server from "../Server2.ts";
 
 import { DataGrid } from '@mui/x-data-grid/DataGrid';
 const COLUMNS = [
-    { field: 'id', headerName: 'ID', maxWidth : 100, flex:1, hideable : false },
+    { field: 'id', headerName: 'ID', maxWidth : 30, flex:1, hideable : false },
     { field: 'title', headerName: 'Title' , flex: 1, hideable : false },
-    { field: 'wikidata', headerName: 'Wikidata', width : 120},
+    // { field: 'wikidata', headerName: 'Wikidata', width : 120},
     { field: 'target', headerName: 'Target', flex : 1},
 
 ]
@@ -209,10 +209,10 @@ class ArticleList extends React.Component {
                     m: 1,
                 },
             }}>
-                <Button variant="contained" color="primary" onClick={this.exportWikiTextToggle.bind(this)}>
+                <Button size="small" variant="contained" color="primary" onClick={this.exportWikiTextToggle.bind(this)}>
                     <CodeIcon /> WikiText
                 </Button>
-                <Button variant="contained" color="primary" onClick={this.exportCSV.bind(this)}>
+                <Button size="small" variant="contained" color="primary" onClick={this.exportCSV.bind(this)}>
                     <DownloadIcon /> CSV
                 </Button>
             </Box>
@@ -331,10 +331,10 @@ const _ArticleList = ({ taskID, statusRef, setDisabled }) => {
                 m: 1,
             },
         }}>
-            <Button variant="contained" color="primary" onClick={exportWikiTextToggle} disabled={generating}>
+            <Button variant="contained" color="primary" onClick={exportWikiTextToggle} disabled={generating} size="small">
                 <CodeIcon /> WikiText
             </Button>
-            <Button variant="contained" color="primary" onClick={exportCSV} disabled={generating}>
+            <Button variant="contained" color="primary" onClick={exportCSV} disabled={generating} size="small">
                 <DownloadIcon /> CSV
             </Button>
         </Box>
