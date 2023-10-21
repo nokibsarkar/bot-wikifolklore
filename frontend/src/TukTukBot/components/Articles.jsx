@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import WaterfallChartIcon from '@mui/icons-material/WaterfallChart';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import AutoComplete from '@mui/material/Autocomplete';
 import AddIcon from '@mui/icons-material/Add';
 import TextField from '@mui/material/TextField';
@@ -18,36 +18,126 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Collapse from "@mui/material/Collapse"
+import TranslateIcon from '@mui/icons-material/Translate';
 import Server from "../Server.ts";
+// import TranslationIcon from '@mui/icons-material/Translation';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Typography from '@mui/material/Typography';
+
 
 
 import { DataGrid } from '@mui/x-data-grid/DataGrid';
-const COLUMNS = [
-    { field: 'id', headerName: 'ID', maxWidth : 30, flex:1, hideable : false },
-    { field: 'title', headerName: 'Title' , flex: 1, hideable : false },
-    // { field: 'wikidata', headerName: 'Wikidata', width : 120},
-    { field: 'target', headerName: 'Target', flex : 1},
 
+const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode, action }) => {
+    const [targetTitle, setTargetTitle] = React.useState(suggestedTargetTitle);
+    useEffect(() => {
+        setTargetTitle(suggestedTargetTitle)
+    }, [suggestedTargetTitle])
+    const data = {
+        title: '',
+        targetURL : '',
+        buttonName : ''
+    }
+    if(action == 'translate'){
+        data.title = 'Translate'
+        data.targetURL = `https://${languageCode}.wikipedia.org/w/index.php?title=${targetTitle}&campaign=contributionsmenu&from=en&page=${englishTitle}&to=${targetTitle}&action=translate`
+        data.buttonName = 'Translate'
+    } else {
+        data.title = 'Create'
+        data.targetURL = `https://${languageCode}.wikipedia.org/w/index.php?title=${targetTitle}&campaign=contributionsmenu&from=en&page=${englishTitle}&to=${targetTitle}&action=edit`
+        data.buttonName = 'Create'
+    }
+    return  (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>{data.title}</DialogTitle>
+            <DialogContent>
+                <Typography variant="body1" gutterBottom >
+                    <b>English : <a href={"https://en.wikipedia.org/wiki/" + englishTitle} target="_blank" style={{textDecoration : 'none'}}>{englishTitle}</a></b>
+                </Typography>
+                <TextField
+                    id="outlined-multiline-static"
+                    label="Target Title"
+                    multiline
+                    value={targetTitle}
+                    fullWidth
+                    onChange={e => setTargetTitle(e.target.value)}
+                    sx={{
+                        mt : 1
+                    }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button sx={{mr : 1}} onClick={() => onClose(null)} color="secondary" variant="contained" size="small">
+                    Cancel
+                </Button>
+                <Button color="primary" variant="contained" component="a"  size="small" href={data.targetURL} target="_blank" autoFocus>
+                    {data.buttonName}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    )
+}
+const COLUMNS = [
+    { field: 'id', headerName: 'ID', maxWidth: 70, flex: 1, hideable: false },
+    { field: 'title', headerName: 'Title', flex: 1, hideable: false, minWidth : 300 },
+    // { field: 'wikidata', headerName: 'Wikidata', width : 120},
+    { field: 'target', headerName: 'Target', flex: 1 , minWidth : 300},
+    { field: 'action', headerName: 'Action', flex: 1, minWidth : 150, hideable: false , renderCell : (params) => params.value}
 ]
-const TabledArticles = ({ data }) => {
-    const rows = data?.map((article, index) => ({
+const TabledArticles = ({ data, targetLanguage }) => {
+    
+    const [popupAction, setPopupAction] = React.useState(null);
+    const [popupOpen, setPopupOpen] = React.useState(false);
+    const [popupEnglishTitle, setPopupEnglishTitle] = React.useState('');
+    const [popupSuggestedTargetTitle, setPopupSuggestedTargetTitle] = React.useState('');
+    const executeAction = (e) => {
+        setPopupAction(e.currentTarget.dataset.action)
+        setPopupEnglishTitle(e.currentTarget.dataset.src)
+        setPopupSuggestedTargetTitle(e.currentTarget.dataset.target)
+        setPopupOpen(true)
+    }
+    const rows = useMemo(() => data?.map((article, index) => ({
         id: index + 1,
         title: article?.title,
-        wikidata : article?.wikidata,
-        target : article?.target
-    }));
+        wikidata: article?.wikidata,
+        target: article?.target,
+        action : (
+            <>
+            {/* <TranslateIcon sx={{pointer : 'cursor'}} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small" /> */}
+                <button style={{cursor: 'pointer'}} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small">
+                文A
+                </button>
+                <button style={{cursor: 'pointer', marginLeft : '5px'}} type='button' data-action="create" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small">
+                &#43;
+                </button>
+            </>
+        )
+    })), [data]);
     return (
-        <DataGrid
-            rows={rows}
-            columns={COLUMNS}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            checkboxSelection={false}
-            disableSelectionOnClick
-            sx={{
-                width: '100%',
-            }}
-        />
+        <>
+            <Popup
+                open={popupOpen}
+                action={popupAction}
+                onClose={() => setPopupOpen(false)}
+                suggestedTargetTitle={popupSuggestedTargetTitle}
+                englishTitle={popupEnglishTitle}
+                languageCode={targetLanguage}
+            />
+            <DataGrid
+                rows={rows}
+                columns={COLUMNS}
+                pageSize={50}
+                rowsPerPageOptions={[50]}
+                checkboxSelection={false}
+                disableSelectionOnClick
+                sx={{
+                    width: '100%',
+                }}
+            />
+        </>
     )
 }
 
@@ -64,184 +154,7 @@ const WikiTextArticles = ({ data }) => {
         />
     )
 }
-class ArticleList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: [],
-
-            wikitext: '',
-            showWikiText: false,
-            fetchingWikiText: false,
-
-            csv: null,
-            fetchingCSV: false,
-
-            json: null,
-            fetchingJSON: false,
-
-            statusCheckerTimer: 0,
-
-            articleCount: 0,
-            processedCategory: 'Cat:L',
-            processedCount: 100
-        };
-    }
-    async checkTaskStatus() {
-        console.log("Checking status")
-        const task = await Server.getTask(this.props.taskID)
-        console.log("Task Status", task)
-        if (task.status != 'pending') {
-            console.log("Timer Cleared", this.state.statusCheckerTimer)
-            this.setState({
-                generating: false,
-                statusCheckerTimer: 0
-            })
-            if (task.status == 'done') {
-                this.exportTable();
-            } else {
-
-            }
-        } else {
-            this.setState({
-                generating: true,
-                statusCheckerTimer: setTimeout(this.checkTaskStatus.bind(this), 1000)
-
-            })
-        }
-        this.setState({
-            articleCount: task.article_count,
-            processedCategory: task.last_category,
-            processedCount: task.category_count
-        })
-    }
-    componentWillUnmount() {
-        clearTimeout(this.state.statusCheckerTimer);
-        this.setState({
-            // statusCheckerTimer : 0
-        })
-
-    }
-    async exportCSV() {
-        const download = (taskID, csv) => {
-            const a = document.createElement("a");
-            a.download = `results-${taskID}.csv`
-            a.href = URL.createObjectURL(new Blob([csv], {
-                type: 'application/csv'
-            }));
-            a.click();
-            a.remove()
-        }
-        if (!this.state.csv) {
-            // fetch CSV
-            const csv = await Server.exportResult(this.props.taskID, 'csv');
-            this.setState({
-                csv: csv
-            })
-            return download(this.props.taskID, csv)
-        };
-        return download(this.props.taskID, this.state.csv)
-
-    }
-    async exportWikiTextToggle() {
-        if (this.state.showWikiText)
-            // hide the wikitext
-            this.setState({
-                showWikiText: false
-            })
-        else {
-            if (!this.state.wikitext) {
-                // fetch the wikitext
-                const wikitext = await Server.exportResult(this.props.taskID, 'wikitext');
-                this.setState({
-                    showWikiText: true,
-                    wikitext: wikitext
-                })
-            }
-            else
-                this.setState({
-                    showWikiText: true
-                })
-        }
-    }
-    async exportTable() {
-        const cats = await Server.exportResult(this.props.taskID, 'json');
-        this.setState({
-            data: cats,
-            json: JSON.stringify(cats)
-        })
-    }
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log("Should Component Update", nextProps, nextState)
-        if (this.props.taskID != nextProps.taskID) {
-            this.checkTaskStatus();
-            // reset the state
-            this.setState({
-                data: [],
-
-                wikitext: '',
-                showWikiText: false,
-                fetchingWikiText: false,
-
-                csv: null,
-                fetchingCSV: false,
-
-                json: null,
-                fetchingJSON: false,
-
-                statusCheckerTimer: 0,
-
-                articleCount: 0,
-                processedCategory: '',
-                processedCount: 0
-            })
-        }
-        return true;
-    }
-    render() {
-        const processing = this.state.fetchingCSV || this.state.fetchingJSON || this.state.fetchingWikiText;
-        const Actions = (
-            <Box sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                '& > *': {
-                    m: 1,
-                },
-            }}>
-                <Button size="small" variant="contained" color="primary" onClick={this.exportWikiTextToggle.bind(this)}>
-                    <CodeIcon /> WikiText
-                </Button>
-                <Button size="small" variant="contained" color="primary" onClick={this.exportCSV.bind(this)}>
-                    <DownloadIcon /> CSV
-                </Button>
-            </Box>
-        );
-        const GeneratorStatus = (
-            <Box>
-                Article count : {this.state.articleCount}
-                Processed Count : {this.state.processedCount}
-                Last Category: {this.state.processedCategory}
-            </Box>
-        )
-        return <Card sx={
-            { m: '5px' }
-        }>
-            <CardHeader action={Actions} title={GeneratorStatus} />
-            <CardContent>
-                {processing ? <CircularProgress /> : (
-                    <>
-                        <Collapse in={this.state.showWikiText}>
-                            <WikiTextArticles data={this.state.wikitext} />
-                        </Collapse>
-                        {this.state.data?.length > 0 && <TabledArticles data={this.state.data} />}
-                    </>
-                )}
-            </CardContent>
-        </Card>
-    }
-}
-const _ArticleList = ({ taskID, statusRef, setDisabled }) => {
+const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
     const [data, setData] = React.useState([]);
     const [wikitext, setWikiText] = React.useState('');
     const [showWikiText, setShowWikiText] = React.useState(false);
@@ -263,7 +176,7 @@ const _ArticleList = ({ taskID, statusRef, setDisabled }) => {
             setStatusCheckerTimer(0)
             if (task.status == 'done') {
                 exportTable();
-            } else if(task.status == 'failed'){
+            } else if (task.status == 'failed') {
                 alert("Task Failed")
             }
         } else {
@@ -314,7 +227,7 @@ const _ArticleList = ({ taskID, statusRef, setDisabled }) => {
         setData(cats);
         setJSON(JSON.stringify(cats));
     }, [taskID]);
-    
+
     React.useEffect(() => {
         checkTaskStatus();
         return () => {
@@ -343,9 +256,9 @@ const _ArticleList = ({ taskID, statusRef, setDisabled }) => {
         <Box sx={{
             fontSize: '16px'
         }}>
-            Article count : {articleCount}<br/>
-            Processed Count : {processedCount}<br/>
-            Last Category: {processedCategory}<br/>
+            Article count : {articleCount}<br />
+            Processed Count : {processedCount}<br />
+            Last Category: {processedCategory}<br />
         </Box>
     )
     return <Card sx={
@@ -358,10 +271,10 @@ const _ArticleList = ({ taskID, statusRef, setDisabled }) => {
                     <Collapse in={showWikiText}>
                         <WikiTextArticles data={wikitext} />
                     </Collapse>
-                    {data?.length > 0 && <TabledArticles data={data} />}
+                    {data?.length > 0 && <TabledArticles data={data} targetLanguage={targetLanguage}/>}
                 </>
             )}
         </CardContent>
     </Card>
 }
-export default _ArticleList
+export default ArticleList
