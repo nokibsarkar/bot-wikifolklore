@@ -38,10 +38,10 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
     }, [suggestedTargetTitle])
     const data = {
         title: '',
-        targetURL : '',
-        buttonName : ''
+        targetURL: '',
+        buttonName: ''
     }
-    if(action == 'translate'){
+    if (action == 'translate') {
         data.title = 'Translate'
         data.targetURL = `https://${languageCode}.wikipedia.org/w/index.php?title=${targetTitle}&campaign=contributionsmenu&from=en&page=${englishTitle}&to=${targetTitle}&action=translate`
         data.buttonName = 'Translate'
@@ -50,12 +50,12 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
         data.targetURL = `https://${languageCode}.wikipedia.org/w/index.php?title=${targetTitle}&campaign=contributionsmenu&from=en&page=${englishTitle}&to=${targetTitle}&action=edit`
         data.buttonName = 'Create'
     }
-    return  (
+    return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{data.title}</DialogTitle>
             <DialogContent>
                 <Typography variant="body1" gutterBottom >
-                    <b>English : <a href={"https://en.wikipedia.org/wiki/" + englishTitle} target="_blank" style={{textDecoration : 'none'}}>{englishTitle}</a></b>
+                    <b>English : <a href={"https://en.wikipedia.org/wiki/" + englishTitle} target="_blank" style={{ textDecoration: 'none' }}>{englishTitle}</a></b>
                 </Typography>
                 <TextField
                     id="outlined-multiline-static"
@@ -65,15 +65,15 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
                     fullWidth
                     onChange={e => setTargetTitle(e.target.value)}
                     sx={{
-                        mt : 1
+                        mt: 1
                     }}
                 />
             </DialogContent>
             <DialogActions>
-                <Button sx={{mr : 1}} onClick={() => onClose(null)} color="secondary" variant="contained" size="small">
+                <Button sx={{ mr: 1 }} onClick={() => onClose(null)} color="secondary" variant="contained" size="small">
                     Cancel
                 </Button>
-                <Button color="primary" variant="contained" component="a"  size="small" href={data.targetURL} target="_blank" autoFocus>
+                <Button color="primary" variant="contained" component="a" size="small" href={data.targetURL} target="_blank" autoFocus>
                     {data.buttonName}
                 </Button>
             </DialogActions>
@@ -82,13 +82,13 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
 }
 const COLUMNS = [
     { field: 'id', headerName: 'ID', maxWidth: 70, flex: 1, hideable: false },
-    { field: 'title', headerName: 'Title', flex: 1, hideable: false, minWidth : 300 },
+    { field: 'title', headerName: 'Title', flex: 1, hideable: false, minWidth: 300 },
     // { field: 'wikidata', headerName: 'Wikidata', width : 120},
-    { field: 'target', headerName: 'Target', flex: 1 , minWidth : 300},
-    { field: 'action', headerName: 'Action', flex: 1, minWidth : 150, hideable: false , renderCell : (params) => params.value}
+    { field: 'target', headerName: 'Target', flex: 1, minWidth: 300 },
+    { field: 'action', headerName: 'Action', flex: 1, minWidth: 150, hideable: false, renderCell: (params) => params.value }
 ]
 const TabledArticles = ({ data, targetLanguage }) => {
-    
+
     const [popupAction, setPopupAction] = React.useState(null);
     const [popupOpen, setPopupOpen] = React.useState(false);
     const [popupEnglishTitle, setPopupEnglishTitle] = React.useState('');
@@ -104,15 +104,21 @@ const TabledArticles = ({ data, targetLanguage }) => {
         title: article?.title,
         wikidata: article?.wikidata,
         target: article?.target,
-        action : (
+        action: (
             <>
-            {/* <TranslateIcon sx={{pointer : 'cursor'}} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small" /> */}
-                <button style={{cursor: 'pointer'}} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small">
-                文A
+                {/* <TranslateIcon sx={{pointer : 'cursor'}} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small" /> */}
+                {/* <button style={{ cursor: 'pointer' }} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary" size="small">
+                    文A
                 </button>
-                <button style={{cursor: 'pointer', marginLeft : '5px'}} type='button' data-action="create" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small">
-                &#43;
-                </button>
+                <button style={{ cursor: 'pointer', marginLeft: '5px' }} type='button' data-action="create" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary" size="small">
+                    &#43;
+                </button> */}
+                <Button variant="contained" color="primary" size="small" data-action="create" data-src={article?.title} data-target={article?.target} onClick={executeAction}>
+                    <AddIcon />
+                </Button>
+                <Button variant="contained" sx={{ml : 1}} color="primary" size="small" data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction}>
+                    <TranslateIcon />
+                </Button>
             </>
         )
     })), [data]);
@@ -133,6 +139,11 @@ const TabledArticles = ({ data, targetLanguage }) => {
                 rowsPerPageOptions={[50]}
                 checkboxSelection={false}
                 disableSelectionOnClick
+                initialState={{
+                    pagination: {
+                        paginationModel: { pageSize: 25 },
+                    },
+                }}
                 sx={{
                     width: '100%',
                 }}
@@ -271,7 +282,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
                     <Collapse in={showWikiText}>
                         <WikiTextArticles data={wikitext} />
                     </Collapse>
-                    {data?.length > 0 && <TabledArticles data={data} targetLanguage={targetLanguage}/>}
+                    {data?.length > 0 && <TabledArticles data={data} targetLanguage={targetLanguage} />}
                 </>
             )}
         </CardContent>
