@@ -3,15 +3,19 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
+import AutoComplete from "@mui/material/Autocomplete"
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import HideIcon from '@mui/icons-material/VisibilityOff';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
+import Collapse from "@mui/material/Collapse"
 import Server from "../Server.ts";
+import { useCallback, useState } from "react";
 const Settings = () => {
-    const hideUsername = (e) => {
+    const [users, setUsers] = useState([])
+    const hideUsername = useCallback((e) => {
         const message = `
         Are you want to hide your username from all the records?
         This action is irreversible and it would:
@@ -31,7 +35,7 @@ const Settings = () => {
                     window.location.href = '/user/login'
                 })
         })
-    }
+    }, []);
     return (
         <Paper sx={{
             height: "100%",
@@ -41,6 +45,13 @@ const Settings = () => {
             outline: 0,
             position: 'absolute',
         }}>
+            <Collapse in={true}>
+                <AutoComplete
+                options={users}
+                sx={{m : 1}}
+                renderInput={props => <TextField {...props} label="Username" />}
+                />
+            </Collapse>
 
             <Button variant="contained" color="error" size="small" sx={{
                 padding: 1,

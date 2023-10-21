@@ -92,7 +92,13 @@ const TaskList = () => {
     return <DataGrid
         rows={tasks}
         columns={headers}
-        pageSize={5}
+        initialState={{
+            pagination: {
+                paginationModel : {
+                    pageSize: 10,
+                }
+            }
+        }}
         sx={{
             '& .MuiDataGrid-row' : {
                 cursor : 'pointer',
