@@ -18,7 +18,7 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Collapse from "@mui/material/Collapse"
-import Server from "../Server2.ts";
+import Server from "../Server.ts";
 
 
 import { DataGrid } from '@mui/x-data-grid/DataGrid';

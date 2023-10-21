@@ -202,6 +202,9 @@ class User:
         conn.execute("UPDATE `user` SET `rights` = ? WHERE `id` = ?", (rights, id))
         conn.commit()
     @staticmethod
+    def update_username(conn : sqlite3.Cursor, id, username):
+        return conn.execute("UPDATE `user` SET `username` = ? WHERE `id` = ?", (username, id))
+    @staticmethod
     def update_stats(cur : sqlite3.Cursor, task_id):
         task = Task.get_by_id(cur, task_id)
         user_id = task['submitted_by']

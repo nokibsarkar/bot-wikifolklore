@@ -38,6 +38,10 @@ class UserScheme:
     task_count : int = 0
     created_at : str = None
 @dataclass
+class UserUpdate:
+    username : str | None = None
+    rights : int | None = None
+@dataclass
 class TaskCreate:
     """
     `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,

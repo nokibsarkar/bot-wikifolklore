@@ -31,6 +31,20 @@ def get_me(req : Request):
         success=True,
         data=UserScheme(**user)
     )
+@user_router.post('/me', response_model=ResponseSingle[UserScheme])
+def update_me(req : Request, user : UserUpdate = Body(...)):
+    user_id = req.state.user['id']
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        if user.username:
+            user.username = "USERNAME HIDDEN"
+            User.update_username(cur, user_id, user.username)
+        conn.commit()
+        user = User.get_by_id(cur, user_id)
+    return ResponseSingle[UserScheme](
+        success=True,
+        data=UserScheme(**user)
+    )
 
 #------------------------------------ Fetch Subcategories ------------------------------------
 @api.get("/subcat/{parent_category}", tags=["subcategory"], response_model=ResponseMultiple[CategoryScheme])
@@ -85,7 +99,7 @@ def create_topic(req : Request, topic : TopicCreate = Body(...)):
 
 
 #------------------------------------ Fetch Available Countries ------------------------------------
-@api.get("/topic/{topic_prefix}", response_model=ResponseMultiple[Country])
+@api.get("/topic/{topic_prefix}/country", response_model=ResponseMultiple[Country])
 def get_countries(topic_prefix : str, req: Request):
     try:
         assert "/" not in topic_prefix, "Topic prefix must not contain '/'"

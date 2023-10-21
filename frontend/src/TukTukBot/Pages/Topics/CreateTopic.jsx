@@ -1,6 +1,6 @@
 import { createRef, useEffect, useState, useCallback } from "react";
 import CategoryList from "../../components/Category";
-import Server from "../../Server2.ts";
+import Server from "../../Server";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -44,7 +44,7 @@ const AddTopic = () => {
             title : selectedTopic,
             categories : categoryList
         }).then(topic => {
-            const url = new URL( `/tuktukbot/topic/edit`);
+            const url = new URL( `/tuktukbot/topic/edit`, window.location.origin);
             url.searchParams.append('id', topic.id);
             window.location.href = url;
         }).finally(() => {

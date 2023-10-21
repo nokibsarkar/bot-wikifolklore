@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-import Server from "../Server2.ts";
+import Server from "../Server.ts";
 const Category = ({ category, onRemove, onSubCategory }) => {
     return (
         <ListItem>

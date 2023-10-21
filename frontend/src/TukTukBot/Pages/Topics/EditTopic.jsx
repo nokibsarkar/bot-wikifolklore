@@ -1,6 +1,6 @@
 import CategoryList from "../../components/Category.jsx";
 import { createRef, useEffect, useState, useCallback } from "react";
-import Server from "../../Server2.ts";
+import Server from "../../Server.ts";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -13,24 +13,21 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 const EditTopic = () => {
     const [topicID, setTopicID] = useState('');
     const [country, setCountry] = useState('');
+    const [refreshKey, setRefreshKey] = useState(0);
     const [categories, setCategories] = useState([]);
     const [saving, setSaving] = useState(false);
     const categoryListRef = createRef(null);
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
-        console.log(id)
         if(!id)
             return;
         setTopicID(id);
-        setSaving(true);
         Server.getTopic(id).then(topic => {
-            setCountry(topic.country);
+            setCountry(Server.countries[topic.country]);
             setCategories(topic.categories);
-        }).finally(() => {
-            setSaving(false);
         })
-    }, []);
+    }, [refreshKey]);
     const save = useCallback(async () => {
         if(!topicID)
             return;
@@ -39,11 +36,17 @@ const EditTopic = () => {
         const categoryList = categoryListRef?.current;
         if (!categoryList?.length)
             return;
-        console.log(categoryList)
         setSaving(true);
-        // await Server.addTopic(topic, country);
+        const updated = await Server.updateTopic({
+            id: topicID,
+            country: country,
+            categories: categoryList
+        });
+        if (!updated)
+            return;
+        setRefreshKey(refreshKey + 1);
         setSaving(false);
-    }, [topicID, country]);
+    }, [topicID, country, categoryListRef]);
     return <Card>
         <CardHeader title="Edit Topic" action={<Button variant="contained" onClick={save} disabled={saving}>Save</Button>} />
         <CardContent>

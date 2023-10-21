@@ -16,7 +16,7 @@ import { DataGrid } from '@mui/x-data-grid/DataGrid';
 import GREEN from "@mui/material/colors/green";
 import RED from "@mui/material/colors/red";
 import Yellow from "@mui/material/colors/yellow";
-import Server from "../../Server2.ts"
+import Server from "../../Server"
 import DownloadIcon from '@mui/icons-material/Download';
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';

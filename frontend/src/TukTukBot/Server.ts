@@ -64,6 +64,7 @@ type TopicCreate = {
     country : Country;
     categories : Category[];
 }
+
 type Topic = {
     id : string;
     title : string;
@@ -130,7 +131,7 @@ class TukTukBot {
 
     }
     static async fetchCountries(topic : string){
-        const url = new URL("api/topic/" + topic, TukTukBot.baseURL);
+        const url = new URL("api/topic/" + topic + "/country", TukTukBot.baseURL);
         const response = await fetch(url.toString());
         const responseData: APIResponseMultiple<CountryEntry> = await response.json();
         if (responseData.success) {
@@ -254,7 +255,28 @@ class TukTukBot {
     static async getTopic(topicID : string){
         const url = new URL("api/topic/" + topicID, TukTukBot.baseURL);
         const response : APIResponseSingle<Topic> = await fetch(url.toString()).then(res => res.json());
-        console.log(response)
+        return response.data;
+    }
+    static async updateTopic({id, categories} : Topic){
+        const url = new URL("api/topic/" + id, TukTukBot.baseURL);
+        const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
+            method: "POST",
+            body: JSON.stringify({categories}),
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(res => res.json());
+        return response.data;
+    }
+    static async updateMe({username, rights} : User){
+        const url = new URL("api/user/me", TukTukBot.baseURL);
+        const response : APIResponseSingle<User> = await fetch(url.toString(), {
+            method: "POST",
+            body: JSON.stringify({username, rights}),
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(res => res.json());
         return response.data;
     }
 }
