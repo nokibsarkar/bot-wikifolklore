@@ -112,14 +112,6 @@ function App() {
     }
   }, [])
   const [toolName, Tool] = ToolSelector();
-  const toolOptions = [
-    {
-      text: 'Topics',
-      icon: null,
-      component: null,
-      active: true
-    }
-  ]
   const commonProps = {
     user,
     setUser,

@@ -18,7 +18,7 @@ const deleteCookie = (name) => {
   document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-export default function PrimarySearchAppBar({ user, toolName, open, setOpen }) {
+export default function PrimarySearchAppBar({ username, toolName, open, setOpen }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -107,7 +107,7 @@ export default function PrimarySearchAppBar({ user, toolName, open, setOpen }) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              {user?.username} &nbsp;
+              {username?.username} &nbsp;
               <AccountCircle sx={{ ml: 2 }} />
             </Button>
           </Box>
