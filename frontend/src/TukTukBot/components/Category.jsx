@@ -12,17 +12,17 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
-import Server from "../Server2.ts";
+import Server from "../Server.ts";
 const Category = ({ category, onRemove, onSubCategory }) => {
     return (
         <ListItem>
             <ListItemText sx={{
                 padding: '5px'
             }} primary={category?.title} />
-            <Button size="small" variant="outlined" color="error" onClick={e => onSubCategory(category?.title)}>
+            <Button size="small" variant="outlined" color="error" onClick={e => onSubCategory(category?.id)}>
                 <WaterfallChartIcon />
             </Button>
-            <Button size="small" variant="outlined" color="error" onClick={e => onRemove(category?.title)}>
+            <Button size="small" variant="outlined" color="error" onClick={e => onRemove(category?.id)}>
                 <DeleteIcon />
             </Button>
         </ListItem>
@@ -33,7 +33,13 @@ const AddCategory = ({ onAdd, disabled }) => {
     const [categorySuggestions, setCategorySuggestions] = React.useState([]); // [{title: 'cat1'}, {title: 'cat2'}
     const [newCat, setNewCat] = React.useState('');
     const onInput = React.useCallback(Server.searchCategory(setCategorySuggestions, setSearching), []);
-
+    const _onAdd = React.useCallback((e) => {
+        const category = categorySuggestions.find(cat => cat.title === newCat);
+        if (!category)
+            return;
+        onAdd(category);
+        setNewCat('');
+    }, [categorySuggestions, newCat]);
     return (
         <Box sx={{
             display: 'flex',
@@ -45,12 +51,12 @@ const AddCategory = ({ onAdd, disabled }) => {
 
         }}>
             <AutoComplete
-                // disablePortal
                 id="new-category"
                 options={categorySuggestions}
                 disabled={disabled}
                 size="small"
-
+                clearOnBlur
+                clearOnEscape
                 loading={searching}
                 getOptionLabel={(option) => option?.title || ''}
                 sx={{
@@ -66,7 +72,7 @@ const AddCategory = ({ onAdd, disabled }) => {
                     label="Add Category"
                 />}
             />
-            <Button disabled={disabled} variant="contained" color="success" onClick={e => onAdd(newCat) || setNewCat('')} >
+            <Button disabled={disabled} variant="contained" color="success" onClick={_onAdd} >
                 <AddIcon />
             </Button>
         </Box>
@@ -74,41 +80,33 @@ const AddCategory = ({ onAdd, disabled }) => {
 }
 const CategoryList = ({ categoryListRef, initialCategories, disabled = false }) => {
     const [categoryObject, setCategoryObject] = React.useState({});// {categoryName: {categoryObject}
-
     const categories = React.useMemo(() => {
         return Object.values(categoryObject);
     }, [categoryObject]);
-
-    const [searching, setSearching] = React.useState(false);
-    const onRemove = React.useCallback((category) => {
+    const onRemove = React.useCallback((ccatID) => {
+        if (!ccatID)
+            return
+        if (!categoryObject[ccatID])
+            return
+        delete categoryObject[ccatID];
+        setCategoryObject({ ...categoryObject });
+    }, [categoryObject]);
+    const onAdd = React.useCallback((category) => {
         if (!category)
             return
-        if (!categoryObject[category])
+        if (categoryObject[category.id])
             return
-        delete categoryObject[category];
+        categoryObject[category.id] = category;
         setCategoryObject({ ...categoryObject });
     }, [categoryObject]);
-    const onAdd = React.useCallback((catTitle) => {
-        if (!catTitle)
-            return
-        if (categoryObject[catTitle])
-            return
-        const cat = {
-            name: catTitle,
-            title: catTitle,
-            pageid: Math.round(Math.random() * 1e5),
-            subcat: false
-        };
-        categoryObject[catTitle] = cat;
-        setCategoryObject({ ...categoryObject });
-    }, [categoryObject]);
-    const onSubCategory = React.useCallback((category) => {
-        const cat = categoryObject[category];
+    const onSubCategory = React.useCallback((catID) => {
+        console.log('onSubCategory', catID)
+        const cat = categoryObject[catID];
         if (!cat)
             return
         Server.addSubCategories([cat]).then(categories => {
             categories.forEach(cat => {
-                categoryObject[cat.title] = cat;
+                categoryObject[cat.id] = cat;
             });
             setCategoryObject({ ...categoryObject });
         });
@@ -121,7 +119,7 @@ const CategoryList = ({ categoryListRef, initialCategories, disabled = false }) 
     React.useEffect(() => {
         if (!initialCategories?.length)
             return;
-        setCategoryObject(initialCategories?.reduce((dict, v) => { dict[v.title] = v; return dict }, {}))
+        setCategoryObject(initialCategories?.reduce((dict, v) => { dict[v.id] = v; return dict }, {}))
     }, [initialCategories]);
     return (
         <Paper elevation={0}>

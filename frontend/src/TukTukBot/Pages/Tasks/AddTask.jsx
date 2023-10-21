@@ -8,12 +8,11 @@ import React from "react";
 import ArticleList from "../../components/Articles";
 import Box from "@mui/material/Box"
 import Collapse from "@mui/material/Collapse"
-import AutoComplete from "@mui/material/Autocomplete"
 import { useState, useEffect, useCallback } from "react";
 import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
 import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import Server from "../../Server2.ts";
+import Server from "../../Server";
 
 function AddTask() {
     const categoryListRef = React.useRef([]);
@@ -27,6 +26,7 @@ function AddTask() {
     const [categoryFetching, setCategoryFetching] = useState(false);
     const [targetWikiError, setTargetWikiError] = useState(false);
     const [defaultCategories, setDefaultCategories] = useState([]);
+    const [resultElement, setResultElement] = useState(null);
     const statusRef = React.useRef(false);
     const wiki = []
     for (const [key, value] of Object.entries(Server.languages)) {
@@ -69,6 +69,7 @@ function AddTask() {
         if ( !country || !categoryList || !topicName)
             return;
         setDisabled(true);
+        setResultElement(null);
         Server.submitTask({
             target_wiki: targetwiki,
             country: country,
@@ -81,6 +82,13 @@ function AddTask() {
             // console.log(response)
             setDisabled(false);
             setCategoryExpanded(false);
+            setResultElement(<ArticleList
+                Server={Server}
+                taskID={taskID}
+                statusRef={statusRef}
+                setDisabled={setDisabled}
+                targetWiki={targetwiki}
+            />)
         })
     }, [targetwiki]);
     return (
@@ -146,12 +154,7 @@ function AddTask() {
                         />
                     )}
                 </Collapse>
-                {taskID && <ArticleList
-                    Server={Server}
-                    taskID={taskID}
-                    statusRef={statusRef}
-                    setDisabled={setDisabled}
-                />}
+                {resultElement}
             </CardContent>
         </Card>
     );
