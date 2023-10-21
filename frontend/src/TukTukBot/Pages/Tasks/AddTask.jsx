@@ -8,7 +8,6 @@ import React from "react";
 import ArticleList from "../../components/Articles";
 import Box from "@mui/material/Box"
 import Collapse from "@mui/material/Collapse"
-import AutoComplete from "@mui/material/Autocomplete"
 import { useState, useEffect, useCallback } from "react";
 import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
