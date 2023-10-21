@@ -83,6 +83,26 @@ def create_topic(req : Request, topic : TopicCreate = Body(...)):
         raise BAD_REQUEST_EXCEPTION(e)
 #------------------------------------ Create Topic ------------------------------------
 
+
+#------------------------------------ Fetch Available Countries ------------------------------------
+@api.get("/topic/{topic_prefix}", response_model=ResponseMultiple[Country])
+def get_countries(topic_prefix : str, req: Request):
+    try:
+        assert "/" not in topic_prefix, "Topic prefix must not contain '/'"
+        if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
+            raise FORBIDDEN_EXCEPTION
+        countries = []
+        with Server.get_parmanent_db() as conn:
+            cur = conn.cursor()
+            countries = Topic.get_countries(cur, topic_prefix)
+        return ResponseMultiple[Country](
+            success=True,
+            data=countries
+        )
+    except Exception as e:
+        logging.exception(e)
+        raise BAD_REQUEST_EXCEPTION(e)
+
 #------------------------------------ Update Topic ------------------------------------
 @api.post('/topic/{topic_name}/{country}', response_model=ResponseSingle[TopicScheme])
 def update_topic(topic_name : str, country: Country, req : Request, topic : TopicUpdate = Body(...) ):
@@ -112,26 +132,24 @@ def update_topic(topic_name : str, country: Country, req : Request, topic : Topi
         logging.exception(e)
         raise BAD_REQUEST_EXCEPTION(e)
 #------------------------------------ Update Topic ------------------------------------
-#------------------------------------ Fetch Available Countries ------------------------------------
-@api.get("/topic/{topic_prefix}", response_model=ResponseMultiple[Country])
-def get_countries(topic_prefix : str, req: Request):
-    try:
-        assert "/" not in topic_prefix, "Topic prefix must not contain '/'"
-        if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
-            raise FORBIDDEN_EXCEPTION
-        countries = []
-        with Server.get_parmanent_db() as conn:
-            cur = conn.cursor()
-            countries = Topic.get_countries(cur, topic_prefix)
-        return ResponseMultiple[Country](
-            success=True,
-            data=countries
+@api.get("/topic/{topic_name}/{country}", response_model=ResponseSingle[TopicScheme])
+def get_topic(topic_name : str, country : Country, req : Request):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
+        raise FORBIDDEN_EXCEPTION
+    topic_id = Topic.normalize_id(topic_name, country)
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        topic = Topic.get_by_id(cur, topic_id)
+        categories = Category.get_by_topic_id(cur, topic_id)
+    return ResponseSingle[TopicScheme](
+        success=True,
+        data=TopicScheme(
+            id=topic['id'],
+            title=topic['title'],
+            country=topic['country'],
+            categories=[CategoryScheme(**cat) for cat in categories]
         )
-    except Exception as e:
-        logging.exception(e)
-        raise BAD_REQUEST_EXCEPTION(e)
-
-
+    )
 #------------------------------------ Fetch Topic Categories ------------------------------------
 @api.get("/topic/{topic_name}/{country}/categories", response_model=ResponseMultiple[CategoryScheme])
 def topic_categories(topic_name : str, country : Country, req : Request):

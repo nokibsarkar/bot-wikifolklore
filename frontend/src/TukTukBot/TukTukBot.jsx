@@ -14,7 +14,7 @@ const TukTukBot = () => {
         <Routes>
             <Route path='/topic/*'>
                 <Route path="create" element={<AddTopic />} />
-                <Route path=":topic/:country" element={<EditTopic />} />
+                <Route path="edit" element={<EditTopic />} />
                 {/* <Route path=":id" element={<Setting />} /> */}
                 <Route path="*" element={<Setting />} />
             </Route>

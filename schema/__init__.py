@@ -94,6 +94,7 @@ class TopicScheme:
     title : str
     country : Country
     id : str
+    categories : List[CategoryScheme] | None = None
     pass
 @dataclass
 class Statistics:

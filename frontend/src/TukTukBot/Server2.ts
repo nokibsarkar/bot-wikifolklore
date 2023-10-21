@@ -251,5 +251,11 @@ class TukTukBot {
         console.log(response)
         return response.data;
     }
+    static async getTopic(topicID : string){
+        const url = new URL("api/topic/" + topicID, TukTukBot.baseURL);
+        const response : APIResponseSingle<Topic> = await fetch(url.toString()).then(res => res.json());
+        console.log(response)
+        return response.data;
+    }
 }
 export default TukTukBot;

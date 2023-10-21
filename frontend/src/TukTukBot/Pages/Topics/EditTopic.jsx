@@ -17,13 +17,29 @@ const EditTopic = () => {
     const [saving, setSaving] = useState(false);
     const categoryListRef = createRef(null);
     useEffect(() => {
-        setTopicID("My Topic");
-        setCountry('Bangladesh');
-        setCategories([{
-            id : 1, title : "Category 1",
-        }]);
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        console.log(id)
+        if(!id)
+            return;
+        setTopicID(id);
+        setSaving(true);
+        Server.getTopic(id).then(topic => {
+            setCountry(topic.country);
+            setCategories(topic.categories);
+        }).finally(() => {
+            setSaving(false);
+        })
     }, []);
     const save = useCallback(async () => {
+        if(!topicID)
+            return;
+        if(!country)
+            return;
+        const categoryList = categoryListRef?.current;
+        if (!categoryList?.length)
+            return;
+        console.log(categoryList)
         setSaving(true);
         // await Server.addTopic(topic, country);
         setSaving(false);

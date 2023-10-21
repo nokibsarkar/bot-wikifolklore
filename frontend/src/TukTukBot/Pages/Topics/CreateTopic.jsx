@@ -44,7 +44,9 @@ const AddTopic = () => {
             title : selectedTopic,
             categories : categoryList
         }).then(topic => {
-            window.location.href = `/tuktukbot/topic/${topic.id}`;
+            const url = new URL( `/tuktukbot/topic/edit`);
+            url.searchParams.append('id', topic.id);
+            window.location.href = url;
         }).finally(() => {
             setCreating(false);
         })
