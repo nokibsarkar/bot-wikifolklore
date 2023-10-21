@@ -87,7 +87,7 @@ function AddTask() {
                 taskID={taskID}
                 statusRef={statusRef}
                 setDisabled={setDisabled}
-                targetWiki={targetwiki}
+                targetLanguage={targetwiki}
             />)
         })
     }, [targetwiki]);
@@ -151,6 +151,7 @@ function AddTask() {
                             categoryListRef={categoryListRef}
                             Server={Server}
                             initialCategories={defaultCategories}
+
                         />
                     )}
                 </Collapse>
