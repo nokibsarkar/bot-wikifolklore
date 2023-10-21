@@ -255,10 +255,10 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
                 m: 1,
             },
         }}>
-            <Button variant="contained" color="primary" onClick={exportWikiTextToggle} disabled={generating} size="small">
-                <CodeIcon /> WikiText
+            <Button variant="contained" color="primary" onClick={exportWikiTextToggle} disabled={generating} size="small" sx={{mr : 1}}>
+                <CodeIcon /> Wiki
             </Button>
-            <Button variant="contained" color="primary" onClick={exportCSV} disabled={generating} size="small">
+            <Button variant="contained" color="primary" onClick={exportCSV} disabled={generating} size="small" >
                 <DownloadIcon /> CSV
             </Button>
         </Box>
