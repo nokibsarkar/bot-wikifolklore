@@ -1,26 +1,26 @@
 {
   "files": {
     "main.css": "/static/css/main.073c9b0a.css",
-    "main.js": "/static/js/main.bec7ce7b.js",
-    "static/js/778.1f5c01a3.chunk.js": "/static/js/778.1f5c01a3.chunk.js",
+    "main.js": "/static/js/main.83dbd1b7.js",
+    "static/js/778.a11b230e.chunk.js": "/static/js/778.a11b230e.chunk.js",
     "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
     "static/js/490.92bb933a.chunk.js": "/static/js/490.92bb933a.chunk.js",
     "static/js/477.8a0d0ed2.chunk.js": "/static/js/477.8a0d0ed2.chunk.js",
     "static/js/984.610d3dd5.chunk.js": "/static/js/984.610d3dd5.chunk.js",
-    "static/js/310.fd590b4e.chunk.js": "/static/js/310.fd590b4e.chunk.js",
+    "static/js/900.d0a8b0b9.chunk.js": "/static/js/900.d0a8b0b9.chunk.js",
     "static/media/Wiki_Loves_Folklore_Logo.svg.png": "/static/media/Wiki_Loves_Folklore_Logo.svg.b5b1224b7d68fc0c465b.png",
     "index.html": "/index.html",
     "main.073c9b0a.css.map": "/static/css/main.073c9b0a.css.map",
-    "main.bec7ce7b.js.map": "/static/js/main.bec7ce7b.js.map",
-    "778.1f5c01a3.chunk.js.map": "/static/js/778.1f5c01a3.chunk.js.map",
+    "main.83dbd1b7.js.map": "/static/js/main.83dbd1b7.js.map",
+    "778.a11b230e.chunk.js.map": "/static/js/778.a11b230e.chunk.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map",
     "490.92bb933a.chunk.js.map": "/static/js/490.92bb933a.chunk.js.map",
     "477.8a0d0ed2.chunk.js.map": "/static/js/477.8a0d0ed2.chunk.js.map",
     "984.610d3dd5.chunk.js.map": "/static/js/984.610d3dd5.chunk.js.map",
-    "310.fd590b4e.chunk.js.map": "/static/js/310.fd590b4e.chunk.js.map"
+    "900.d0a8b0b9.chunk.js.map": "/static/js/900.d0a8b0b9.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.bec7ce7b.js"
+    "static/js/main.83dbd1b7.js"
   ]
 }
