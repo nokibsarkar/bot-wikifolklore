@@ -25,6 +25,7 @@ function AddTask() {
     const [targetwiki, setTargetwiki] = useState('');
     const [categoryExpanded, setCategoryExpanded] = useState(true);
     const [categoryFetching, setCategoryFetching] = useState(false);
+    const [targetWikiError, setTargetWikiError] = useState(false);
     const [defaultCategories, setDefaultCategories] = useState([]);
     const statusRef = React.useRef(false);
     const wiki = []
@@ -59,9 +60,13 @@ function AddTask() {
         const categoryList = categoryListRef?.current;
         if (!categoryList?.length)
             return;
-
-        console.log(targetwiki, country, categoryList, topicName)
-        if (!targetwiki || !country || !categoryList || !topicName)
+        if(!targetwiki){
+            setTargetWikiError(true);
+            return;
+        } else {
+            setTargetWikiError(false);
+        }
+        if ( !country || !categoryList || !topicName)
             return;
         setDisabled(true);
         Server.submitTask({
@@ -81,8 +86,8 @@ function AddTask() {
     return (
         <Card>
             <CardHeader title="Add Task" action={
-                <Button variant="contained" color="primary" onClick={submitTask} disabled={disabled}>
-                    <ListIcon /> Generate List
+                <Button variant="contained" color="success" onClick={submitTask} disabled={disabled} size="small">
+                    <ListIcon /> Generate
                 </Button>
             } />
             <CardContent>
@@ -90,9 +95,9 @@ function AddTask() {
                     display: 'flex',
                     justifyContent: 'left',
                     flexDirection: 'row',
-                    borderSpacing: 1
+                    // borderSpacing: 1
                 }}>
-                    <FormControl sx={{ width: 300, m: 1 }}>
+                    <FormControl sx={{ width: 300 }} size="small">
                         <InputLabel>Country</InputLabel>
                         <Select
                             fullWidth
@@ -104,18 +109,12 @@ function AddTask() {
                             {countries.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
                         </Select>
                     </FormControl>
-                    {/* <AutoComplete
-                        
-                        renderInput={props => <TextField {...props} label="Target Wiki" onSelect={e => console.log(e) || e.target.value && setTargetwiki(e.target.value)} />}
-                        options={wiki}
-                    /> */}
-                    <FormControl sx={{ width: 300, m: 1 }}>
+                    <FormControl sx={{ width: 300, ml: 0.5 }} size="small">
                         <InputLabel>Target Wiki</InputLabel>
                         <Select
                             fullWidth
                             disabled={disabled}
-                            // disablePortal
-                            // sx={{ width: 300, m: 2 }}
+                            error={targetWikiError}
                             value={targetwiki}
                             label="Target Wiki"
                             onChange={e => e.target.value && setTargetwiki(e.target.value)}
@@ -123,8 +122,17 @@ function AddTask() {
                             {wiki.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
                         </Select>
                     </FormControl>
-                    <Button variant="contained" disabled={disabled} onClick={e => setCategoryExpanded(!categoryExpanded)} size="small">
-                        Advanced {categoryExpanded ? <CollapseIcon /> : <ExpandedIcon />}
+                    <Button
+                        variant="contained"
+                        disabled={disabled}
+                        // color="secondary"
+                        onClick={e => setCategoryExpanded(!categoryExpanded)}
+                        size="small"
+                        sx={{
+                            padding : 1
+                        }}
+                        >
+                        {categoryExpanded ? <CollapseIcon /> : <ExpandedIcon />}
                     </Button>
                 </Box>
 

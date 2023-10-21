@@ -11,7 +11,7 @@ import AutoComplete from "@mui/material/Autocomplete"
 import { useState, useEffect, useCallback } from "react";
 import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { CardActions, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid/DataGrid';
 import GREEN from "@mui/material/colors/green";
 import RED from "@mui/material/colors/red";
@@ -19,6 +19,7 @@ import Yellow from "@mui/material/colors/yellow";
 import Server from "../../Server2.ts"
 import DownloadIcon from '@mui/icons-material/Download';
 import { Link } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
 const countryMAP = await Server.getCountryMap()
 const User = () => {
     const [username, setUsername] = useState(null);
@@ -65,7 +66,7 @@ const headers = [
     { field: 'country', headerName: 'Country',  flex : 1 },
     { field: 'category_count', headerName: 'Category', maxWidth: 100, flex : 1 },
     {field : 'article_count', headerName : 'Article', maxWidth : 100, flex : 1},
-    { field: 'created_at', headerName: 'Timestamp', flex : 1},
+    // { field: 'created_at', headerName: 'Timestamp', flex : 1},
     { field: 'download', headerName: 'Download', renderCell : (params) => params.value},
 ]
 const TaskList = () => {
@@ -131,14 +132,15 @@ const TaskList = () => {
 const ListTask = () => {
     const NewTaskButton = () => (
         <Link to="create">
-            <Button variant="contained" color="primary">New Task</Button>
+           <Button variant="contained" color="success"><AddIcon /> New</Button>
         </Link>
     )
     return (
         <Card>
-            <CardHeader action={<NewTaskButton />}>HI</CardHeader>
+            
+            <CardHeader action={<NewTaskButton />}/>
             <CardContent>
-                <User />
+            <User />
                 <TaskList />
             </CardContent>
         </Card>
