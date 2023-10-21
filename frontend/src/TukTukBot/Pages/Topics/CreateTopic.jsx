@@ -10,7 +10,7 @@ import ArticleList from "../../components/Articles";
 import Box from "@mui/material/Box"
 import Collapse from "@mui/material/Collapse"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-const AddTask = () => {
+const AddTopic = () => {
     const [availableCountries, setAvailableCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     const [selectedTopic, setSelectedTopic] = useState('folklore');
@@ -89,4 +89,4 @@ const AddTask = () => {
         </CardContent>
     </Card>
 }
-export default AddTask
+export default AddTopic

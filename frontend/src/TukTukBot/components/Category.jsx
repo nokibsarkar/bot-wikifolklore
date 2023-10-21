@@ -80,7 +80,6 @@ const AddCategory = ({ onAdd, disabled }) => {
 }
 const CategoryList = ({ categoryListRef, initialCategories, disabled = false }) => {
     const [categoryObject, setCategoryObject] = React.useState({});// {categoryName: {categoryObject}
-
     const categories = React.useMemo(() => {
         return Object.values(categoryObject);
     }, [categoryObject]);
@@ -120,7 +119,7 @@ const CategoryList = ({ categoryListRef, initialCategories, disabled = false }) 
     React.useEffect(() => {
         if (!initialCategories?.length)
             return;
-        setCategoryObject(initialCategories?.reduce((dict, v) => { dict[v.title] = v; return dict }, {}))
+        setCategoryObject(initialCategories?.reduce((dict, v) => { dict[v.id] = v; return dict }, {}))
     }, [initialCategories]);
     return (
         <Paper elevation={0}>

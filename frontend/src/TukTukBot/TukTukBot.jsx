@@ -6,6 +6,7 @@ import Setting from "./Pages/Settings.jsx";
 import DashBoard from "./Pages/Dashboard.jsx";
 import AddTopic from "./Pages/Topics/CreateTopic.jsx";
 import Server from "./Server2.ts"
+import EditTopic from "./Pages/Topics/EditTopic.jsx";
 Server.init()
 const TukTukBot = () => {
 
@@ -13,8 +14,8 @@ const TukTukBot = () => {
         <Routes>
             <Route path='/topic/*'>
                 <Route path="create" element={<AddTopic />} />
-                <Route path=":id/edit" element={<Setting />} />
-                <Route path=":id" element={<Setting />} />
+                <Route path=":topic/:country" element={<EditTopic />} />
+                {/* <Route path=":id" element={<Setting />} /> */}
                 <Route path="*" element={<Setting />} />
             </Route>
             <Route path="task/*" >
