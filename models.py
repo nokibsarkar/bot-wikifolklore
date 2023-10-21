@@ -200,7 +200,6 @@ class User:
     @staticmethod
     def update_rights(conn : sqlite3.Cursor, id, rights : int):
         conn.execute("UPDATE `user` SET `rights` = ? WHERE `id` = ?", (rights, id))
-        conn.commit()
     @staticmethod
     def update_username(conn : sqlite3.Cursor, id, username):
         return conn.execute("UPDATE `user` SET `username` = ? WHERE `id` = ?", (username, id))
@@ -219,7 +218,9 @@ class User:
             'id': user_id
         }
         cur = cur.execute("UPDATE `user` SET `category_count` = `category_count` + :category_added, `task_count` = `task_count` + :task_added, `article_count` = `article_count` + :article_added WHERE `id` = :id;", added)
-        
+    @staticmethod
+    def get_all(conn : sqlite3.Cursor):
+        return conn.execute(SQL1_GET_USER_SUMMARY).fetchall()
 class Task:
     STATUS = {
         'pending': 'pending',

@@ -126,7 +126,7 @@ function App() {
         <AppDrawer {...commonProps} components={Tools} />
         <React.Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/tuktukbot/*" element={<TukTukBot />} />
+            <Route path="/tuktukbot/*" element={<TukTukBot {...commonProps} />} />
           </Routes>
         </React.Suspense>
       </BrowserRouter>

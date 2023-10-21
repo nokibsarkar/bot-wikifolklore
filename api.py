@@ -18,6 +18,50 @@ BAD_REQUEST_EXCEPTION = lambda a : HTTPException(
 )
 
 #------------------------------------ User ------------------------------------
+@user_router.get('/', response_model=ResponseMultiple[UserScheme])
+def get_users(req : Request):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['grant']) == False:
+        raise FORBIDDEN_EXCEPTION
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        users = User.get_all(cur)
+    return ResponseMultiple[UserScheme](
+        success=True,
+        data=[UserScheme(**user) for user in users]
+    )
+@user_router.get('/{user_id}', response_model=ResponseSingle[UserScheme])
+def get_user(user_id : int, req : Request):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['grant']) == False:
+        raise FORBIDDEN_EXCEPTION
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        user = User.get_by_id(cur, user_id)
+    if user is None:
+        raise BAD_REQUEST_EXCEPTION("User not found")
+    return ResponseSingle[UserScheme](
+        success=True,
+        data=UserScheme(**user)
+    )
+@user_router.post('/{user_id}', response_model=ResponseSingle[UserScheme])
+def update_user(user_id : int, req : Request, user : UserUpdate = Body(...)):
+    if User.has_access(req.state.user['rights'], User.RIGHTS['grant']) == False:
+        raise FORBIDDEN_EXCEPTION
+    if user.rights is not None:
+        bit_length = max(user.rights.bit_length(), req.state.user['rights'].bit_length())
+        my_perms = bin(req.state.user['rights'])[2:].rjust(bit_length, '0')
+        target_perms = bin(user.rights)[2:].rjust(bit_length, '0')
+        for i in range(bit_length):
+            if my_perms[i] == '0' and target_perms[i] == '1':
+                raise FORBIDDEN_EXCEPTION
+        with Server.get_parmanent_db() as conn:
+            cur = conn.cursor()
+            User.update_rights(cur, user_id, user.rights)
+            conn.commit()
+            user = User.get_by_id(cur, user_id)
+    return ResponseSingle[UserScheme](
+        success=True,
+        data=UserScheme(**user)
+    )
 #------------------------------------ GET User ------------------------------------
 @user_router.get('/me', response_model=ResponseSingle[UserScheme])
 def get_me(req : Request):
