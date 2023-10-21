@@ -43,7 +43,7 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
     }
     if (action == 'translate') {
         data.title = 'Translate'
-        data.targetURL = `https://${languageCode}.wikipedia.org/w/index.php?title=Special:ContentTranslation&campaign=fnf&from=en&page=${englishTitle}&to=${languageCode}`
+        data.targetURL = `https://${languageCode}.wikipedia.org/w/index.php?title=Special:ContentTranslation&campaign=fnf&from=en&page=${englishTitle}&to=${languageCode}&targettitle=${targetTitle}`
         data.buttonName = 'Translate'
     } else {
         data.title = 'Create'
