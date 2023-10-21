@@ -14,6 +14,8 @@ const AddTask = () => {
     const [availableCountries, setAvailableCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     const [selectedTopic, setSelectedTopic] = useState('folklore');
+    const [countryerror, setCountryError] = useState(false);
+    const [creating, setCreating] = useState(false);
     const categoryListRef = createRef(null);
     useEffect(() => {
         Server.fetchCountries(selectedTopic).then(alreadyAvailableCountries => {
@@ -30,11 +32,23 @@ const AddTask = () => {
         const categoryList = categoryListRef?.current;
         if (!categoryList?.length)
             return;
-        const categories = categoryList.map(category => category.id);
-        Server.createTask(selectedTopic, selectedCountry, categories).then(task => {
-            window.location.replace(`/tuktukbot/task/${task.id}/edit`)
+        if (!selectedCountry) {
+            setCountryError(true);
+            return;
+        } else {
+            setCountryError(false);
+        }
+        setCreating(true);
+        Server.createTopic({
+            country : selectedCountry,
+            title : selectedTopic,
+            categories : categoryList
+        }).then(topic => {
+            console.log(topic);
+        }).finally(() => {
+            setCreating(false);
         })
-    }, []);
+    }, [categoryListRef]);
     return <Card>
         <CardHeader title="Add Topic" action={ <Button variant="contained" color="primary" onClick={createTopic}>Create</Button>} />
         <CardContent>
@@ -42,7 +56,7 @@ const AddTask = () => {
                 <FormControl size="small" sx={{
                     minWidth: 250,
                     m: 1
-                }} >
+                }} disabled={creating} >
                     <InputLabel id="topic">Topic</InputLabel>
                     <Select
                         labelId="topic"
@@ -57,11 +71,12 @@ const AddTask = () => {
                 <FormControl size="small" sx={{
                     minWidth: 250,
                     m: 1
-                }}>
+                }} disabled={creating}>
                     <InputLabel id="country">Country</InputLabel>
                     <Select
                         labelId="country"
                         id="country"
+                        error={countryerror}
                         value={selectedCountry}
                         onChange={e => setSelectedCountry(e.target.value)}
                         label="Country"
@@ -70,7 +85,7 @@ const AddTask = () => {
                     </Select>
                 </FormControl>
             </Box>
-            <CategoryList categoryListRef={categoryListRef} />
+            <CategoryList categoryListRef={categoryListRef} disabled={creating} />
         </CardContent>
     </Card>
 }

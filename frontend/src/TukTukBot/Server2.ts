@@ -15,11 +15,13 @@ type Category = {
 
 type APIResponseSingle<T> = {
     success : true;
-    data : T
+    data : T;
+    detail? : string;
 }
 type APIResponseMultiple<T> = {
     success : true;
-    data : T[]
+    data : T[];
+    detail? : string;
 }
 type User = {
     id : number;
@@ -57,6 +59,17 @@ type CountryEntry = {
     label : string;
     title : string;
 }
+type TopicCreate = {
+    title : string;
+    country : Country;
+    categories : Category[];
+}
+type Topic = {
+    id : string;
+    title : string;
+    country : Country;
+    categories? : Category[];
+}
 const LANGUAGE_KEY = "tk-lang"
 const COUNTRY_KEY = "tk-country"
 class TukTukBot {
@@ -75,7 +88,7 @@ class TukTukBot {
         
     }
     static async addSubCategories(categories: Category[]) {
-        var subcats:Category[] = []
+        var subcats : Category[] = []
         for (let cat of categories) {
             console.info("Adding subcategories for", cat.title)
             const url = new URL("api/subcat/" + cat.title, TukTukBot.baseURL);
@@ -225,6 +238,18 @@ class TukTukBot {
             }
         }
 
+    }
+    static async createTopic(topic : TopicCreate){
+        const url = new URL("api/topic", TukTukBot.baseURL);
+        const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
+            method: "POST",
+            body: JSON.stringify(topic),
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(res => res.json());
+        console.log(response)
+        return response.data;
     }
 }
 export default TukTukBot;
