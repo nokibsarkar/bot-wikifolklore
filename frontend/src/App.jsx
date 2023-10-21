@@ -17,6 +17,7 @@ import {
   Router,
   BrowserRouter
 } from "react-router-dom";
+import theme from './Layout/theme';
 
 const TukTukBot = React.lazy(() => import('./TukTukBot/TukTukBot.jsx'));
 function ToolSelector() {
@@ -127,7 +128,7 @@ function App() {
     open: drawerOpen
   }
   return (
-    <ThemeProvider theme={createTheme()}>
+    <ThemeProvider theme={theme}>
       <BrowserRouter>
         <AppBar {...commonProps} />
         <AppDrawer {...commonProps} components={Tools} />

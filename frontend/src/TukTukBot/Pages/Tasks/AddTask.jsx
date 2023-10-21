@@ -125,6 +125,7 @@ function AddTask() {
                     <Button
                         variant="contained"
                         disabled={disabled}
+                        // color="secondary"
                         onClick={e => setCategoryExpanded(!categoryExpanded)}
                         size="small"
                         sx={{
