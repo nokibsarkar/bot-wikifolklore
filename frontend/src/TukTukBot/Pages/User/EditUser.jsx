@@ -35,6 +35,7 @@ const columns = [
 const EditUser = ({ user : currentUser }) => {
     const [user, setUser] = useState(null);
     const [rights, setRights] = useState(user?.rights || 0);
+    const [refreshKey, setRefreshKey] = useState(0);
     const id = new URLSearchParams(window.location.search).get('id');
     useState(() => {
         if(!id)
@@ -43,10 +44,11 @@ const EditUser = ({ user : currentUser }) => {
             setUser(u);
             setRights(u.rights);
         })
-    }, [id])
+    }, [id, refreshKey])
     const save = useCallback(() => {
-        Server.updateUser({id, rights}).then(() => {
-            window.location.reload();
+        Server.updateUser({id, rights}).then((user) => {
+            setUser(user);
+            setRights(user.rights);
         })
     }, [id, rights])
     if(!user)
