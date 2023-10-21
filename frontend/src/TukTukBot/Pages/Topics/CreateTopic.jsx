@@ -44,7 +44,7 @@ const AddTask = () => {
             title : selectedTopic,
             categories : categoryList
         }).then(topic => {
-            console.log(topic);
+            window.location.href = `/tuktukbot/topic/${topic.id}`;
         }).finally(() => {
             setCreating(false);
         })
