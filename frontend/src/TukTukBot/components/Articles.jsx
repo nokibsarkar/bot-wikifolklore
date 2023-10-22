@@ -87,8 +87,7 @@ const COLUMNS = [
     { field: 'target', headerName: 'Target', flex: 1, minWidth: 300 },
    
 ]
-const TabledArticles = ({ data, targetLanguage }) => {
-
+const TabledArticles = ({ data, targetLanguage, taskID }) => {
     const [popupAction, setPopupAction] = React.useState(null);
     const [popupOpen, setPopupOpen] = React.useState(false);
     const [popupEnglishTitle, setPopupEnglishTitle] = React.useState('');
@@ -106,13 +105,6 @@ const TabledArticles = ({ data, targetLanguage }) => {
         target: article?.target,
         action: (
             <>
-                {/* <TranslateIcon sx={{pointer : 'cursor'}} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary"  size="small" /> */}
-                {/* <button style={{ cursor: 'pointer' }} type='button' data-action="translate" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary" size="small">
-                    文A
-                </button>
-                <button style={{ cursor: 'pointer', marginLeft: '5px' }} type='button' data-action="create" data-src={article?.title} data-target={article?.target} onClick={executeAction} variant="contained" color="primary" size="small">
-                    &#43;
-                </button> */}
                 <Button variant="contained" color="primary" size="small" data-action="create" data-src={article?.title} data-target={article?.target} onClick={executeAction}>
                     <AddIcon />
                 </Button>
@@ -121,7 +113,7 @@ const TabledArticles = ({ data, targetLanguage }) => {
                 </Button>
             </>
         )
-    })), [data]);
+    })), [data, taskID]);
     return (
         <>
             <Popup
@@ -194,6 +186,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
             setGenerating(true);
             setDisabled(true);
             setStatusCheckerTimer(setTimeout(checkTaskStatus, 1000))
+            setData([]);
         }
         setArticleCount(task.article_count);
         setProcessedCategory(task.last_category);
@@ -282,7 +275,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
                     <Collapse in={showWikiText}>
                         <WikiTextArticles data={wikitext} />
                     </Collapse>
-                    {data?.length > 0 && <TabledArticles data={data} targetLanguage={targetLanguage} />}
+                    {data && <TabledArticles data={data} targetLanguage={targetLanguage} taskID={taskID} />}
                 </>
             )}
         </CardContent>
