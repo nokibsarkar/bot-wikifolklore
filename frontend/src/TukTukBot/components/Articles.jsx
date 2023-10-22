@@ -20,7 +20,6 @@ import CardContent from '@mui/material/CardContent';
 import Collapse from "@mui/material/Collapse"
 import TranslateIcon from '@mui/icons-material/Translate';
 import Server from "../Server.ts";
-// import TranslationIcon from '@mui/icons-material/Translation';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -82,10 +81,11 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
 }
 const COLUMNS = [
     { field: 'id', headerName: 'ID', maxWidth: 70, flex: 1, hideable: false },
+    { field: 'action', headerName: 'Action', flex: 1, minWidth: 150, hideable: false, renderCell: (params) => params.value },
     { field: 'title', headerName: 'Title', flex: 1, hideable: false, minWidth: 300 },
     // { field: 'wikidata', headerName: 'Wikidata', width : 120},
     { field: 'target', headerName: 'Target', flex: 1, minWidth: 300 },
-    { field: 'action', headerName: 'Action', flex: 1, minWidth: 150, hideable: false, renderCell: (params) => params.value }
+   
 ]
 const TabledArticles = ({ data, targetLanguage }) => {
 
