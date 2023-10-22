@@ -55,7 +55,7 @@ const EditTopic = () => {
         const deleted = await Server.deleteTopic(topicID);
         if(!deleted)
             return;
-        window.location.href = "/tuktukbot/topics";
+        window.location.href = "/tuktukbot/topic";
     }, [topicID]);
     return <Card>
         <CardHeader title="Edit Topic" action={<Button variant="contained" color="error" onClick={deleteTopic} disabled={saving}><DeleteIcon /> Delete</Button>} />
