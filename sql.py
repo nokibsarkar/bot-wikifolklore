@@ -186,3 +186,13 @@ FROM
     `user`
 """
 SQL2_DELETE_UNUSED_ARTICLES = "DELETE FROM `article` WHERE `created_at` < ?"
+SQL2_GET_MISSING_TRANSLATION = """
+SELECT
+    `article`.`id` AS `id`,
+    `article`.`title` AS `title`,
+    `article`.`target` AS `target`
+FROM
+    `article`
+WHERE
+    `task_id` = :task_id
+"""

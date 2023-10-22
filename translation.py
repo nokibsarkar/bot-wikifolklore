@@ -25,6 +25,7 @@ def _translate_azure(texts, target):
             'X-ClientTraceId': str(uuid.uuid4())
         }
         results = []
+        done = []
         while len(texts):
             data = []
             char_count = 0
@@ -38,14 +39,14 @@ def _translate_azure(texts, target):
                 char_count += len(text)
                 data.append({'Text': text})
             res = sess.post(f"{AZURE_ENDPOINT}/translate", json=data)
-            if res.status_code != 403:
-                return [], texts
+            if res.status_code != 200:
+                return {}, texts
+            print("Cost", res.headers['X-metered-usage'])
             res = res.json()
             results.extend([x['translations'][0]['text'] for x in res])
+            done.extend(texts[:element_count])
             texts = texts[element_count:]
-            
-
-        return results, texts
+        return dict(zip(done, results)), texts
 
 def _translate_google(texts, target):
     """
@@ -58,6 +59,12 @@ def _translate_yandex(texts, target):
     This function would take a list of texts and translate them to target language.
     It would return a list of translated texts and the remaining texts that could not be translated.
     """
+def _translate_aws(texts, target):
+    """
+    This function would take a list of texts and translate them to target language.
+    It would return a list of translated texts and the remaining texts that could not be translated.
+    """
+    pass
 def translate(texts, target):
     """
     This function would take a list of texts and translate them to target language.
@@ -66,4 +73,4 @@ def translate(texts, target):
     return _translate_azure(texts, target)
 
 if __name__ == "__main__":
-    print(translate(["Hello World", "weight"], "bn"))
+    print(translate(["I would really like to drive your car around the block a few times!", "weight"], "ru"))
