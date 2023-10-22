@@ -3,7 +3,7 @@ import React, { lazy } from "react"
 import AddTask from "./Pages/Tasks/AddTask.jsx";
 import ListTask from "./Pages/Tasks/ListTask.jsx"
 import Setting from "./Pages/Settings.jsx";
-
+import DashBoard from "./Dashboard.jsx";
 import Server from "./Server.ts"
 const AddTopic = lazy(() => import('./Pages/Topics/CreateTopic.jsx'))
 const EditTopic = lazy(() => import('./Pages/Topics/EditTopic.jsx'))
@@ -13,11 +13,6 @@ const ListUser = lazy(() => import('./Pages/User/ListUser.jsx'));
 const EditUser = lazy(() => import('./Pages/User/EditUser.jsx'));
 Server.init()
 const TukTukBot = ({ user }) => {
-    const DashBoard = (
-        Server.hasAccess(user.rights, Server.RIGHTS.TOPIC) && ListTopic
-        || Server.hasAccess(user.rights, Server.RIGHTS.TASK) && ListTask
-        || Setting
-    )
     const TopicRoutes = (
         <Route path='topic/*'>
             <Route path="create" element={<AddTopic />} />
@@ -40,7 +35,7 @@ const TukTukBot = ({ user }) => {
                 <Route path="*" element={<ListTask />} />
             </Route>
             <Route path="setting" element={<Setting />} />
-            <Route path="*" element={<DashBoard />} />
+            <Route path="*" element={<DashBoard user={user} />} />
         </Routes>
     )
 }
