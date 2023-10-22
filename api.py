@@ -30,6 +30,34 @@ def get_users(req : Request):
         success=True,
         data=[UserScheme(**user) for user in users]
     )
+#------------------------------------ GET User ------------------------------------
+@user_router.get('/me', response_model=ResponseSingle[UserScheme])
+def get_me(req : Request):
+    user_id = req.state.user['id']
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        user = User.get_by_id(cur, user_id)
+        if user is None:
+            raise BAD_REQUEST_EXCEPTION("User not found")
+    return ResponseSingle[UserScheme](
+        success=True,
+        data=UserScheme(**user)
+    )
+@user_router.post('/me', response_model=ResponseSingle[UserScheme])
+def update_me(req : Request, user : UserUpdate = Body(...)):
+    user_id = req.state.user['id']
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        if user.username:
+            user.username = "USERNAME HIDDEN"
+            User.update_username(cur, user_id, user.username)
+        conn.commit()
+        user = User.get_by_id(cur, user_id)
+    return ResponseSingle[UserScheme](
+        success=True,
+        data=UserScheme(**user)
+    )
+
 @user_router.get('/{user_id}', response_model=ResponseSingle[UserScheme])
 def get_user(user_id : int, req : Request):
     if User.has_access(req.state.user['rights'], User.RIGHTS['grant']) == False:
@@ -59,33 +87,6 @@ def update_user(user_id : int, req : Request, user : UserUpdate = Body(...)):
             User.update_rights(cur, user_id, user.rights)
             conn.commit()
             user = User.get_by_id(cur, user_id)
-    return ResponseSingle[UserScheme](
-        success=True,
-        data=UserScheme(**user)
-    )
-#------------------------------------ GET User ------------------------------------
-@user_router.get('/me', response_model=ResponseSingle[UserScheme])
-def get_me(req : Request):
-    user_id = req.state.user['id']
-    with Server.get_parmanent_db() as conn:
-        cur = conn.cursor()
-        user = User.get_by_id(cur, user_id)
-        if user is None:
-            raise BAD_REQUEST_EXCEPTION("User not found")
-    return ResponseSingle[UserScheme](
-        success=True,
-        data=UserScheme(**user)
-    )
-@user_router.post('/me', response_model=ResponseSingle[UserScheme])
-def update_me(req : Request, user : UserUpdate = Body(...)):
-    user_id = req.state.user['id']
-    with Server.get_parmanent_db() as conn:
-        cur = conn.cursor()
-        if user.username:
-            user.username = "USERNAME HIDDEN"
-            User.update_username(cur, user_id, user.username)
-        conn.commit()
-        user = User.get_by_id(cur, user_id)
     return ResponseSingle[UserScheme](
         success=True,
         data=UserScheme(**user)

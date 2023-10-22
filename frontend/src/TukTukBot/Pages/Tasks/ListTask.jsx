@@ -138,7 +138,7 @@ const TaskList = () => {
 const ListTask = () => {
     const NewTaskButton = () => (
         <Link to="create">
-           <Button variant="contained" color="success"><AddIcon /> New</Button>
+           <Button variant="contained" color="success"><AddIcon /> New List</Button>
         </Link>
     )
     return (
