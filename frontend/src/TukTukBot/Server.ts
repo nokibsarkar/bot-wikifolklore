@@ -254,7 +254,7 @@ class TukTukBot {
 
     }
     static async createTopic(topic : TopicCreate){
-        const url = new URL("api/topic", TukTukBot.baseURL);
+        const url = new URL("api/topic/", TukTukBot.baseURL);
         const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
             method: "POST",
             body: JSON.stringify(topic),
