@@ -71,7 +71,7 @@ const EditUser = ({ user : currentUser }) => {
                     <List>
                         <ListItem>
                             <ListItemText primary="Task Rights" />
-                            <CheckBox sx={{cursor : 'pointer'}} checked={Server.hasAccess(rights, Server.RIGHTS.TASK)} onClick={() => setRights(Server.toggleAccess(rights, Server.RIGHTS.TASK))} />
+                            <CheckBox sx={{cursor : 'pointer'}} disabled checked={Server.hasAccess(rights, Server.RIGHTS.TASK)} onClick={() => setRights(Server.toggleAccess(rights, Server.RIGHTS.TASK))} />
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Topic Rights" />
