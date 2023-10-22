@@ -36,11 +36,11 @@ def _export_to_wikitext(res):
     content = """
 {| class="wikitable sortable"
 |-
-! Serial No. !! English Title !! Wikidata !! Hindi Title !! Category 
+! Serial No. !! English Title !! Wikidata !! Target Title !! Category 
 |-
 """
     for row in res:
-        content += f"\n|{serial} || [[:en:{row['title']}|]] || [[:wd:{row['wikidata']}|]] || [[:hi:{row['target']}|]] || [[:en:{row['category']}|]]\n|-"
+        content += f"\n|{serial} || [[:en:{row['title']}|]] || [[:wd:{row['wikidata']}|]] || [[:{row['target_lang']}:{row['target']}|]] || [[:en:{row['category']}|]]\n|-"
         serial += 1
     content += "\n|}"
     return content
@@ -54,7 +54,7 @@ def export_to_csv(res):
     result = io.StringIO()
     writer = csv.writer(result, quoting=csv.QUOTE_MINIMAL)
     writer.writerow(headers)
-    for pageid, task_id, title, target, wikidata, category, created_at in res:
+    for pageid, task_id, title, target, wikidata, category, created_at, target_lang in res:
         writer.writerow([serial, pageid, title, target, wikidata, category])
         serial += 1
     result.seek(0)
@@ -69,7 +69,7 @@ def get_task_result(task_id, format : TaskResultFormat =TaskResultFormat.json) -
         res = Article.get_all_by_task_id(cur, task_id)
     if format == TaskResultFormat.json:
         result = []
-        for pageid, task_id, title, target, wikidata, category, created_at in res:
+        for pageid, task_id, title, target, wikidata, category, created_at, target_lang in res:
             result.append({
                 "pageid": pageid,
                 "task_id": task_id,
@@ -77,7 +77,8 @@ def get_task_result(task_id, format : TaskResultFormat =TaskResultFormat.json) -
                 "target": target,
                 "wikidata": wikidata,
                 "category": category,
-                "created_at": created_at
+                "created_at": created_at,
+                "target_lang" : target_lang
             })
         return result
     elif format == TaskResultFormat.csv:
@@ -89,7 +90,7 @@ def get_task_result(task_id, format : TaskResultFormat =TaskResultFormat.json) -
 #---------------------------- Task Related Functions ----------------------------
 
 
-def _extract_page(task_id, category, pages, added):
+def _extract_page(task_id, category, pages, added, target_lang : str):
     logger.debug("Extracting Pages from the result set")
     for page in pages:
         if page['pageid'] in added:
@@ -111,6 +112,7 @@ def _extract_page(task_id, category, pages, added):
                     "target": page['title'],
                     "wikidata": wbentity,
                     "category": category,
+                    'target_lang' : target_lang
                     
             }
     logger.debug("Pages Extracted")
@@ -159,7 +161,7 @@ def execute_task(task_id, cats, target_wiki : Language):
                         # result_list.extend()
                         with Server.get_parmanent_db() as conn, Server.get_temporary_db() as conn2:
                             new_added = Article.create(conn2, 
-                                _extract_page(task_id, category, res["query"].get('pages', []), added)
+                                _extract_page(task_id, category, res["query"].get('pages', []), added, target_lang)
                             )
                             Task.update_article_count(
                                 conn,

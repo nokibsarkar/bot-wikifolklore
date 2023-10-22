@@ -308,11 +308,11 @@ class Article:
 
     @staticmethod
     def create(conn : sqlite3.Cursor, articles) -> int:
-        cur = conn.executemany(SQL1_INSERT_ARTICLE, articles)
+        cur = conn.executemany(SQL2_INSERT_ARTICLE, articles)
         return cur.rowcount
     @staticmethod
     def get_all_by_task_id(conn : sqlite3.Cursor, task_id):
-        return conn.execute(SQL1_GET_ARTICLES_BY_TASK_ID, {'task_id': task_id}).fetchall()
+        return conn.execute(SQL2_GET_ARTICLES_BY_TASK_ID, {'task_id': task_id}).fetchall()
     
 class Category:
     @staticmethod

@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS `article` (
     `wikidata`	TEXT NULL DEFAULT NULL,
     `category`	TEXT NOT NULL,
     `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `target_lang` TEXT NULL DEFAULT NULL,
     PRIMARY KEY(`id`,`task_id`)
 );
 """
@@ -80,15 +81,15 @@ SQL1_GET_TASK = "SELECT * FROM `task` WHERE `id` = :task_id"
 SQL1_GET_TASKS = "SELECT * FROM `task`"
 SQL1_GET_TASKS_BY_STATUS = "SELECT * FROM `task` WHERE `status` = :status"
 
-SQL1_GET_ARTICLES_BY_TASK_ID = "SELECT * FROM `article` WHERE `task_id` = :task_id ORDER BY `title` ASC"
-SQL1_INSERT_ARTICLE = """
+SQL2_GET_ARTICLES_BY_TASK_ID = "SELECT * FROM `article` WHERE `task_id` = :task_id ORDER BY `title` ASC"
+SQL2_INSERT_ARTICLE = """
 INSERT INTO
-    `article` (`id`, `task_id`, `title`, target, wikidata, category)
+    `article` (`id`, `task_id`, `title`, target, wikidata, category, `target_lang`)
 VALUES
-    (:id, :task_id, :title, :target, :wikidata, :category)
+    (:id, :task_id, :title, :target, :wikidata, :category, :target_lang)
     ON CONFLICT DO NOTHING;
 """
-SQL1_GET_ARTICLE_BY_PAGE_ID_AND_TASK_ID = """
+SQL2_GET_ARTICLE_BY_PAGE_ID_AND_TASK_ID = """
 SELECT * FROM `article` WHERE `id` = :id AND `task_id` = :task_id;
 """
 
