@@ -145,7 +145,14 @@ ON
 WHERE
     `topic_category`.`topic_id` = :topic_id;
 """
-
+SQL1_GET_CATEGORY_REL_BY_TOPIC_ID = """
+SELECT
+    `category_id` AS `id`
+FROM
+    `topic_category`
+WHERE
+    `topic_category`.`topic_id` = :topic_id;
+"""
 SQL1_INSERT_USER = "INSERT INTO `user` (`id`, `username`,`rights`) VALUES (:id, :username, :rights)"
 SQL1_GET_STATISTICS_FROM_USER="""
 SELECT

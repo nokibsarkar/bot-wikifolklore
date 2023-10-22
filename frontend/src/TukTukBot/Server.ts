@@ -73,10 +73,20 @@ type Topic = {
 }
 const LANGUAGE_KEY = "tk-lang"
 const COUNTRY_KEY = "tk-country"
+type Permission = number;
+const PERMISSIONS : {[key : string] : Permission} = {
+    TASK : 1 << 0,
+    STATS : 1 << 1,
+    CATEGORY : 1 << 2,
+    TOPIC : 1 << 3,
+    GRANT : 1 << 4,
+    REVOKE : 1 << 5,
+};
 class TukTukBot {
     static baseURL = new URL(window.location.origin);
     static languages : Object | null = null;
     static countries : Object | null= null;
+    static RIGHTS = PERMISSIONS;
     static async init(){
         if(!TukTukBot.languages || !TukTukBot.countries){
             if(!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY)){
@@ -87,6 +97,9 @@ class TukTukBot {
             TukTukBot.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
         }
         
+    }
+    static hasAccess(rights : Permission, permission : Permission){
+        return (rights & permission) == permission;
     }
     static async addSubCategories(categories: Category[]) {
         var subcats : Category[] = []
@@ -276,6 +289,37 @@ class TukTukBot {
             headers: {
                 "Content-Type": "application/json"
             },
+        }).then(res => res.json());
+        return response.data;
+    }
+    static async getUsers(){
+        const url = new URL("api/user/", TukTukBot.baseURL);
+        const response : APIResponseMultiple<User> = await fetch(url.toString()).then(res => res.json());
+        return response.data;
+    }
+    static toggleAccess(rights : number, permission : number){
+        return rights & permission ? rights & ~permission : rights | permission;
+    }
+    static async getUser(id : number){
+        const url = new URL("api/user/" + id, TukTukBot.baseURL);
+        const response : APIResponseSingle<User> = await fetch(url.toString()).then(res => res.json());
+        return response.data;
+    }
+    static async updateUser({id, username, rights} : User){
+        const url = new URL("api/user/" + id, TukTukBot.baseURL);
+        const response : APIResponseSingle<User> = await fetch(url.toString(), {
+            method: "POST",
+            body: JSON.stringify({username, rights}),
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(res => res.json());
+        return response.data;
+    }
+    static async deleteTopic(id : string){
+        const url = new URL("api/topic/" + id, TukTukBot.baseURL);
+        const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
+            method: "DELETE",
         }).then(res => res.json());
         return response.data;
     }

@@ -4,6 +4,7 @@ import React from "react";
 import Paper from "@mui/material/Paper";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import SettingIcon from '@mui/icons-material/Settings';
 import AppBar from './Layout/AppBar.jsx';
 import Loading from './Layout/LoadingPage.jsx';
 import AppDrawer from './Layout/AppDrawer';
@@ -64,6 +65,23 @@ const Tools = [
         ]
       },
       {
+        name : 'Users',
+        icon : null,
+        path : '/tuktukbot/user',
+        children : [
+          {
+            name : 'Edit',
+            icon : null,
+            path : '/tuktukbot/user/:id/edit'
+          },
+          {
+            name : 'List',
+            icon : null,
+            path : '/tuktukbot/user'
+          }
+        ]
+      },
+      {
         name : 'Tasks',
         icon : null,
         path : '/tuktukbot/task',
@@ -92,7 +110,7 @@ const Tools = [
       },
       {
         name : 'Settings',
-        icon : null,
+        icon : <SettingIcon />,
         path : '/tuktukbot/setting'
       }
     ]
@@ -126,7 +144,7 @@ function App() {
         <AppDrawer {...commonProps} components={Tools} />
         <React.Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/tuktukbot/*" element={<TukTukBot />} />
+            <Route path="/tuktukbot/*" element={<TukTukBot {...commonProps} />} />
           </Routes>
         </React.Suspense>
       </BrowserRouter>

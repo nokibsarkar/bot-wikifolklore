@@ -200,7 +200,6 @@ class User:
     @staticmethod
     def update_rights(conn : sqlite3.Cursor, id, rights : int):
         conn.execute("UPDATE `user` SET `rights` = ? WHERE `id` = ?", (rights, id))
-        conn.commit()
     @staticmethod
     def update_username(conn : sqlite3.Cursor, id, username):
         return conn.execute("UPDATE `user` SET `username` = ? WHERE `id` = ?", (username, id))
@@ -219,7 +218,9 @@ class User:
             'id': user_id
         }
         cur = cur.execute("UPDATE `user` SET `category_count` = `category_count` + :category_added, `task_count` = `task_count` + :task_added, `article_count` = `article_count` + :article_added WHERE `id` = :id;", added)
-        
+    @staticmethod
+    def get_all(conn : sqlite3.Cursor):
+        return conn.execute(SQL1_GET_USER_SUMMARY).fetchall()
 class Task:
     STATUS = {
         'pending': 'pending',
@@ -332,6 +333,9 @@ class Category:
     def get_by_topic_id(conn : sqlite3.Cursor, topic_id : str):
         return conn.execute(SQL1_GET_CATEGORY_BY_TOPIC_ID, {'topic_id': topic_id}).fetchall()
     @staticmethod
+    def get_rel_by_topic_id(conn : sqlite3.Cursor, topic_id : str):
+        return conn.execute(SQL1_GET_CATEGORY_REL_BY_TOPIC_ID, {'topic_id': topic_id}).fetchall()
+    @staticmethod
     def normalize_name(cat : str) -> str:
         if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
             cat = cat[9:]
@@ -373,6 +377,23 @@ class Topic:
             map(lambda x: {'topic_id': topic_id, 'category_id': x['id']}, categories)
         )
         return cur.rowcount
+    @staticmethod
+    def delete(conn : sqlite3.Cursor, topic_id : str):
+        categories = Category.get_rel_by_topic_id(conn, topic_id)
+        cat_ids = set(map(lambda x: str(x['id']), categories))
+        primary_ids = ",".join(cat_ids)
+        SQL1_GET_DUAL_CAT = f"SELECT * FROM `topic_category` WHERE `category_id` IN ({primary_ids}) AND NOT `topic_id` = :topic_id "
+        shared = conn.execute(SQL1_GET_DUAL_CAT, {'cat_ids': primary_ids, 'topic_id': topic_id}).fetchall()
+        shared = set(map(lambda x: str(x['category_id']), shared))
+        removable = cat_ids - shared
+        removable = ",".join(removable)
+        conn.execute("BEGIN TRANSACTION;")
+        conn.execute(f"DELETE FROM `topic_category` WHERE `topic_id` = :topic_id;", {'topic_id': topic_id})
+        conn.execute(f"DELETE FROM `category` WHERE `id` IN ({removable});")
+        conn.execute("DELETE FROM `topic` WHERE `id` = :topic_id;", {'topic_id': topic_id})
+        conn.execute("COMMIT;")
+    
+
     @staticmethod
     def update_categories(conn : sqlite3.Cursor, topic_id : str, categories : list[CategoryScheme]):
         previous_categories = Category.get_by_topic_id(conn, topic_id)
