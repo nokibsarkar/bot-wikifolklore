@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.073c9b0a.css",
-    "main.js": "/static/js/main.fb6447c0.js",
-    "static/js/778.9adc6f26.chunk.js": "/static/js/778.9adc6f26.chunk.js",
+    "main.js": "/static/js/main.ebc3d880.js",
+    "static/js/778.055b0eb0.chunk.js": "/static/js/778.055b0eb0.chunk.js",
     "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
     "static/js/490.92bb933a.chunk.js": "/static/js/490.92bb933a.chunk.js",
     "static/js/477.f0d01bac.chunk.js": "/static/js/477.f0d01bac.chunk.js",
@@ -14,8 +14,8 @@
     "static/media/Wiki_Loves_Folklore_Logo.svg.png": "/static/media/Wiki_Loves_Folklore_Logo.svg.b5b1224b7d68fc0c465b.png",
     "index.html": "/index.html",
     "main.073c9b0a.css.map": "/static/css/main.073c9b0a.css.map",
-    "main.fb6447c0.js.map": "/static/js/main.fb6447c0.js.map",
-    "778.9adc6f26.chunk.js.map": "/static/js/778.9adc6f26.chunk.js.map",
+    "main.ebc3d880.js.map": "/static/js/main.ebc3d880.js.map",
+    "778.055b0eb0.chunk.js.map": "/static/js/778.055b0eb0.chunk.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map",
     "490.92bb933a.chunk.js.map": "/static/js/490.92bb933a.chunk.js.map",
     "477.f0d01bac.chunk.js.map": "/static/js/477.f0d01bac.chunk.js.map",
@@ -27,6 +27,6 @@
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.fb6447c0.js"
+    "static/js/main.ebc3d880.js"
   ]
 }
