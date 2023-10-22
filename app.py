@@ -41,7 +41,18 @@ async def home(request : Request):
         'user' : user,
         'stats' : stats
     })
-
+@app.get('/terms', response_class=responses.HTMLResponse)
+def terms(request : Request):
+    # user = User.logged_in_user(request.cookies)
+    return app.templates.TemplateResponse("terms.html", context= {
+        'request' : request,
+    })
+@app.get('/privacy', response_class=responses.HTMLResponse)
+def privacy(request : Request):
+    # user = User.logged_in_user(request.cookies)
+    return app.templates.TemplateResponse("privacy.html", context= {
+        'request' : request,
+    })
 def redirect_to(url, cookies : dict = {}):
     response = responses.RedirectResponse(
         url,
