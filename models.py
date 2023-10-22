@@ -278,12 +278,10 @@ class Task:
             sql += " AND " + " AND ".join(filters)
         sql += " ORDER BY `id` DESC"
         sql += " LIMIT :limit"
-        print(sql)
         return conn.execute(sql, filter_values).fetchall()
     @staticmethod
     def update_status(conn : sqlite3.Cursor, id, status : TaskStatus):
         conn.execute("UPDATE `task` SET `status` = ? WHERE `id` = ?", (status.value, id))
-        conn.commit()
     @staticmethod
     def update_article_count(conn : sqlite3.Cursor, id, new_added : int, category_done : int, last_category : str):
         conn.execute(SQL1_TASK_UPDATE_ARTICLE_COUNT, {
@@ -292,7 +290,6 @@ class Task:
             'category_done': category_done,
             'last_category': last_category
         })
-        conn.commit()
 
 class Article:
     @staticmethod
@@ -312,7 +309,6 @@ class Article:
     @staticmethod
     def create(conn : sqlite3.Cursor, articles) -> int:
         cur = conn.executemany(SQL1_INSERT_ARTICLE, articles)
-        conn.commit()
         return cur.rowcount
     @staticmethod
     def get_all_by_task_id(conn : sqlite3.Cursor, task_id):
