@@ -9,6 +9,7 @@ import AppBar from './Layout/AppBar.jsx';
 import Loading from './Layout/LoadingPage.jsx';
 import AppDrawer from './Layout/AppDrawer';
 import { checkToken, AUTH_COOKIE_NAME } from './utils';
+import Server from './TukTukBot/Server.ts';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -31,90 +32,84 @@ function ToolSelector() {
       return ['TukTukBot', () => <TukTukBot /> || <div>Unknown tool: {tool}</div>];
   }
 }
+const TukTukBotTopicRoutes = {
+  name: 'Topics',
+  icon: null,
+  path: '/tuktukbot/topic',
+  children: [
+    {
+      name: 'Create',
+      icon: null,
+      path: '/tuktukbot/topic/create'
+    },
+    {
+      name: 'Edit',
+      icon: null,
+      path: '/tuktukbot/topic/:id/edit'
+    },
+    {
+      name: 'View',
+      icon: null,
+      path: '/tuktukbot/topic/:id'
+    },
+    {
+      name: 'List',
+      icon: null,
+      path: '/tuktukbot/topic'
+    }
+  ]
+};
+const TukTukBotUserRoutes = {
+  name: 'Users',
+  icon: null,
+  path: '/tuktukbot/user',
+  children: [
+    {
+      name: 'Edit',
+      icon: null,
+      path: '/tuktukbot/user/:id/edit'
+    },
+    {
+      name: 'List',
+      icon: null,
+      path: '/tuktukbot/user'
+    }
+  ]
+};
+const TukTukBotSettingRoutes = {
+  name: 'Settings',
+  icon: <SettingIcon />,
+  path: '/tuktukbot/setting'
+};
+const TukTukBotTaskRoutes = {
+  name: 'Tasks',
+  icon: null,
+  path: '/tuktukbot/task',
+  children: [
+    {
+      name: 'Create',
+      icon: null,
+      path: '/tuktukbot/task/create'
+    },
+    {
+      name: 'Edit',
+      icon: null,
+      path: '/tuktukbot/task/:id/edit'
+    },
+    {
+      name: 'View',
+      icon: null,
+      path: '/tuktukbot/task/:id'
+    },
+    {
+      name: 'List',
+      icon: null,
+      path: '/tuktukbot/task'
+    }
+  ]
+};
 const Tools = [
-  {
-    name : 'TukTukBot',
-    icon : null,
-    path : '/tuktukbot',
-    children : [
-      {
-        name : 'Topics',
-        icon : null,
-        path : '/tuktukbot/topic',
-        children : [
-          {
-            name : 'Create',
-            icon : null,
-            path : '/tuktukbot/topic/create'
-          },
-          {
-            name : 'Edit',
-            icon : null,
-            path : '/tuktukbot/topic/:id/edit'
-          },
-          {
-            name : 'View',
-            icon : null,
-            path : '/tuktukbot/topic/:id'
-          },
-          {
-            name : 'List',
-            icon : null,
-            path : '/tuktukbot/topic'
-          }
-        ]
-      },
-      {
-        name : 'Users',
-        icon : null,
-        path : '/tuktukbot/user',
-        children : [
-          {
-            name : 'Edit',
-            icon : null,
-            path : '/tuktukbot/user/:id/edit'
-          },
-          {
-            name : 'List',
-            icon : null,
-            path : '/tuktukbot/user'
-          }
-        ]
-      },
-      {
-        name : 'Tasks',
-        icon : null,
-        path : '/tuktukbot/task',
-        children : [
-          {
-            name : 'Create',
-            icon : null,
-            path : '/tuktukbot/task/create'
-          },
-          {
-            name : 'Edit',
-            icon : null,
-            path : '/tuktukbot/task/:id/edit'
-          },
-          {
-            name : 'View',
-            icon : null,
-            path : '/tuktukbot/task/:id'
-          },
-          {
-            name : 'List',
-            icon : null,
-            path : '/tuktukbot/task'
-          }
-        ]
-      },
-      {
-        name : 'Settings',
-        icon : <SettingIcon />,
-        path : '/tuktukbot/setting'
-      }
-    ]
-  }
+
 ]
 function App() {
   const [user, setUser] = React.useState(null);
@@ -125,6 +120,21 @@ function App() {
       const token = authCookie.split('=')[1];
       const decoded = checkToken(token);
       setUser(decoded);
+      const TukTukBotRoutes = {
+        name: 'TukTukBot',
+        icon: null,
+        path: '/tuktukbot',
+        children: [
+        ]
+      }
+      if (Server.hasAccess(decoded.rights, Server.RIGHTS.TASK))
+        TukTukBotRoutes.children.push(TukTukBotTaskRoutes);
+      if (Server.hasAccess(decoded.rights, Server.RIGHTS.TOPIC))
+        TukTukBotRoutes.children.push(TukTukBotTopicRoutes);
+      if (Server.hasAccess(decoded.rights, Server.RIGHTS.GRANT))
+        TukTukBotRoutes.children.push(TukTukBotUserRoutes);
+      TukTukBotRoutes.children.push(TukTukBotSettingRoutes);
+      Tools[0] = TukTukBotRoutes;
     } else {
       console.log("Please login to continue")
     }

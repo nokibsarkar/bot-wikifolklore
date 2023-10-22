@@ -19,19 +19,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CheckBox from '@mui/material/Checkbox';
-import Chip from '@mui/material/Chip';
-import { DataGrid } from '@mui/x-data-grid';
-import { Link } from 'react-router-dom';
+
 import { Typography } from '@mui/material';
-const columns = [
-    { field: 'id', headerName: 'ID', minWidth: 100, flex: 1 },
-    { field: 'username', headerName: 'Username', flex: 1, minWidth: 300 },
-    { field: 'rights', headerName: 'Rights', width: 130, renderCell: (params) => params.value },
-    { field: 'action', headerName: 'Action', width: 130, renderCell: (params) => params.value },
-    { field: 'task_count', headerName: 'Task Count', minWidth: 130, flex: 1 },
-    { field: 'article_count', headerName: 'Article Count', minWidth: 130, flex: 1 },
-    { field: 'category_count', headerName: 'Category Count', minWidth: 130, flex: 1 },
-];
+
 const EditUser = ({ user : currentUser }) => {
     const [user, setUser] = useState(null);
     const [rights, setRights] = useState(user?.rights || 0);
@@ -71,7 +61,7 @@ const EditUser = ({ user : currentUser }) => {
                     <List>
                         <ListItem>
                             <ListItemText primary="Task Rights" />
-                            <CheckBox sx={{cursor : 'pointer'}} checked={Server.hasAccess(rights, Server.RIGHTS.TASK)} onClick={() => setRights(Server.toggleAccess(rights, Server.RIGHTS.TASK))} />
+                            <CheckBox sx={{cursor : 'pointer'}} disabled checked={Server.hasAccess(rights, Server.RIGHTS.TASK)} /* onClick={() => setRights(Server.toggleAccess(rights, Server.RIGHTS.TASK))}*/ />
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Topic Rights" />
