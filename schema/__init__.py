@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Generic, TypeVar, List, Type, Union, Optional
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timedelta
 from ._countries import Country
 from ._wiki import Language
 class TaskResultFormat(Enum):
