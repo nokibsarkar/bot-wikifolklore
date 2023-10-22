@@ -1,10 +1,10 @@
 from requests import Session
-import uuid
+import uuid, os
 AZURE_QUOTA_CHAR = 1000000
 AZURE_QUOTA_ELEMENT = 1000
 AZURE_ENDPOINT = "https://api-apc.cognitive.microsofttranslator.com"
 AZURE_REGION = "japanwest"
-AZURE_KEY="81cdd5ee33aa4147881ff1fa1ed375fd"
+AZURE_KEY=  os.environ['AZURE_KEY']
 
 
 def _translate_azure(texts, target):

@@ -1,6 +1,7 @@
 from requests import Session
 import time, csv, io, os, logging
 from models import *
+from translation import translate
 #---------------------------- Load the constants ----------------------------
 # Assuming .env is loaded already
 BOT_AUTH_TOKEN = os.getenv("BOT_AUTH_TOKEN") # The credentails to request to the API
@@ -184,13 +185,45 @@ def execute_task(task_id, cats, target_wiki : Language):
             # Article
             Task.update_status(conn, id=task_id, status=TaskStatus.done)
             User.update_stats(conn, task_id)
+            
             conn.commit()
+        translateable = {}
+        with Server.get_temporary_db() as conn:
+            cur = conn.cursor()
+            tr = Article.get_all_by_task_id(cur, task_id)
+            translateable = {x['title'] : x['id'] for x in tr}
+        translate_titles(translateable, target_wiki)
     except Exception as e:
         logging.error(f"Task Failed {task_id}")
         logging.exception(e)
         with Server.get_parmanent_db() as conn:
             Task.update_status(conn, id=task_id, status=TaskStatus.failed)
             logging.info("Task Failed saved to DB")
+def translate_titles(sources, target_wiki : Language):
+    target_lang = target_wiki.value
+    try:
+        logger.info(f"Translating {len(sources)} titles to {target_lang}")
+        assert type(sources) == dict, "Sources must be a dictionary of title and pageid"
+        texts = list(sources.keys())
+        translated_texts, remaining = translate(texts, target_lang)
+        logger.debug(f"Translated {len(translated_texts)} titles")
+        update_vector = []
+        for en_title in translated_texts:
+            translated_title = translated_texts[en_title]
+            pageid = sources[en_title]
+            update_vector.append({
+                "id": pageid,
+                "target": translated_title
+            })
+        with Server.get_temporary_db() as conn:
+            conn.executemany("""
+                UPDATE article SET target = :target WHERE id = :id;
+            """, update_vector)
+            conn.commit()
+    except Exception as e:
+        logging.error(f"Translation Failed {len(sources)} titles")
+        logging.exception(e)
+        return
 
 
 def _normalize_category_name(cat : str) -> str:
