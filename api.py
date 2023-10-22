@@ -7,6 +7,7 @@ from schema import *
 from models import *
 api = APIRouter(prefix="/api", dependencies=[Depends(authenticate)], tags=['api'])
 user_router = APIRouter(prefix="/user", tags=['user'])
+topic_router = APIRouter(prefix="/topic", tags=['topic'])
 FORBIDDEN_EXCEPTION = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
     detail="ISorry, you do not have permission to perform this action",
@@ -107,7 +108,7 @@ def subcategories(parent_category : str):
 
 
 #------------------------------------ Create Topic ------------------------------------
-@api.post('/topic', response_model=ResponseSingle[TopicScheme])
+@topic_router.post('/', response_model=ResponseSingle[TopicScheme])
 def create_topic(req : Request, topic : TopicCreate = Body(...)):
     """
     Create a topic with categories and country
@@ -143,7 +144,7 @@ def create_topic(req : Request, topic : TopicCreate = Body(...)):
 
 
 #------------------------------------ Fetch Available Countries ------------------------------------
-@api.get("/topic/{topic_prefix}/country", response_model=ResponseMultiple[Country])
+@topic_router.get("/{topic_prefix}/country", response_model=ResponseMultiple[Country])
 def get_countries(topic_prefix : str, req: Request):
     try:
         assert "/" not in topic_prefix, "Topic prefix must not contain '/'"
@@ -162,7 +163,7 @@ def get_countries(topic_prefix : str, req: Request):
         raise BAD_REQUEST_EXCEPTION(e)
 
 #------------------------------------ Update Topic ------------------------------------
-@api.post('/topic/{topic_name}/{country}', response_model=ResponseSingle[TopicScheme])
+@topic_router.post('/{topic_name}/{country}', response_model=ResponseSingle[TopicScheme])
 def update_topic(topic_name : str, country: Country, req : Request, topic : TopicUpdate = Body(...) ):
     topic_id = Topic.normalize_id(topic_name, country)
     try:
@@ -189,8 +190,29 @@ def update_topic(topic_name : str, country: Country, req : Request, topic : Topi
     except Exception as e:
         logging.exception(e)
         raise BAD_REQUEST_EXCEPTION(e)
+@topic_router.delete('/{topic_name}/{country}', response_model=ResponseSingle[TopicScheme])
+def delete_topic(topic_name : str, country: Country, req : Request):
+    topic_id = Topic.normalize_id(topic_name, country)
+    try:
+        # if User.has_access(req.state.user['rights'], User.RIGHTS['topic']) == False:
+        #     raise FORBIDDEN_EXCEPTION
+        with Server.get_parmanent_db() as conn:
+            cur = conn.cursor()
+            Topic.delete(cur, topic_id=topic_id)
+            conn.commit()
+        return ResponseSingle[TopicScheme](
+            success=True,
+            data=TopicScheme(
+                id = topic_id,
+                title=topic_name,
+                country=country
+            )
+        )
+    except Exception as e:
+        logging.exception(e)
+        raise BAD_REQUEST_EXCEPTION(e)
 #------------------------------------ Update Topic ------------------------------------
-@api.get("/topic/{topic_name}/{country}", response_model=ResponseSingle[TopicScheme])
+@topic_router.get("/{topic_name}/{country}", response_model=ResponseSingle[TopicScheme])
 def get_topic(topic_name : str, country : Country, req : Request):
     if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
         raise FORBIDDEN_EXCEPTION
@@ -208,8 +230,9 @@ def get_topic(topic_name : str, country : Country, req : Request):
             categories=[CategoryScheme(**cat) for cat in categories]
         )
     )
+
 #------------------------------------ Fetch Topic Categories ------------------------------------
-@api.get("/topic/{topic_name}/{country}/categories", response_model=ResponseMultiple[CategoryScheme])
+@topic_router.get("/{topic_name}/{country}/categories", response_model=ResponseMultiple[CategoryScheme])
 def topic_categories(topic_name : str, country : Country, req : Request):
     if User.has_access(req.state.user['rights'], User.RIGHTS['task']) == False:
         raise FORBIDDEN_EXCEPTION
@@ -341,3 +364,4 @@ def get_language_list():
     )
 
 api.include_router(user_router)
+api.include_router(topic_router)
