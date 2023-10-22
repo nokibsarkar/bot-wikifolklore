@@ -45,13 +45,13 @@ const Settings = () => {
             outline: 0,
             position: 'absolute',
         }}>
-            <Collapse in={true}>
+            {/* <Collapse in={true}>
                 <AutoComplete
                 options={users}
                 sx={{m : 1}}
                 renderInput={props => <TextField {...props} label="Username" />}
                 />
-            </Collapse>
+            </Collapse> */}
 
             <Button variant="contained" color="error" size="small" sx={{
                 padding: 1,
