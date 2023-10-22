@@ -316,5 +316,12 @@ class TukTukBot {
         }).then(res => res.json());
         return response.data;
     }
+    static async deleteTopic(id : string){
+        const url = new URL("api/topic/" + id, TukTukBot.baseURL);
+        const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
+            method: "DELETE",
+        }).then(res => res.json());
+        return response.data;
+    }
 }
 export default TukTukBot;

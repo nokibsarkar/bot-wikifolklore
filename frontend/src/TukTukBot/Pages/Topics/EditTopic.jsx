@@ -6,6 +6,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import React from "react";
+import DeleteIcon from '@mui/icons-material/Delete';
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import Collapse from "@mui/material/Collapse"
@@ -47,15 +48,25 @@ const EditTopic = () => {
         setRefreshKey(refreshKey + 1);
         setSaving(false);
     }, [topicID, country, categoryListRef]);
+    const deleteTopic = useCallback(async () => {
+        if(!topicID)
+            return;
+        const deleted = await Server.deleteTopic(topicID);
+        if(!deleted)
+            return;
+        window.location.href = "/tuktukbot/topics";
+    }, [topicID]);
     return <Card>
-        <CardHeader title="Edit Topic" action={<Button variant="contained" onClick={save} disabled={saving}>Save</Button>} />
+        <CardHeader title="Edit Topic" action={<Button variant="contained" color="error" onClick={deleteTopic} disabled={saving}><DeleteIcon /> Delete</Button>} />
         <CardContent>
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <Typography variant="subtitle">Topic ID : {topicID}</Typography>
                 <Typography variant="subtitle">Country : {country}</Typography>
             </Box>
             <CategoryList categoryListRef={categoryListRef} disabled={saving} initialCategories={categories} />
-            
+            <Box sx={{ mt : 5, maxWidth : 300,display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <Button variant="contained" onClick={save} disabled={saving}>Save</Button>
+            </Box>
         </CardContent>
     </Card>
 }
