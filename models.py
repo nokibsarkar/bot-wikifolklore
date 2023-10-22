@@ -231,6 +231,7 @@ class Task:
     }
     @staticmethod
     def create(conn : sqlite3.Cursor, *, submitted_by : int, topic_id : str, task_data : str, target_wiki : Language, country : Country, category_count : int) -> int:
+        Article.cleanup(7) # Cleanup articles older than 7 days
         cur = conn.execute(SQL1_CREATE_TASK, {
             'status': TaskStatus.pending.value,
             'topic_id': topic_id,
@@ -267,6 +268,7 @@ class Task:
         filters = []
         filter_values = {
             'user_id': user_id,
+            "limit" : 50
         }
         if status and status is not Optional :
             filters.append("`status` = :status")
@@ -275,6 +277,7 @@ class Task:
         if len(filters) > 0:
             sql += " AND " + " AND ".join(filters)
         sql += " ORDER BY `id` DESC"
+        sql += " LIMIT :limit"
         print(sql)
         return conn.execute(sql, filter_values).fetchall()
     @staticmethod
@@ -293,12 +296,18 @@ class Task:
 
 class Article:
     @staticmethod
-    def cleanup(conn : sqlite3.Cursor, conn2, timeframe : int):
-        tasks = Task.get_tasks_by_created_at(conn, time.time() - timeframe)
-        task_ids = map(lambda x : x['id'], filter(lambda x: x['status'] == Task.STATUS['done'], tasks))
-        sql = "DELETE FROM `articles` WHERE `task_id` IN ({})".format(','.join('?' * len(task_ids)))
-        conn2.execute(sql, task_ids)
-        conn2.commit()
+    def cleanup( timeframe : int = 7):
+        # tasks = Task.get_tasks_by_created_at(conn, time.time() - timeframe)
+        # task_ids = map(lambda x : x['id'], filter(lambda x: x['status'] == Task.STATUS['done'], tasks))
+        # sql = "DELETE FROM `articles` WHERE `task_id` IN ({})".format(','.join('?' * len(task_ids)))
+        # conn2.execute(sql, task_ids)
+        # conn2.commit()
+        date = datetime.now() - timedelta(days=timeframe)
+        print(date)
+        with Server.get_temporary_db() as conn2:
+            conn2.execute(SQL2_DELETE_UNUSED_ARTICLES, (date.isoformat(), ))
+            conn2.commit()
+
 
     @staticmethod
     def create(conn : sqlite3.Cursor, articles) -> int:

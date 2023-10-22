@@ -185,3 +185,4 @@ SELECT
 FROM
     `user`
 """
+SQL2_DELETE_UNUSED_ARTICLES = "DELETE FROM `article` WHERE `created_at` < ?"
