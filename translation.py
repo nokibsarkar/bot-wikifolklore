@@ -39,8 +39,11 @@ def _translate_azure(texts, target):
                 char_count += len(text)
                 data.append({'Text': text})
             res = sess.post(f"{AZURE_ENDPOINT}/translate", json=data)
+            
             if res.status_code != 200:
+                print(res.status_code, res.text)
                 return {}, texts
+            
             print("Cost", res.headers['X-metered-usage'])
             res = res.json()
             results.extend([x['translations'][0]['text'] for x in res])
