@@ -13,6 +13,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Collapse from "@mui/material/Collapse"
 import Server from "../Server.ts";
 import { useCallback, useState } from "react";
+import Footer from "../../Layout/Footer.jsx";
 const Settings = () => {
     const [users, setUsers] = useState([])
     const hideUsername = useCallback((e) => {
@@ -34,7 +35,7 @@ const Settings = () => {
                 }).then(res => {
                     window.location.href = '/user/login'
                 })
-        })
+            })
     }, []);
     return (
         <Paper sx={{
@@ -62,7 +63,7 @@ const Settings = () => {
                 <HideIcon /> &nbsp; Hide my username
             </Button>
 
-
+            <Footer />
         </Paper>
     )
 }

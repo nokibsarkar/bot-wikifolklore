@@ -11,6 +11,7 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import Collapse from "@mui/material/Collapse"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import Footer from "../../../Layout/Footer.jsx";
 const EditTopic = () => {
     const [topicID, setTopicID] = useState('');
     const [country, setCountry] = useState('');
@@ -67,6 +68,7 @@ const EditTopic = () => {
             <Box sx={{ mt : 5, maxWidth : 300,display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <Button variant="contained" onClick={save} disabled={saving}>Save</Button>
             </Box>
+            <Footer />
         </CardContent>
     </Card>
 }

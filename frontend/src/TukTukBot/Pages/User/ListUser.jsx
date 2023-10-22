@@ -21,6 +21,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import { DataGrid } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
+import Footer from '../../../Layout/Footer.jsx';
 const columns = [
     { field: 'id', headerName: 'ID', minWidth: 100, flex: 1 },
     { field: 'username', headerName: 'Username', flex: 1, minWidth: 300 },
@@ -80,6 +81,7 @@ const ListUser = ({ user }) => {
                         checkboxSelection={false}
                         disableSelectionOnClick
                     />
+                    <Footer />
                 </CardContent>
             </Card>
         </Box>

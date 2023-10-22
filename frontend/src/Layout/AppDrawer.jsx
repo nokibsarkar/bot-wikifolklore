@@ -12,6 +12,7 @@ import ListItem from '@mui/material/ListItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import Collapse from '@mui/material/Collapse';
+import Footer from './Footer';
 const Tool = (comp) => {
     const [expanded, setExpanded] = React.useState(true);
     return <List>
@@ -99,6 +100,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                 </List>
                 <Divider />
                 {components?.map((comp, index) => comp && <Tool key={comp?.name} {...comp} />)}
+
             </Box>
         </SwipeableDrawer>
     )

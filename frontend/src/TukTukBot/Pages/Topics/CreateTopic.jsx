@@ -10,6 +10,7 @@ import ArticleList from "../../components/Articles";
 import Box from "@mui/material/Box"
 import Collapse from "@mui/material/Collapse"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import Footer from "../../../Layout/Footer";
 const AddTopic = () => {
     const [availableCountries, setAvailableCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
@@ -88,6 +89,7 @@ const AddTopic = () => {
                 </FormControl>
             </Box>
             <CategoryList categoryListRef={categoryListRef} disabled={creating} />
+            <Footer />
         </CardContent>
     </Card>
 }

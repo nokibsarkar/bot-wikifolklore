@@ -24,6 +24,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import MuiAlert from '@mui/material/Alert';
 import { Typography } from '@mui/material';
+import Footer from '../../../Layout/Footer.jsx';
 const Alert = forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={1} ref={ref} variant="filled" {...props} />;
 });
@@ -91,6 +92,7 @@ const EditUser = ({ user: currentUser }) => {
                             Saved Successfully
                         </Alert>
                     </Snackbar>
+                    <Footer />
                 </CardContent>
             </Card>
         </Box>

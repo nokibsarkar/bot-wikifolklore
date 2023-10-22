@@ -19,6 +19,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import { DataGrid } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
+import Footer from '../../../Layout/Footer.jsx';
 const ListTopic = () => {
     const [topic, setTopic] = useState('folklore');
     const [countries, setCountries] = useState([]);
@@ -64,6 +65,7 @@ const ListTopic = () => {
                         )
                         )}
                     </List>
+                    <Footer/>
                 </CardContent>
             </Card>
         </Box>

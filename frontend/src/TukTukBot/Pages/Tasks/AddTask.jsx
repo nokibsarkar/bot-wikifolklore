@@ -13,6 +13,7 @@ import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
 import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Server from "../../Server";
+import Footer from "../../../Layout/Footer";
 
 function AddTask() {
     const categoryListRef = React.useRef([]);
@@ -156,6 +157,8 @@ function AddTask() {
                     )}
                 </Collapse>
                 {resultElement}
+
+            <Footer />
             </CardContent>
         </Card>
     );

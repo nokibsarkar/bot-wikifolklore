@@ -20,6 +20,7 @@ import Server from "../../Server"
 import DownloadIcon from '@mui/icons-material/Download';
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
+import Footer from '../../../Layout/Footer';
 const countryMAP = await Server.getCountryMap()
 const User = () => {
     const [username, setUsername] = useState(null);
@@ -148,6 +149,7 @@ const ListTask = () => {
             <CardContent>
             <User />
                 <TaskList />
+                <Footer />
             </CardContent>
         </Card>
     )
