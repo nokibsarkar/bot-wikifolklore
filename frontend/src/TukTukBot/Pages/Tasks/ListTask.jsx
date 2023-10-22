@@ -21,7 +21,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import Footer from '../../../Layout/Footer';
-const countryMAP = await Server.getCountryMap()
 const User = () => {
     const [username, setUsername] = useState(null);
     const [id, setID] = useState(0)
@@ -63,12 +62,12 @@ const DownloadButon = ({ id }) => {
 const headers = [
     { field: 'id', headerName: 'ID', maxWidth: 70, flex: 1 },
     { field: 'status', headerName: 'Status',maxWidth: 100, flex : 1 },
-    { field: 'topic_id', headerName: 'Topic',  flex : 1 },
+    // { field: 'topic_id', headerName: 'Topic',  flex : 1 },
     { field: 'country', headerName: 'Country',  flex : 1 },
+    { field: 'targetwiki', headerName: 'Language', minWidth : 100, flex : 1},
+    { field: 'download', headerName: 'Download', renderCell : (params) => params.value},
     { field: 'category_count', headerName: 'Category', maxWidth: 100, flex : 1 },
     {field : 'article_count', headerName : 'Article', maxWidth : 100, flex : 1},
-    // { field: 'created_at', headerName: 'Timestamp', flex : 1},
-    { field: 'download', headerName: 'Download', renderCell : (params) => params.value},
 ]
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
@@ -80,11 +79,12 @@ const TaskList = () => {
     useEffect(() => {
         setFetching(true)
         Server.getTasks().then(tasks => {
-            setTasks(tasks.map(v => ({
+            setTasks(tasks.map(v =>  ({
                 ...v,
-                country : countryMAP[v.country] || v.country,
-                created_at : formatter.format(new Date(v.created_at)),
-                download : v.status == 'done' && <DownloadButon id={v.id} />
+                country : Server.countries[v.country] || v.country,
+                // created_at : formatter.format(new Date(v.created_at)),
+                download : v.status == 'done' && <DownloadButon id={v.id} />,
+                targetwiki : Server.languages[v.target_wiki] || v.target_wiki,
             })))
         }).finally(() => {
             setFetching(false)

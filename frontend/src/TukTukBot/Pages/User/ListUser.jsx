@@ -41,6 +41,7 @@ const ListUser = ({ user }) => {
     const rows = useMemo(() => {
         return users?.map(user => {
             return {
+                ...user,
                 id: user.id,
                 username: user.username,
                 rights: user.rights,

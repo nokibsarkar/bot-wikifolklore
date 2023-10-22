@@ -17,13 +17,6 @@ CREATE TABLE IF NOT EXISTS `topic` (
     `title`	VARCHAR(95) NOT NULL,
     `country`    VARCHAR(3) NOT NULL
 );
-INSERT INTO
-    `topic` (`id`, `title`, `country`)
-VALUES
-    ('folklore/IN', 'Folklore in India', 'India'),
-    ('folklore/BD', 'Folklore in Bangladesh', 'Bangladesh'),
-    ('folklore/PAK', 'Folklore in Pakistan', 'Pakistan')
- ON CONFLICT DO NOTHING;
 
 -- This Table would be used to store the category
 CREATE TABLE IF NOT EXISTS `category` (
