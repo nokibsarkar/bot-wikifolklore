@@ -94,14 +94,13 @@ export default function Description({ user }) {
                 m: 2
             }}>
                 Welcome {user.username},<br/>
-                This is a tool to generate a list of articles that are present in the English Wikipedia,
+            </Typography>
+            <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
+            This is a tool to generate a list of articles that are present in the English Wikipedia,
                 but not present in your native langauge Wikipedia. The tool would generate the list based on your selection and show 
                 you the list of articles that are missing in your native language Wikipedia with suggested title.
                 The output would be in a form of a table, but you can also download the list in a CSV format,
                 and a wikitables format.
-            </Typography>
-            <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
-                This is a tool to help you manage your tasks and topics.
             </Typography>
             <hr />
             
