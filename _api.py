@@ -5,7 +5,7 @@ from translation import translate
 #---------------------------- Load the constants ----------------------------
 # Assuming .env is loaded already
 BOT_AUTH_TOKEN = os.getenv("BOT_AUTH_TOKEN") # The credentails to request to the API
-
+TASK_ID_OFFSET = 28 # The offset to be used to store the task id in the pageid
 #---------------------------- Logging ----------------------------
 logger = logging.getLogger("page.extraction.module")
 logger.setLevel(logging.INFO)
@@ -55,7 +55,7 @@ def export_to_csv(res):
     writer = csv.writer(result, quoting=csv.QUOTE_MINIMAL)
     writer.writerow(headers)
     for pageid, task_id, title, target, wikidata, category, created_at, target_lang in res:
-        writer.writerow([serial, pageid, title, target, wikidata, category])
+        writer.writerow([serial, pageid & ~((pageid >> TASK_ID_OFFSET) << TASK_ID_OFFSET), title, target, wikidata, category])
         serial += 1
     result.seek(0)
     result = result.read()
@@ -71,7 +71,7 @@ def get_task_result(task_id, format : TaskResultFormat =TaskResultFormat.json) -
         result = []
         for pageid, task_id, title, target, wikidata, category, created_at, target_lang in res:
             result.append({
-                "pageid": pageid,
+                "pageid": pageid & ~(task_id << TASK_ID_OFFSET),
                 "task_id": task_id,
                 "title": title,
                 "target": target,
@@ -90,7 +90,7 @@ def get_task_result(task_id, format : TaskResultFormat =TaskResultFormat.json) -
 #---------------------------- Task Related Functions ----------------------------
 
 
-def _extract_page(task_id, category, pages, added, target_lang : str):
+def _extract_page(task_id, category, pages, added : set, target_lang : str):
     logger.debug("Extracting Pages from the result set")
     for page in pages:
         if page['pageid'] in added:
@@ -106,8 +106,8 @@ def _extract_page(task_id, category, pages, added, target_lang : str):
             logger.debug(f"Page {page['title']} is ready to be inserted")
             yield {
                     "task_id": task_id,
-                    "pageid": page['pageid'],
-                    'id' : page['pageid'],
+                    "pageid": page['pageid'] | task_id << TASK_ID_OFFSET,
+                    'id' : page['pageid'] | task_id << TASK_ID_OFFSET,
                     "title": page['title'],
                     "target": page['title'],
                     "wikidata": wbentity,
@@ -183,18 +183,19 @@ def execute_task(task_id, cats, target_wiki : Language):
                         Task.update_status(conn, id=task_id, status=TaskStatus.failed)
                     return
         logger.info(f"Task Done  {task_id}")
-        with Server.get_parmanent_db() as conn:
-            # Article
-            Task.update_status(conn, id=task_id, status=TaskStatus.done)
-            User.update_stats(conn, task_id)
-            
-            conn.commit()
+        
         translateable = {}
         with Server.get_temporary_db() as conn:
             cur = conn.cursor()
             tr = Article.get_all_by_task_id(cur, task_id)
             translateable = {x['title'] : x['id'] for x in tr}
         translate_titles(translateable, target_wiki)
+        print("Translation Done")
+        with Server.get_parmanent_db() as conn:
+            # Article
+            Task.update_status(conn, id=task_id, status=TaskStatus.done)
+            User.update_stats(conn, task_id)
+            conn.commit()
     except Exception as e:
         logging.error(f"Task Failed {task_id}")
         logging.exception(e)

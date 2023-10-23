@@ -114,6 +114,7 @@ const TabledArticles = ({ data, targetLanguage, taskID }) => {
             </>
         )
     })), [data, taskID]);
+    console.log(rows?.[0]?.target);
     return (
         <>
             <Popup
@@ -227,6 +228,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
         }
     }, [taskID, showWikiText]);
     const exportTable = useCallback(async () => {
+        console.log("Export table called")
         const cats = await Server.exportResult(taskID, 'json');
         setData(cats);
         setJSON(JSON.stringify(cats));
