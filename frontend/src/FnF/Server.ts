@@ -214,7 +214,6 @@ class FnF {
         let queued = false;
         const interval = 1000;
         async function _search() {
-            
             if(q == "") return callback([]);
             const url = new URL("https://en.wikipedia.org/w/api.php");
             const params = new URLSearchParams({
@@ -247,6 +246,8 @@ class FnF {
                 // Nothing is queued
                 queued = true;
                 setTimeout(_search, interval)
+                console.log("Queued")
+                
             } else {
                 // Something is already queued
                 console.log("Already queued")
