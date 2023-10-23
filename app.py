@@ -61,12 +61,21 @@ def redirect_to(url, cookies : dict = {}):
         response.set_cookie(key, value)
     return response
 @app.get("/user/callback", response_class=responses.RedirectResponse)
-def login(code : str, state : str):
+def login(code : str, state : str = '/fnf'):
     cookie_name, cookie_value, redirect_uri = User.generate_access_token(code = code, state = state)
     return redirect_to(redirect_uri, {
         cookie_name : cookie_value
     })
-
+@app.route('/error')
+def error(request : Request, code : str = None):
+    return app.templates.TemplateResponse("error.html", context= {
+        'request' : request,
+        'code' : code,
+        'error' : "Unknown Error"
+    })
+@app.get('/manifest.json')
+def manifest():
+    return responses.RedirectResponse("/static/manifest.json")
 #------------------------------------ Logout ------------------------------------
 @app.post("/user/logout", response_class=responses.RedirectResponse)
 async def logout():
