@@ -165,6 +165,7 @@ class FnF {
         const url = new URL(`api/task/${taskID}/export/` + format, FnF.baseURL);
         const response = await fetch(url.toString());
         const data : APIResponseSingle<TaskResult> = await response.json();
+        
         return data.data;
     }
     static async getTask(taskID: number) {
