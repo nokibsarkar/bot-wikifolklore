@@ -45,7 +45,7 @@ const ListUser = ({ user }) => {
                 id: user.id,
                 username: user.username,
                 rights: user.rights,
-                action: <Link to={`/tuktukbot/user/edit?id=${user.id}`}>
+                action: <Link to={`/fnf/user/edit?id=${user.id}`}>
                     <Button color="secondary" variant="contained">
                         <EditIcon />
                     </Button>

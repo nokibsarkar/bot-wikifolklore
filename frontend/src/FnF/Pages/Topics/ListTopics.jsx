@@ -40,7 +40,7 @@ const ListTopic = () => {
                         variant="contained"
                         component={Link}
                         color='success'
-                        to="/tuktukbot/topic/create"
+                        to="/fnf/topic/create"
                         startIcon={<AddIcon />}
                     >
                         New
@@ -56,7 +56,7 @@ const ListTopic = () => {
                                     variant="contained"
                                     component={Link}
                                     color="secondary"
-                                    to={`/tuktukbot/topic/edit?id=${topic}/${country.id}`}
+                                    to={`/fnf/topic/edit?id=${topic}/${country.id}`}
                                     startIcon={<EditIcon />}
                                 >
                                     Edit

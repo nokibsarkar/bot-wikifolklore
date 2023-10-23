@@ -12,7 +12,7 @@ const ListTopic = lazy(() => import('./Pages/Topics/ListTopics.jsx'))
 const ListUser = lazy(() => import('./Pages/User/ListUser.jsx'));
 const EditUser = lazy(() => import('./Pages/User/EditUser.jsx'));
 Server.init()
-const TukTukBot = ({ user }) => {
+const FnF = ({ user }) => {
     const TopicRoutes = (
         <Route path='topic/*'>
             <Route path="create" element={<AddTopic />} />
@@ -40,4 +40,4 @@ const TukTukBot = ({ user }) => {
     )
 }
 
-export default TukTukBot
+export default FnF

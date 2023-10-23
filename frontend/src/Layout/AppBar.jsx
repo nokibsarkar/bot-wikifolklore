@@ -56,7 +56,7 @@ export default function PrimarySearchAppBar({ username, toolName, open, setOpen 
     >
 
 
-      <MenuItem onClick={handleMenuClose} LinkComponent={Link} href="/tuktukbot/setting" >
+      <MenuItem onClick={handleMenuClose} LinkComponent={Link} href="/fnf/setting" >
         <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>

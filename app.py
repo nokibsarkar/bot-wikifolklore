@@ -7,7 +7,7 @@ from settings import *
 from api import api, Server, User
 from fastapi import FastAPI, responses, Request, staticfiles
 from fastapi.templating import Jinja2Templates
-class TukTukBot(FastAPI):
+class FnF(FastAPI):
     """
     This is the bot that will be used to extract the data from the wikipedia.
     """
@@ -26,7 +26,7 @@ class TukTukBot(FastAPI):
         def shutdown():
             print("Shutting down...")
 
-app = TukTukBot()
+app = FnF()
 app.include_router(api)
 app.mount("/static", staticfiles.StaticFiles(directory="static"), name="static")
 
@@ -75,11 +75,11 @@ async def logout():
         cookie_name : cookie_value
     })
 
-@app.get("/tuktukbot/{optional_path:path}", response_class=responses.HTMLResponse)
-async def tuktukbot2(req : Request, optional_path : str = ''):
+@app.get("/fnf/{optional_path:path}", response_class=responses.HTMLResponse)
+async def fnf2(req : Request, optional_path : str = ''):
     user = User.logged_in_user(req.cookies)
     if user is None:
-        redirect_uri = User.generate_login_url('/tuktukbot')
+        redirect_uri = User.generate_login_url('/fnf')
         return redirect_to(redirect_uri)
     return responses.FileResponse("static/index.html")
 

@@ -138,7 +138,7 @@ const TaskList = () => {
 }
 const ListTask = () => {
     const NewTaskButton = () => (
-        <Link to="/tuktukbot/task/create">
+        <Link to="/fnf/task/create">
            <Button variant="contained" color="success"><AddIcon /> New List</Button>
         </Link>
     )
