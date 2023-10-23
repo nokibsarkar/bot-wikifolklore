@@ -4,7 +4,7 @@ COOKIE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTAwODAwMzQsInVzZXJuYW1lI
 BASE_URL = "http://localhost:5000/api"
 sess.cookies.set('auth', COOKIE)
 sess.headers = {
-    "User-Agent": "TukTukBot/1.0 (Linux x86_64)",
+    "User-Agent": "FnF/1.0 (Linux x86_64)",
 }
 test_topic = {
     "title": "folklore/IN",

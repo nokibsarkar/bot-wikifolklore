@@ -17,7 +17,7 @@ export default function Description({ user }) {
                 m: 1
             }}
                 component={Link}
-                to="/tuktukbot/task/create"
+                to="/fnf/task/create"
             >
                 <AddIcon /> &nbsp; Add Task
             </Button>
@@ -26,7 +26,7 @@ export default function Description({ user }) {
                 m: 1
             }}
                 component={Link}
-                to="/tuktukbot/task"
+                to="/fnf/task"
             >
                 <ListIcon /> &nbsp; List Tasks
             </Button>
@@ -41,7 +41,7 @@ export default function Description({ user }) {
                 m: 1
             }}
                 component={Link}
-                to="/tuktukbot/topic/create"
+                to="/fnf/topic/create"
             >
                 <AddIcon /> &nbsp; Create New Topic
             </Button>
@@ -50,7 +50,7 @@ export default function Description({ user }) {
                 m: 1
             }}
                 component={Link}
-                to="/tuktukbot/topic"
+                to="/fnf/topic"
             >
                 <ListIcon /> &nbsp; See All Topics
             </Button>
@@ -65,7 +65,7 @@ export default function Description({ user }) {
                 m: 1
             }}
                 component={Link}
-                to="/tuktukbot/setting"
+                to="/fnf/setting"
             >
                 <SettingIcon /> &nbsp; Settings
             </Button>
@@ -74,7 +74,7 @@ export default function Description({ user }) {
                 m: 1
             }}
                 component={Link}
-                to="/tuktukbot/user"
+                to="/fnf/user"
             >
                 <PeopleIcon /> &nbsp; See All Users
             </Button>
@@ -93,7 +93,12 @@ export default function Description({ user }) {
                 textAlign: 'center',
                 m: 2
             }}>
-                Welcome to TukTuk
+                Welcome {user.username},<br/>
+                This is a tool to generate a list of articles that are present in the English Wikipedia,
+                but not present in your native langauge Wikipedia. The tool would generate the list based on your selection and show 
+                you the list of articles that are missing in your native language Wikipedia with suggested title.
+                The output would be in a form of a table, but you can also download the list in a CSV format,
+                and a wikitables format.
             </Typography>
             <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
                 This is a tool to help you manage your tasks and topics.

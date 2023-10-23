@@ -33,7 +33,7 @@ const Settings = () => {
                     },
                     body: JSON.stringify({})
                 }).then(res => {
-                    window.location.href = '/user/login'
+                    window.location.href = '/'
                 })
             })
     }, []);

@@ -9,7 +9,7 @@ import AppBar from './Layout/AppBar.jsx';
 import Loading from './Layout/LoadingPage.jsx';
 import AppDrawer from './Layout/AppDrawer';
 import { checkToken, AUTH_COOKIE_NAME } from './utils';
-import Server from './TukTukBot/Server.ts';
+import Server from './FnF/Server.ts';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -21,90 +21,90 @@ import {
 } from "react-router-dom";
 import theme from './Layout/theme';
 
-const TukTukBot = React.lazy(() => import('./TukTukBot/TukTukBot.jsx'));
+const FnF = React.lazy(() => import('./FnF/FnF.jsx'));
 function ToolSelector() {
   const url = new URL(window.location.href);
   const tool = url.searchParams.get('tool');
   switch (tool) {
-    case 'tuktukbot':
-      return ['TukTukBot', TukTukBot]
+    case 'fnf':
+      return ['FnF', FnF]
     default:
-      return ['TukTukBot', () => <TukTukBot /> || <div>Unknown tool: {tool}</div>];
+      return ['FnF', () => <FnF /> || <div>Unknown tool: {tool}</div>];
   }
 }
-const TukTukBotTopicRoutes = {
+const FnFTopicRoutes = {
   name: 'Topics',
   icon: null,
-  path: '/tuktukbot/topic',
+  path: '/fnf/topic',
   children: [
     {
       name: 'Create',
       icon: null,
-      path: '/tuktukbot/topic/create'
+      path: '/fnf/topic/create'
     },
     {
       name: 'Edit',
       icon: null,
-      path: '/tuktukbot/topic/:id/edit'
+      path: '/fnf/topic/:id/edit'
     },
     {
       name: 'View',
       icon: null,
-      path: '/tuktukbot/topic/:id'
+      path: '/fnf/topic/:id'
     },
     {
       name: 'List',
       icon: null,
-      path: '/tuktukbot/topic'
+      path: '/fnf/topic'
     }
   ]
 };
-const TukTukBotUserRoutes = {
+const FnFUserRoutes = {
   name: 'Users',
   icon: null,
-  path: '/tuktukbot/user',
+  path: '/fnf/user',
   children: [
     {
       name: 'Edit',
       icon: null,
-      path: '/tuktukbot/user/:id/edit'
+      path: '/fnf/user/:id/edit'
     },
     {
       name: 'List',
       icon: null,
-      path: '/tuktukbot/user'
+      path: '/fnf/user'
     }
   ]
 };
-const TukTukBotSettingRoutes = {
+const FnFSettingRoutes = {
   name: 'Settings',
   icon: <SettingIcon />,
-  path: '/tuktukbot/setting'
+  path: '/fnf/setting'
 };
-const TukTukBotTaskRoutes = {
+const FnFTaskRoutes = {
   name: 'Tasks',
   icon: null,
-  path: '/tuktukbot/task',
+  path: '/fnf/task',
   children: [
     {
       name: 'Create',
       icon: null,
-      path: '/tuktukbot/task/create'
+      path: '/fnf/task/create'
     },
     {
       name: 'Edit',
       icon: null,
-      path: '/tuktukbot/task/:id/edit'
+      path: '/fnf/task/:id/edit'
     },
     {
       name: 'View',
       icon: null,
-      path: '/tuktukbot/task/:id'
+      path: '/fnf/task/:id'
     },
     {
       name: 'List',
       icon: null,
-      path: '/tuktukbot/task'
+      path: '/fnf/task'
     }
   ]
 };
@@ -120,21 +120,21 @@ function App() {
       const token = authCookie.split('=')[1];
       const decoded = checkToken(token);
       setUser(decoded);
-      const TukTukBotRoutes = {
-        name: 'TukTukBot',
+      const FnFRoutes = {
+        name: 'FnF',
         icon: null,
-        path: '/tuktukbot',
+        path: '/fnf',
         children: [
         ]
       }
       if (Server.hasAccess(decoded.rights, Server.RIGHTS.TASK))
-        TukTukBotRoutes.children.push(TukTukBotTaskRoutes);
+        FnFRoutes.children.push(FnFTaskRoutes);
       if (Server.hasAccess(decoded.rights, Server.RIGHTS.TOPIC))
-        TukTukBotRoutes.children.push(TukTukBotTopicRoutes);
+        FnFRoutes.children.push(FnFTopicRoutes);
       if (Server.hasAccess(decoded.rights, Server.RIGHTS.GRANT))
-        TukTukBotRoutes.children.push(TukTukBotUserRoutes);
-      TukTukBotRoutes.children.push(TukTukBotSettingRoutes);
-      Tools[0] = TukTukBotRoutes;
+        FnFRoutes.children.push(FnFUserRoutes);
+      FnFRoutes.children.push(FnFSettingRoutes);
+      Tools[0] = FnFRoutes;
     } else {
       console.log("Please login to continue")
     }
@@ -154,7 +154,7 @@ function App() {
         <AppDrawer {...commonProps} components={Tools} />
         <React.Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/tuktukbot/*" element={<TukTukBot {...commonProps} />} />
+            <Route path="/fnf/*" element={<FnF {...commonProps} />} />
           </Routes>
         </React.Suspense>
       </BrowserRouter>

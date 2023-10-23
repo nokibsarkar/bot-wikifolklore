@@ -82,19 +82,19 @@ const PERMISSIONS : {[key : string] : Permission} = {
     GRANT : 1 << 4,
     REVOKE : 1 << 5,
 };
-class TukTukBot {
+class FnF {
     static baseURL = new URL(window.location.origin);
     static languages : Object | null = null;
     static countries : Object | null= null;
     static RIGHTS = PERMISSIONS;
     static async init(){
-        if(!TukTukBot.languages || !TukTukBot.countries){
+        if(!FnF.languages || !FnF.countries){
             if(!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY)){
                 localStorage.setItem(COUNTRY_KEY, JSON.stringify(await fetch("/api/country").then(res => res.json()).then(res => res.data)))
                 localStorage.setItem(LANGUAGE_KEY, JSON.stringify(await fetch("/api/language").then(res => res.json()).then(res => res.data)))
             }
-            TukTukBot.languages = JSON.parse(localStorage.getItem(LANGUAGE_KEY) || "{}");
-            TukTukBot.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
+            FnF.languages = JSON.parse(localStorage.getItem(LANGUAGE_KEY) || "{}");
+            FnF.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
         }
         
     }
@@ -105,7 +105,7 @@ class TukTukBot {
         var subcats : Category[] = []
         for (let cat of categories) {
             console.info("Adding subcategories for", cat.title)
-            const url = new URL("api/subcat/" + cat.title, TukTukBot.baseURL);
+            const url = new URL("api/subcat/" + cat.title, FnF.baseURL);
             const response = await fetch(url.toString());
             const data: APIResponseMultiple<Category> = await response.json();
             subcats = subcats.concat(data.data);
@@ -114,7 +114,7 @@ class TukTukBot {
         return subcats;
     }
     static async getCategories({country, topic} : {country : Country, topic : string}){
-        const url = new URL(`api/topic/${topic.split("/")[0]}/${country}/categories`, TukTukBot.baseURL);
+        const url = new URL(`api/topic/${topic.split("/")[0]}/${country}/categories`, FnF.baseURL);
         const response = await fetch(url.toString());
         const responseData: APIResponseMultiple<Category> = await response.json();
         if (responseData.success) {
@@ -126,7 +126,7 @@ class TukTukBot {
     }
     static async submitTask(data : TaskCreate) {
         // Submit the task
-        const url = new URL("api/task", TukTukBot.baseURL);
+        const url = new URL("api/task", FnF.baseURL);
         const response = await fetch(url.toString(), {
             method: "POST",
             body: JSON.stringify(data),
@@ -144,7 +144,7 @@ class TukTukBot {
 
     }
     static async fetchCountries(topic : string){
-        const url = new URL("api/topic/" + topic + "/country", TukTukBot.baseURL);
+        const url = new URL("api/topic/" + topic + "/country", FnF.baseURL);
         const response = await fetch(url.toString());
         const responseData: APIResponseMultiple<CountryEntry> = await response.json();
         if (responseData.success) {
@@ -162,13 +162,13 @@ class TukTukBot {
         }
     }
     static async exportResult(taskID : Number, format: TaskResultFormat = "json") {
-        const url = new URL(`api/task/${taskID}/export/` + format, TukTukBot.baseURL);
+        const url = new URL(`api/task/${taskID}/export/` + format, FnF.baseURL);
         const response = await fetch(url.toString());
         const data : APIResponseSingle<TaskResult> = await response.json();
         return data.data;
     }
     static async getTask(taskID: number) {
-        const url = new URL("api/task/" + taskID, TukTukBot.baseURL);
+        const url = new URL("api/task/" + taskID, FnF.baseURL);
         // console.log(taskID)
         const response = await fetch(url.toString());
         const responseData: APIResponseSingle<Task> = await response.json();
@@ -180,7 +180,7 @@ class TukTukBot {
         }
     }
     static async getTasks() {
-        const url = new URL("api/task", TukTukBot.baseURL);
+        const url = new URL("api/task", FnF.baseURL);
         // console.log(taskID)
         const response = await fetch(url.toString());
         const responseData: APIResponseMultiple<Task> = await response.json();
@@ -192,7 +192,7 @@ class TukTukBot {
         }
     }
     static async getMe(){
-        const url = new URL("api/user/me", TukTukBot.baseURL);
+        const url = new URL("api/user/me", FnF.baseURL);
         // console.log(taskID)
         const response = await fetch(url.toString());
         const responseData: APIResponseSingle<User> = await response.json();
@@ -204,7 +204,7 @@ class TukTukBot {
         }
     }
     static async getCountryMap(){
-        const url = new URL("api/country", TukTukBot.baseURL);
+        const url = new URL("api/country", FnF.baseURL);
         const countries = await fetch(url).then(res => res.json())
         return countries.data
     }
@@ -254,7 +254,7 @@ class TukTukBot {
 
     }
     static async createTopic(topic : TopicCreate){
-        const url = new URL("api/topic/", TukTukBot.baseURL);
+        const url = new URL("api/topic/", FnF.baseURL);
         const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
             method: "POST",
             body: JSON.stringify(topic),
@@ -266,12 +266,12 @@ class TukTukBot {
         return response.data;
     }
     static async getTopic(topicID : string){
-        const url = new URL("api/topic/" + topicID, TukTukBot.baseURL);
+        const url = new URL("api/topic/" + topicID, FnF.baseURL);
         const response : APIResponseSingle<Topic> = await fetch(url.toString()).then(res => res.json());
         return response.data;
     }
     static async updateTopic({id, categories} : Topic){
-        const url = new URL("api/topic/" + id, TukTukBot.baseURL);
+        const url = new URL("api/topic/" + id, FnF.baseURL);
         const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
             method: "POST",
             body: JSON.stringify({categories}),
@@ -282,7 +282,7 @@ class TukTukBot {
         return response.data;
     }
     static async updateMe({username, rights} : User){
-        const url = new URL("api/user/me", TukTukBot.baseURL);
+        const url = new URL("api/user/me", FnF.baseURL);
         const response : APIResponseSingle<User> = await fetch(url.toString(), {
             method: "POST",
             body: JSON.stringify({username, rights}),
@@ -293,7 +293,7 @@ class TukTukBot {
         return response.data;
     }
     static async getUsers(){
-        const url = new URL("api/user/", TukTukBot.baseURL);
+        const url = new URL("api/user/", FnF.baseURL);
         const response : APIResponseMultiple<User> = await fetch(url.toString()).then(res => res.json());
         return response.data;
     }
@@ -301,12 +301,12 @@ class TukTukBot {
         return rights & permission ? rights & ~permission : rights | permission;
     }
     static async getUser(id : number){
-        const url = new URL("api/user/" + id, TukTukBot.baseURL);
+        const url = new URL("api/user/" + id, FnF.baseURL);
         const response : APIResponseSingle<User> = await fetch(url.toString()).then(res => res.json());
         return response.data;
     }
     static async updateUser({id, username, rights} : User){
-        const url = new URL("api/user/" + id, TukTukBot.baseURL);
+        const url = new URL("api/user/" + id, FnF.baseURL);
         const response : APIResponseSingle<User> = await fetch(url.toString(), {
             method: "POST",
             body: JSON.stringify({username, rights}),
@@ -317,11 +317,11 @@ class TukTukBot {
         return response.data;
     }
     static async deleteTopic(id : string){
-        const url = new URL("api/topic/" + id, TukTukBot.baseURL);
+        const url = new URL("api/topic/" + id, FnF.baseURL);
         const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
             method: "DELETE",
         }).then(res => res.json());
         return response.data;
     }
 }
-export default TukTukBot;
+export default FnF;
