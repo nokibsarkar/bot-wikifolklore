@@ -113,8 +113,7 @@ const TabledArticles = ({ data, targetLanguage, taskID }) => {
                 </Button>
             </>
         )
-    })), [data, taskID]);
-    console.log(rows?.[0]?.target);
+    })), [data]);
     return (
         <>
             <Popup
