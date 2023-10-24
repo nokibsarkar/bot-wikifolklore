@@ -76,4 +76,4 @@ def translate(texts, target):
     return _translate_azure(texts, target)
 
 if __name__ == "__main__":
-    print(translate(["I would really like to drive your car around the block a few times!", "weight"], "ru"))
+    print(translate(["I would really like to drive your car around the block a few times!", "weight"], "bn"))
