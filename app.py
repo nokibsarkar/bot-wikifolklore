@@ -36,7 +36,7 @@ app.mount("/static", staticfiles.StaticFiles(directory="static"), name="static")
 async def home(request : Request):
     stats = Server.get_stats()
     user = User.logged_in_user(request.cookies)
-    _, _, redirect_uri = User.generate_login_url('/')
+    _, __, redirect_uri = User.generate_login_url('/')
     return app.templates.TemplateResponse("index.html", context= {
         'request' : request,
         'user' : user,
