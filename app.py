@@ -36,12 +36,11 @@ app.mount("/static", staticfiles.StaticFiles(directory="static"), name="static")
 async def home(request : Request):
     stats = Server.get_stats()
     user = User.logged_in_user(request.cookies)
-    _, __, redirect_uri = User.generate_login_url('/')
     return app.templates.TemplateResponse("index.html", context= {
         'request' : request,
         'user' : user,
         'stats' : stats,
-        'login_url' : redirect_uri
+        'login_url' : User.generate_login_url('/')
     })
 @app.get('/terms', response_class=responses.HTMLResponse)
 def terms(request : Request):
