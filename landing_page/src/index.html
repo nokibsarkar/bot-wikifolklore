@@ -29,6 +29,7 @@
             </p>
         </div>
     </div>
+    {% if not user %}
     <p class="font-primary">
         This is a list of tools that are developed by/for/under Wiki Loves Folklore Project.
         In order to access the tools, you need to login with your Wikimedia account.
@@ -43,6 +44,9 @@
                 class="w-6 inline-block">
             Login with Wikipedia</a>
     </div>
+    {% else %}
+    Welcome {{user['username']}}!
+    {% endif %}
     We are currently working on the following tools:
     <ul class="list-disc pl-6">
         <li class=" font-secondary">
