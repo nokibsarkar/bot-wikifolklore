@@ -36,10 +36,12 @@ app.mount("/static", staticfiles.StaticFiles(directory="static"), name="static")
 async def home(request : Request):
     stats = Server.get_stats()
     user = User.logged_in_user(request.cookies)
+    _, _, redirect_uri = User.generate_login_url('/')
     return app.templates.TemplateResponse("index.html", context= {
         'request' : request,
         'user' : user,
-        'stats' : stats
+        'stats' : stats,
+        'login_url' : redirect_uri
     })
 @app.get('/terms', response_class=responses.HTMLResponse)
 def terms(request : Request):
@@ -85,7 +87,7 @@ async def logout():
     })
 
 @app.get("/fnf/{optional_path:path}", response_class=responses.HTMLResponse)
-async def fnf2(req : Request, optional_path : str = ''):
+async def fnf(req : Request, optional_path : str = ''):
     user = User.logged_in_user(req.cookies)
     if user is None:
         redirect_uri = User.generate_login_url('/fnf')
