@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       fonts : {
         primary : ['"Playfair Display"']
+
       },
       colors : {
         primary : 'rgb(0,102,153)',
