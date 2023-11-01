@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       fontFamily : {
         primary : ['"Playfair Display"'],
+        secondary : ['"Dosis"'],
         cursive : "Cursive"
 
       },
