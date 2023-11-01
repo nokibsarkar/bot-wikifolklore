@@ -3,8 +3,9 @@ module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
     extend: {
-      fonts : {
-        primary : ['"Playfair Display"']
+      fontFamily : {
+        primary : ['"Playfair Display"'],
+        cursive : "Cursive"
 
       },
       colors : {
