@@ -1,0 +1,10 @@
+{
+    "name": "wikibot",
+    "scripts": {
+        "start": "tailwindcss -i ./src/input.css -o ./src/static/index.css --watch",
+        "build": "tailwindcss -i ./src/input.css -o ./src/static/index.css --minify"
+    },
+    "devDependencies": {
+        "tailwindcss": "^3.3.5"
+    }
+}
