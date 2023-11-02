@@ -48,7 +48,7 @@
     {% else %}
     <h1 class="text-3xl font-primary text-center">Welcome <b class="font-bold">{{user['username']}}</b>!</h1>
     <div class="flex justify-center mb-3 mt-3">
-        <form action="/logout" method="post"
+        <form action="/user/logout" method="post"
             class="p-3 w-36 rounded bg-red-700  text-white hover:bg-opacity-50  border-slate-400 text-center">
             <button type="submit">Logout</button>
         </form>
@@ -56,7 +56,7 @@
     {% endif %}
     <hr>
     <h1 class="p-5 self-center text-3xl w-3/4 text-center font-bold font-primary block  mt-6" id="tools">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/BotOp-logo.svg" class="w-10 inline-block" /> TOOLS
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/BotOp-logo.svg" class="w-8 inline-block" /> TOOLS
     </h1>
     <ul class="flex md:flex-row flex-col justify-center">
         <a href="/fnf" class="w-96" id="listgen">
@@ -79,7 +79,7 @@
     {% if stats %}
     <div class="p-5 self-center text-3xl w-3/4 text-center font-bold font-primary hidden md:block  mt-6">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/62/Trophy_Flat_Icon_GIF_Animation.gif" alt=""
-            srcset="" class="w-10 inline-block"> MILESTONES
+            srcset="" class="w-7 inline-block"> MILESTONES
     </div>
     <div class="flex  flex-col flex-nowrap justify-center md:flex-row">
         <div class="p-5 self-center text-3xl w-3/4 text-center font-bold font-primary md:hidden">
