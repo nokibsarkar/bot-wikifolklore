@@ -49,6 +49,7 @@ class BaseServer {
         localStorage.removeItem(LANGUAGE_KEY);
         localStorage.removeItem(COUNTRY_KEY);
         document.location.href = "/";
+
     }
 }
 export default BaseServer;

@@ -15,6 +15,7 @@
     "index.html": "/index.html",
     "main.073c9b0a.css.map": "/static/css/main.073c9b0a.css.map",
     "main.25101583.js.map": "/static/js/main.25101583.js.map",
+
     "541.05b42559.chunk.js.map": "/static/js/541.05b42559.chunk.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map",
     "595.0c071708.chunk.js.map": "/static/js/595.0c071708.chunk.js.map",
@@ -28,5 +29,6 @@
   "entrypoints": [
     "static/css/main.073c9b0a.css",
     "static/js/main.25101583.js"
+
   ]
 }
