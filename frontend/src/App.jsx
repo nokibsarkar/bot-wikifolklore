@@ -114,7 +114,7 @@ function App() {
   const [user, setUser] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   React.useEffect(() => {
-    decoded = Server.loginnedUser();
+    const decoded = Server.loginnedUser();
     if (decoded) {
       setUser(decoded);
       const FnFRoutes = {
