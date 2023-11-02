@@ -8,8 +8,7 @@ import SettingIcon from '@mui/icons-material/Settings';
 import AppBar from './Layout/AppBar.jsx';
 import Loading from './Layout/LoadingPage.jsx';
 import AppDrawer from './Layout/AppDrawer';
-import { checkToken, AUTH_COOKIE_NAME } from './utils';
-import Server from './FnF/Server.ts';
+import Server from './Server.ts';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -115,10 +114,8 @@ function App() {
   const [user, setUser] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   React.useEffect(() => {
-    const authCookie = document.cookie.split('; ').find(row => row.startsWith(AUTH_COOKIE_NAME));
-    if (authCookie) {
-      const token = authCookie.split('=')[1];
-      const decoded = checkToken(token);
+    const decoded = Server.loginnedUser();
+    if (decoded) {
       setUser(decoded);
       const FnFRoutes = {
         name: 'FnF',
