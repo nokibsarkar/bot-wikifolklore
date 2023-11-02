@@ -55,9 +55,7 @@ def privacy(request : Request):
         'request' : request,
     })
 def redirect_to(url, cookies : dict = {}):
-    response = responses.RedirectResponse(
-        url,
-    )
+    response = responses.RedirectResponse(url)
     for key, value in cookies.items():
         response.set_cookie(key, value)
     return response
@@ -78,7 +76,7 @@ def error(request : Request, code : str = None):
 def manifest():
     return responses.RedirectResponse("/static/manifest.json")
 #------------------------------------ Logout ------------------------------------
-@app.post("/user/logout", response_class=responses.RedirectResponse)
+@app.get("/user/logout", response_class=responses.RedirectResponse)
 async def logout():
     cookie_name, cookie_value, redirect_uri = User.logout()
     return redirect_to(redirect_uri, {
