@@ -14,8 +14,7 @@
     "static/media/Wiki_Loves_Folklore_Logo.svg.png": "/static/media/Wiki_Loves_Folklore_Logo.svg.b5b1224b7d68fc0c465b.png",
     "index.html": "/index.html",
     "main.073c9b0a.css.map": "/static/css/main.073c9b0a.css.map",
-    "main.25101583.js.map": "/static/js/main.25101583.js.map",
-
+    "main.ae80b708.js.map": "/static/js/main.ae80b708.js.map",
     "541.05b42559.chunk.js.map": "/static/js/541.05b42559.chunk.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map",
     "595.0c071708.chunk.js.map": "/static/js/595.0c071708.chunk.js.map",
@@ -28,7 +27,6 @@
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.25101583.js"
-
+    "static/js/main.ae80b708.js"
   ]
 }
