@@ -48,15 +48,15 @@
     {% else %}
     <h1 class="text-3xl font-primary text-center">Welcome <b class="font-bold">{{user['username']}}</b>!</h1>
     <div class="flex justify-center mb-3 mt-3">
-        <form action="/user/logout"
-            class="p-3 w-36 rounded bg-red-700  text-white hover:bg-opacity-50  border-slate-400 text-center">
-            <button type="submit">Logout</button>
-        </form>
+        <a href="/user/logout"
+            class="p-2 w-36 rounded text-center bg-red-600 text-white hover:bg-opacity-80  border-slate-400">
+            Logout
+        </a>
     </div>
     {% endif %}
     <hr>
     <h1 class="p-5 self-center text-3xl w-3/4 text-center font-bold font-primary block  mt-6" id="tools">
-         TOOLS
+        TOOLS
     </h1>
     <ul class="flex md:flex-row flex-col justify-center items-center">
         <a href="/fnf" class="w-96" id="listgen">
