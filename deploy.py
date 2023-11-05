@@ -10,6 +10,8 @@ def upload_recurively(conn : Connection, local_path, remote_path):
             conn.mkdir(remote_path)
         for i in os.listdir(local_path):
             print("Processing", i)
+            if i == '__pycache__':
+                continue
             upload_recurively(conn, os.path.join(local_path, i), os.path.join(remote_path, i))
     else:
         print("Uploading", local_path)
