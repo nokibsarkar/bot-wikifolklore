@@ -15,7 +15,6 @@ def upload_recurively(conn : Connection, local_path, remote_path):
         print("Uploading", local_path)
         conn.put(local_path, remote_path)
     
-        
 def upload(username, password, folder, target):
     with Connection(HOST, username=username, password=password, default_path=DEFAULT_PATH) as conn:
         upload_recurively(conn, folder, target)
@@ -23,7 +22,7 @@ def upload(username, password, folder, target):
         print(''.join(map(lambda a : a.decode('utf-8'), k)))
 
 if __name__ == '__main__':
-    assert len(sys.argv) == 5, "Usage: python3 tuktukbot.py <username> <password> <local_folder> <remote_folder>"
+    assert len(sys.argv) == 5, "Usage: python3 deploy.py <username> <password> <local_folder> <remote_folder>"
     USER= sys.argv[1]
     PASSWORD= sys.argv[2]
     SOURCE= sys.argv[3]
