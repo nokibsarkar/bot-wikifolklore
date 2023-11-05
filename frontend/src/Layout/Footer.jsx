@@ -1,10 +1,10 @@
 const Footer = () => (
     <footer className="footer" style={{
-        position: 'relative',
+        position: 'absolute',
         bottom: '0',
         top: 'auto',
-        marginTop: '20px',
-        width: '100%',
+        marginTop: '40px',
+        // width: '99%',
         textAlign: 'center',
         marginBottom: '0',
         fontSize: 'small',

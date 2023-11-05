@@ -52,11 +52,13 @@ export default function PrimarySearchAppBar({ username, toolName, open, setOpen 
     >
 
 
-      <MenuItem onClick={handleMenuClose} LinkComponent={Link} href="/fnf/setting" to="/fnf/setting" >
-        <ListItemIcon>
+      <MenuItem onClick={handleMenuClose} >
+        <Link to="/fnf/setting" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
           Settings
+        </Link>
       </MenuItem>
 
       <MenuItem onClick={Server.logout}>
