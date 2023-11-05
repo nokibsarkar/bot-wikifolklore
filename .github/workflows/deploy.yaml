@@ -28,7 +28,7 @@ jobs:
           npm install
       - name: Build
         run: |
-          bash build.sh temp
+          bash build.sh ${{ secrets.SSH_LOCAL_PATH }}
       - name: Deploy
         run: |
-          python3 deploy.py ${{ secrets.SSH_USERNAME }} ${{ secrets.SSH_PASSWORD }} temp ${{ secrets.SSH_PATH }}
+          python3 deploy.py ${{ secrets.SSH_USER }} ${{ secrets.SSH_PASSWORD }} ${{ secrets.SSH_LOCAL_PATH }} ${{ secrets.SSH_REMOTE_PATH }}
