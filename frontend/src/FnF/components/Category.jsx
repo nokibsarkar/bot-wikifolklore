@@ -69,7 +69,7 @@ const AddCategory = ({ onAdd, disabled }) => {
                     {...params} disabled={disabled}
                     onInput={onInput}
                     onSelect={e => setNewCat(e.target.value)}
-                    label="Add Category"
+                    label="Add Additional Category"
                 />}
             />
             <Button disabled={disabled} variant="contained" color="success" onClick={_onAdd} >
