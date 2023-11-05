@@ -96,11 +96,10 @@ export default function Description({ user }) {
                 Welcome {user.username},<br/>
             </Typography>
             <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
-            This is a tool to generate a list of articles that are present in the English Wikipedia,
-                but not present in your native langauge Wikipedia. The tool would generate the list based on your selection and show 
-                you the list of articles that are missing in your native language Wikipedia with suggested title.
-                The output would be in a form of a table, but you can also download the list in a CSV format,
-                and a wikitables format.
+            Introducing a powerful tool that identifies articles in the English Wikipedia that are absent from your native language Wikipedia.
+            You can customize your selection criteria, and our tool will provide you with a table displaying the missing articles along with suggested titles.
+            You also have the option to download the list in both CSV and wikitables formats.
+            Explore the gap and enhance your language's Wikipedia with ease.
             </Typography>
             <hr />
             
