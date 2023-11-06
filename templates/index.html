@@ -21,7 +21,7 @@
 
 <body class="bg-slate-100 p-3 flex flex-col justify-center font-secondary">
     <div class="flex flex-col justify-center bg-repeat-x bg-center h-96" id="header">
-        <div class="mb-5 flex flex-col self-center border-solid bg-fadedGreen text-white p-4  h-3/4 w-3/4 sm:w-96">
+        <div class="mb-5 flex flex-col self-center border-solid bg-white text-black font-lg p-4  h-3/4 w-3/4 sm:w-96">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Wiki_Loves_Folklore_Logo.svg" alt="" srcset=""
                 class="mb-5 h-32 ">
             <p class="text-center font-medium font-cursive">
@@ -31,12 +31,12 @@
     </div>
     {% if not user %}
     <p class="font-primary">
-        This is a list of tools that are developed by/for/under Wiki Loves Folklore Project.
-        In order to access the tools, you need to login with your Wikimedia account.
-        By Logging in, you agree to the <a href="/terms" alt="" class="text-primary hover:underline">Terms of
-            Service</a> and
-        <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a> of this tool.
-        Please click on the following button to login.
+        Welcome to the Wiki Loves Folklore Tools! Explore our collection of tools designed for and by our community.
+        To access these tools, simply log in using your Wikimedia account.
+        By logging in, you are accepting our 
+        <a href="/terms" alt="" class="text-primary hover:underline">Terms of Service</a> and
+        <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a>.
+        Ready to get started? Click the button below to log in.
     </p>
     <div class="flex justify-center mb-3 mt-3">
         <a href="{{login_url}}" class="p-2 w-max rounded bg-primary  text-white hover:bg-secondary  border-slate-400">
@@ -64,7 +64,11 @@
                     Article List Generator by Topic
                 </h1>
                 <p>
-                    Introducing a powerful tool that identifies articles in the English Wikipedia that are absent from your native language Wikipedia. You can customize your selection criteria, and our tool will provide you with a table displaying the missing articles along with suggested titles. You also have the option to download the list in both CSV and wikitables formats. Explore the gap and enhance your language's Wikipedia with ease.
+                    Introducing a powerful tool that identifies articles in the English Wikipedia that are absent from
+                    your native language Wikipedia. You can customize your selection criteria, and our tool will provide
+                    you with a table displaying the missing articles along with suggested titles. You also have the
+                    option to download the list in both CSV and wikitables formats. Explore the gap and enhance your
+                    language's Wikipedia with ease.
                 </p>
             </li>
         </a>
@@ -102,10 +106,10 @@
 
     </div>
     {% endif %}
-<footer class="text-center  mt-3">
-    <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a> |
-    <a href="/terms" alt="" class="text-primary hover:underline">Terms of Service</a>
-</footer>
+    <footer class="text-center  mt-3">
+        <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a> |
+        <a href="/terms" alt="" class="text-primary hover:underline">Terms of Service</a>
+    </footer>
 </body>
 
 </html>
