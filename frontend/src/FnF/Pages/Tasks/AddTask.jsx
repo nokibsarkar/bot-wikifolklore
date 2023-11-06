@@ -11,9 +11,8 @@ import Collapse from "@mui/material/Collapse"
 import { useState, useEffect, useCallback } from "react";
 import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Autocomplete, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Server from "../../Server";
-import Footer from "../../../Layout/Footer";
 
 function AddTask() {
     const categoryListRef = React.useRef([]);
@@ -118,7 +117,7 @@ function AddTask() {
                             {countries.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
                         </Select>
                     </FormControl>
-                    <FormControl sx={{ width: 300, ml: 0.5 }} size="small">
+                    {/* <FormControl sx={{ width: 300, ml: 0.5 }} size="small">
                         <InputLabel>Target Wiki</InputLabel>
                         <Select
                             fullWidth
@@ -130,7 +129,20 @@ function AddTask() {
                         >
                             {wiki.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
                         </Select>
-                    </FormControl>
+                    </FormControl> */}
+                    <Autocomplete
+                        sx={{ width: 300, ml: 0.5 }}
+                        disablePortal
+                        size="small"
+                        options={wiki}
+                        value={targetwiki}
+                        onChange={(event, newValue) => {
+                            if (newValue) {
+                                setTargetwiki(newValue.id);
+                            }
+                        }}
+                        renderInput={(params) => <TextField {...params} label="Target Wiki" />}
+                    />
                     <Button
                         variant="contained"
                         disabled={disabled}
