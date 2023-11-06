@@ -167,6 +167,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
     const [articleCount, setArticleCount] = React.useState(0);
     const [processedCategory, setProcessedCategory] = React.useState('');
     const [processedCount, setProcessedCount] = React.useState(0);
+    const [totalCategories, setTotalCategories] = React.useState(0);
     const [generating, setGenerating] = React.useState(false);
     statusRef.current = generating
     const checkTaskStatus = useCallback(async () => {
@@ -178,6 +179,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
             setDisabled(false);
             setStatusCheckerTimer(0)
             if (task.status == 'done') {
+                setProcessedCount(task.category_count);
                 exportTable();
             } else if (task.status == 'failed') {
                 alert("Task Failed")
@@ -190,7 +192,8 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
         }
         setArticleCount(task.article_count);
         setProcessedCategory(task.last_category);
-        setProcessedCount(task.category_count);
+        setProcessedCount(task.category_done);
+        setTotalCategories(task.category_count);
     }, [taskID]);
     const exportCSV = useCallback(async () => {
         const download = (taskID, csv) => {
@@ -262,7 +265,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
             fontSize: '16px'
         }}>
             Article count : {articleCount}<br />
-            Processed Count : {processedCount}<br />
+            Processed Count : {processedCount}/{totalCategories}<br />
             Last Category: {processedCategory}<br />
         </Box>
     )
