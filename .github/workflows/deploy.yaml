@@ -27,6 +27,8 @@ jobs:
           cd ../landing_page
           npm install
       - name: Build
+        env:
+          CI: false
         run: |
           bash build.sh ${{ secrets.SSH_LOCAL_PATH }}
       - name: Deploy
