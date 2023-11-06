@@ -90,6 +90,7 @@ class FnF {
     static async init(){
         if(!FnF.languages || !FnF.countries){
             if(!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY)){
+                console.log("Fetching languages and countries")
                 localStorage.setItem(COUNTRY_KEY, JSON.stringify(await fetch("/api/country").then(res => res.json()).then(res => res.data)))
                 localStorage.setItem(LANGUAGE_KEY, JSON.stringify(await fetch("/api/language").then(res => res.json()).then(res => res.data)))
             }
