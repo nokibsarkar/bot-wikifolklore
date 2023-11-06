@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  deploy:
+  setup:
     runs-on: ubuntu-latest
     environment: Production
     steps:
@@ -26,12 +26,47 @@ jobs:
           npm install
           cd ../landing_page
           npm install
-      - name: Build
+      - name: Build Setup
         env:
           CI: false
         run: |
           mkdir -p ${{ vars.LOCAL_TEMP_PATH }}
-          bash build.sh ${{ vars.LOCAL_TEMP_PATH }}
+          bash build.sh ${{ vars.LOCAL_TEMP_PATH }} setup
+  build_landing_page:
+    runs-on: ubuntu-latest
+    needs: setup
+    environment: Production
+    steps:
+      - name: Build
+        env:
+          CI: false
+        run: |
+          bash build.sh ${{ vars.LOCAL_TEMP_PATH }} landing_page
+  build_frontend:
+    runs-on: ubuntu-latest
+    needs: setup
+    environment: Production
+    steps:
+      - name: Build
+        env:
+          CI: false
+        run: |
+          bash build.sh ${{ vars.LOCAL_TEMP_PATH }} frontend
+  package_all:
+    runs-on: ubuntu-latest
+    needs: [build_landing_page, build_frontend]
+    environment: Production
+    steps:
+      - name: Package
+        env:
+          CI: false
+        run: |
+          bash build.sh ${{ vars.LOCAL_TEMP_PATH }} package
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: [package_all]
+    steps:
       - name: Deploy
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa

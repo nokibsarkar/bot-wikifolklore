@@ -1,6 +1,13 @@
 TEMP_DIR="$1"
+CMD="$2"
 if [ -z "$TEMP_DIR" ]; then
     echo "Please provide a temp directory name"
+    exit 1
+fi
+echo "Temp directory: $TEMP_DIR"
+echo "Command : $2"
+if [ -z "$CMD" ]; then
+    echo "Please provide a command: setup, landing_page, frontend , package, all"
     exit 1
 fi
 CURRENT_PATH=$(pwd)
@@ -63,7 +70,6 @@ build_frontend (){
     echo "Build completed"
 }
 package () {
-    
     if [ -d "$TEMP_PATH" ]; then
         echo "Removing old temp folder"
         rm -rf $TEMP_PATH
@@ -87,9 +93,20 @@ package () {
     cp production.env $TEMP_PATH/.env
     echo "Packaging done"
 }
-
-setup
-build_landing_page
-build_frontend
-package
+if [ "$CMD" == "setup" ]; then
+    setup
+elif [ "$CMD" == "landing_page" ]; then
+    build_landing_page
+elif [ "$CMD" == "frontend" ]; then
+    build_frontend
+elif [ "$CMD" == "package" ]; then
+    package
+elif [ "$CMD" == "all" ]; then
+    setup
+    build_landing_page
+    build_frontend
+    package
+else
+    echo "Please provide a command: setup, landing_page, frontend , package, all"
+fi
 
