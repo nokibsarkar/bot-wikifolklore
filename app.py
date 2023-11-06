@@ -54,6 +54,18 @@ def privacy(request : Request):
     return app.templates.TemplateResponse("privacy.html", context= {
         'request' : request,
     })
+@app.get('/favicon.ico', response_class=responses.FileResponse)
+def favicon():
+    return responses.FileResponse("static/favicon.ico")
+@app.get("/sitemap.xml", response_class=responses.FileResponse)
+def sitemap():
+    return responses.FileResponse("static/sitemap.xml")
+@app.get("/robots.txt", response_class=responses.FileResponse)
+def robots():
+    return responses.FileResponse("static/robots.txt")
+@app.get("/sitemap", response_class=responses.FileResponse)
+def sitemap():
+    return responses.FileResponse("static/sitemap.xml")
 def redirect_to(url, cookies : dict = {}):
     response = responses.RedirectResponse(url)
     for key, value in cookies.items():
@@ -91,9 +103,7 @@ async def fnf(req : Request, optional_path : str = ''):
         return redirect_to(redirect_uri)
     return responses.FileResponse("static/index.html")
 
-@app.get('/favicon.ico', response_class=responses.RedirectResponse)
-def favicon():
-    return responses.RedirectResponse("/static/favicon.ico")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="", port=5000)
