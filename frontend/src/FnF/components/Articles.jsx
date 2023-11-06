@@ -54,7 +54,7 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
             <DialogTitle>{data.title}</DialogTitle>
             <DialogContent>
                 <Typography variant="body1" gutterBottom >
-                    <b>English : <a href={"https://en.wikipedia.org/wiki/" + englishTitle} target="_blank" style={{ textDecoration: 'none' }}>{englishTitle}</a></b>
+                    <b>English : <a href={"https://en.wikipedia.org/wiki/" + englishTitle} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'none' }}>{englishTitle}</a></b>
                 </Typography>
                 <TextField
                     id="outlined-multiline-static"
