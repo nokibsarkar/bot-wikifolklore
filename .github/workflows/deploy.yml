@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  setup:
+  build:
     runs-on: ubuntu-latest
     environment: Production
     steps:
@@ -32,46 +32,31 @@ jobs:
         run: |
           mkdir -p ${{ vars.LOCAL_TEMP_PATH }}
           bash build.sh ${{ vars.LOCAL_TEMP_PATH }} setup
-  build_landing_page:
-    runs-on: ubuntu-latest
-    needs: setup
-    environment: Production
-    steps:
-      - name: Build
+      - name: Build Landing Page
         env:
           CI: false
         run: |
           bash build.sh ${{ vars.LOCAL_TEMP_PATH }} landing_page
-  build_frontend:
-    runs-on: ubuntu-latest
-    needs: setup
-    environment: Production
-    steps:
-      - name: Build
+      - name: Build Frontend
         env:
           CI: false
         run: |
           bash build.sh ${{ vars.LOCAL_TEMP_PATH }} frontend
-  package_all:
-    runs-on: ubuntu-latest
-    needs: [build_landing_page, build_frontend]
-    environment: Production
-    steps:
-      - name: Package
-        env:
-          CI: false
+      - name: Package Build
         run: |
           bash build.sh ${{ vars.LOCAL_TEMP_PATH }} package
-  deploy:
-    runs-on: ubuntu-latest
-    environment: Production
-    needs: [package_all]
-    steps:
-      - name: Deploy
+      - name: Setup Deployment Environment
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
-          chmod 600 id_rsa
           mkdir -p ~/.ssh
           ssh-keyscan tools.wikilovesfolklore.org >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
+          chmod 600 id_rsa
+      - name: Send Build to Server
+        run: |
           python3 deploy.py ${{ secrets.SSH_USER }} id_rsa ${{ vars.LOCAL_TEMP_PATH }} ${{ secrets.SSH_REMOTE_PATH }}
+      - name: Restart Gunicorn
+        run: |
           ssh -i id_rsa "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "sudo /usr/bin/systemctl restart gunicorn"
+      - name: Delete SSH Key
+        run: |
+          rm id_rsa
