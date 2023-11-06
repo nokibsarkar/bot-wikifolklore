@@ -158,7 +158,7 @@ function AddTask() {
                 </Collapse>
                 {resultElement}
 
-            <Footer />
+            {/* <Footer /> */}
             </CardContent>
         </Card>
     );

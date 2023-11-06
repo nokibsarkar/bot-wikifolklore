@@ -8,6 +8,7 @@ import SettingIcon from '@mui/icons-material/Settings';
 import AppBar from './Layout/AppBar.jsx';
 import Loading from './Layout/LoadingPage.jsx';
 import AppDrawer from './Layout/AppDrawer';
+import Footer from './Layout/Footer';
 import Server from './Server.ts';
 import {
   createBrowserRouter,
@@ -155,6 +156,7 @@ function App() {
           </Routes>
         </React.Suspense>
       </BrowserRouter>
+      <Footer />
     </ThemeProvider>
   );
 }

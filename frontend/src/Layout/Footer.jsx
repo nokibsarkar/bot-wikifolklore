@@ -1,9 +1,9 @@
 const Footer = () => (
     <footer className="footer" style={{
-        position: 'absolute',
+        // position: 'absolute',
         bottom: '0',
         top: 'auto',
-        marginTop: '40px',
+        marginTop: 'auto',
         // width: '99%',
         textAlign: 'center',
         marginBottom: '0',

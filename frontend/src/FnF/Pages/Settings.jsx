@@ -63,7 +63,7 @@ const Settings = () => {
                 <HideIcon /> &nbsp; Hide my username
             </Button>
 
-            <Footer />
+            {/* <Footer /> */}
         </Paper>
     )
 }

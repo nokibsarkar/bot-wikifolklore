@@ -82,7 +82,7 @@ const ListUser = ({ user }) => {
                         checkboxSelection={false}
                         disableSelectionOnClick
                     />
-                    <Footer />
+                    {/* <Footer /> */}
                 </CardContent>
             </Card>
         </Box>

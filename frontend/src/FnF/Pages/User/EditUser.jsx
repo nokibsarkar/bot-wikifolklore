@@ -92,7 +92,7 @@ const EditUser = ({ user: currentUser }) => {
                             Saved Successfully
                         </Alert>
                     </Snackbar>
-                    <Footer />
+                    {/* <Footer /> */}
                 </CardContent>
             </Card>
         </Box>

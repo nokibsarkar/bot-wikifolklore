@@ -104,7 +104,7 @@ export default function Description({ user }) {
             <hr />
             
             {sections}
-            <Footer />
+            {/* <Footer /> */}
         </Paper>
     )
 }

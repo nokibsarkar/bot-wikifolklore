@@ -149,7 +149,7 @@ const ListTask = () => {
             <CardContent>
             <User />
                 <TaskList />
-                <Footer />
+                {/* <Footer /> */}
             </CardContent>
         </Card>
     )

@@ -89,7 +89,7 @@ const AddTopic = () => {
                 </FormControl>
             </Box>
             <CategoryList categoryListRef={categoryListRef} disabled={creating} />
-            <Footer />
+            {/* <Footer /> */}
         </CardContent>
     </Card>
 }

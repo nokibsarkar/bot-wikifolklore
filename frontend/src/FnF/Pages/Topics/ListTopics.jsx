@@ -65,7 +65,7 @@ const ListTopic = () => {
                         )
                         )}
                     </List>
-                    <Footer/>
+                    {/* <Footer/> */}
                 </CardContent>
             </Card>
         </Box>

@@ -68,7 +68,7 @@ const EditTopic = () => {
             <Box sx={{ mt : 5, maxWidth : 300,display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <Button variant="contained" onClick={save} disabled={saving}>Save</Button>
             </Box>
-            <Footer />
+            {/* <Footer /> */}
         </CardContent>
     </Card>
 }
