@@ -19,7 +19,6 @@ def upload_recurively(conn : Connection, local_path, remote_path):
     
 def upload(username, private_key_path, folder, target):
     cnopts = CnOpts(knownhosts=None)
-    print(cnopts.get_hostkey(HOST))
     with Connection(HOST, username=username, private_key=private_key_path, default_path=DEFAULT_PATH, cnopts=cnopts) as conn:
         upload_recurively(conn, folder, target)
         k = conn.execute(f'ls -l \'{DEFAULT_PATH}\'')
