@@ -179,6 +179,7 @@ const ArticleList = ({ taskID, statusRef, setDisabled, targetLanguage }) => {
             setDisabled(false);
             setStatusCheckerTimer(0)
             if (task.status == 'done') {
+                setProcessedCount(task.category_count);
                 exportTable();
             } else if (task.status == 'failed') {
                 alert("Task Failed")
