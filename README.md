@@ -1,1 +1,2 @@
 # bot-wikifolklore
+[![Deploy to Server](https://github.com/nokibsarkar/bot-wikifolklore/actions/workflows/deploy.yaml/badge.svg?branch=main&event=push)](https://github.com/nokibsarkar/bot-wikifolklore/actions/workflows/deploy.yaml)
