@@ -67,6 +67,7 @@ const AddCategory = ({ onAdd, disabled }) => {
 const _CategoryList = ({ categoryListRef, initialCategories, disabled = false }) => {
     const [categoryObject, setCategoryObject] = React.useState({});// {categoryName: {categoryObject}
     const [selectedIds, setSelectedIds] = React.useState([]);// [id1, id2
+    const [loading, setLoading] = React.useState(false);// [id1, id2
     const categories = React.useMemo(() => {
         return Object.values(categoryObject);
     }, [categoryObject]);
@@ -86,6 +87,7 @@ const _CategoryList = ({ categoryListRef, initialCategories, disabled = false })
         setCategoryObject({ ...categoryObject });
     }, [categoryObject]);
     const onSubCategory = React.useCallback((catIDs) => {
+        setLoading(true);
         const categories = catIDs.map(id => categoryObject[id]).filter(v => v && !v.subcat)
         Server.addSubCategories(categories).then(subCategories => {
             subCategories.forEach(cat => categoryObject[cat.id] = cat);
@@ -93,6 +95,7 @@ const _CategoryList = ({ categoryListRef, initialCategories, disabled = false })
             for (let catID of catIDs) {
                 categoryObject[catID].subcat = true;
             }
+            setLoading(false);
         });
     }, [categoryObject]);
     // Populate the categories
@@ -131,6 +134,7 @@ const _CategoryList = ({ categoryListRef, initialCategories, disabled = false })
                 disableColumnFilter
                 disableColumnMenu
                 disableRowSelectionOnClick
+                loading={loading}
                 onRowSelectionModelChange={(newRowSelectionModel, details) => setSelectedIds(newRowSelectionModel)}
                 rows={categories}
                 columns={[
