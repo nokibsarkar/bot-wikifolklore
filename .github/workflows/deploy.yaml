@@ -30,13 +30,13 @@ jobs:
         env:
           CI: false
         run: |
-          mkdir -p ${{ secrets.SSH_LOCAL_PATH }}
-          bash build.sh ${{ secrets.SSH_LOCAL_PATH }}
+          mkdir -p ${{ vars.LOCAL_TEMP_PATH }}
+          bash build.sh ${{ vars.LOCAL_TEMP_PATH }}
       - name: Deploy
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
           chmod 600 id_rsa
           mkdir -p ~/.ssh
           ssh-keyscan tools.wikilovesfolklore.org >> ~/.ssh/known_hosts
-          python3 deploy.py ${{ secrets.SSH_USER }} id_rsa ${{ secrets.SSH_LOCAL_PATH }} ${{ secrets.SSH_REMOTE_PATH }}
+          python3 deploy.py ${{ secrets.SSH_USER }} id_rsa ${{ vars.LOCAL_TEMP_PATH }} ${{ secrets.SSH_REMOTE_PATH }}
           ssh -i id_rsa "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "sudo /usr/bin/systemctl restart gunicorn"
