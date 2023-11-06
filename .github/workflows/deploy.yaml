@@ -33,6 +33,7 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
           chmod 600 id_rsa
+          mkdir -p ~/.ssh
           ssh-keyscan tools.wikilovesfolklore.org >> ~/.ssh/known_hosts
           python3 deploy.py ${{ secrets.SSH_USER }} id_rsa ${{ secrets.SSH_LOCAL_PATH }} ${{ secrets.SSH_REMOTE_PATH }}
           ssh -i id_rsa "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "sudo /usr/bin/systemctl restart gunicorn"
