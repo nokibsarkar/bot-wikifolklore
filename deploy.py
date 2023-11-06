@@ -1,4 +1,5 @@
 from pysftp import Connection
+from paramiko import ECDSAKey, AgentKey
 import os, sys
 HOST='tools.wikilovesfolklore.org'
 
@@ -17,16 +18,19 @@ def upload_recurively(conn : Connection, local_path, remote_path):
         print("Uploading", local_path)
         conn.put(local_path, remote_path)
     
-def upload(username, password, folder, target):
-    with Connection(HOST, username=username, password=password, default_path=DEFAULT_PATH) as conn:
+def upload(username, private_key_path, folder, target):
+    with Connection(HOST, username=username, private_key=private_key_path, default_path=DEFAULT_PATH) as conn:
         upload_recurively(conn, folder, target)
         k = conn.execute(f'ls -l \'{DEFAULT_PATH}\'')
         print(''.join(map(lambda a : a.decode('utf-8'), k)))
 
 if __name__ == '__main__':
-    assert len(sys.argv) == 5, "Usage: python3 deploy.py <username> <password> <local_folder> <remote_folder>"
+    assert len(sys.argv) == 5, "Usage: python3 deploy.py <username> <private key path> <local_folder> <remote_folder>"
     USER= sys.argv[1]
-    PASSWORD= sys.argv[2]
+    PRIVATE_KEY_PATH= sys.argv[2]
     SOURCE= sys.argv[3]
     TARGET= sys.argv[4]
-    upload(USER, PASSWORD, SOURCE, TARGET)
+    # with open(PRIVATE_KEY_PATH, 'rb') as f:
+    #     PRIVATE_KEY_PATH = f.read()
+
+    upload(USER, PRIVATE_KEY_PATH, SOURCE, TARGET)
