@@ -30,6 +30,7 @@ jobs:
         env:
           CI: false
         run: |
+          mkdir -p ${{ secrets.SSH_LOCAL_PATH }}
           bash build.sh ${{ secrets.SSH_LOCAL_PATH }}
       - name: Deploy
         run: |
