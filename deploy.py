@@ -1,5 +1,4 @@
-from pysftp import Connection
-from paramiko import ECDSAKey, AgentKey
+from pysftp import Connection, CnOpts
 import os, sys
 HOST='tools.wikilovesfolklore.org'
 
@@ -19,7 +18,9 @@ def upload_recurively(conn : Connection, local_path, remote_path):
         conn.put(local_path, remote_path)
     
 def upload(username, private_key_path, folder, target):
-    with Connection(HOST, username=username, private_key=private_key_path, default_path=DEFAULT_PATH) as conn:
+    cnopts = CnOpts(knownhosts=None)
+    print(cnopts.get_hostkey(HOST))
+    with Connection(HOST, username=username, private_key=private_key_path, default_path=DEFAULT_PATH, cnopts=cnopts) as conn:
         upload_recurively(conn, folder, target)
         k = conn.execute(f'ls -l \'{DEFAULT_PATH}\'')
         print(''.join(map(lambda a : a.decode('utf-8'), k)))
