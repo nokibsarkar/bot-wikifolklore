@@ -16,6 +16,7 @@ import { useCallback, useState } from "react";
 import Footer from "../../Layout/Footer.jsx";
 const Settings = () => {
     const [users, setUsers] = useState([])
+    const [usernameHidden, setUsernameHidden] = useState(false);
     const hideUsername = useCallback((e) => {
         const message = `
         Are you want to hide your username from all the records?
