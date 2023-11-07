@@ -8,7 +8,7 @@ const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth';
 const HIDDEN_USERNAME = "USERNAME HIDDEN";
 const checkToken = (token: string) => {
     try {
-        const decoded: { exp: number; } = jwt_decode(token);
+        const decoded: { exp: number; username : string; } = jwt_decode(token);
         // check if token is expired
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
