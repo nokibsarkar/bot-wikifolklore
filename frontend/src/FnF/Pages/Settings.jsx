@@ -12,11 +12,11 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Collapse from "@mui/material/Collapse"
 import Server from "../Server.ts";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Footer from "../../Layout/Footer.jsx";
 const Settings = () => {
     const [users, setUsers] = useState([]);
-    const [usernameHidden, setUsernameHidden] = useState(Server.BaseServer.isUsernameHidden());
+    const [usernameHidden, setUsernameHidden] = useState(true);
     const hideUsername = useCallback((e) => {
         const message = `
         Are you want to hide your username from all the records?
@@ -38,6 +38,11 @@ const Settings = () => {
                 })
             })
     }, []);
+    useEffect(() =>{
+        Server.getMe().then(user => setUsernameHidden(user.username == "USERNAME HIDDEN"))
+    }, []);
+
+
     return (
         <Paper sx={{
             height: "100%",
