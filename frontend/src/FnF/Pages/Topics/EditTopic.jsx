@@ -9,15 +9,30 @@ import React from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
-import Collapse from "@mui/material/Collapse"
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import Footer from "../../../Layout/Footer.jsx";
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+const DeleTePrompt = ({ open, onClose, onConfirm }) => {
+    return <Dialog open={open} onClose={onClose}>
+        <DialogTitle>Delete Topic</DialogTitle>
+        <DialogContent>Are you sure you want to delete this topic?
+            This action cannot be undone.
+
+        </DialogContent>
+        <DialogActions>
+            <Button color="success" variant="outlined" onClick={onClose}>Cancel</Button>
+            <Button color="error" variant="contained" onClick={onConfirm}>Confirm</Button>
+        </DialogActions>
+    </Dialog>
+}
 const EditTopic = () => {
     const [topicID, setTopicID] = useState('');
     const [country, setCountry] = useState('');
     const [refreshKey, setRefreshKey] = useState(0);
     const [categories, setCategories] = useState([]);
     const [saving, setSaving] = useState(false);
+    const [deletePromptOpen, setDeletePromptOpen] = useState(false);
     const categoryListRef = createRef(null);
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -58,7 +73,7 @@ const EditTopic = () => {
         window.location.href = "/fnf/topic";
     }, [topicID]);
     return <Card>
-        <CardHeader title="Edit Topic" action={<Button variant="contained" color="error" onClick={deleteTopic} disabled={saving}><DeleteIcon /> Delete</Button>} />
+        <CardHeader title="Edit Topic" action={<Button variant="contained" color="error" onClick={e => setDeletePromptOpen(true)} disabled={saving}><DeleteIcon /> Delete</Button>} />
         <CardContent>
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <Typography variant="subtitle">Topic ID : {topicID}</Typography>
@@ -68,6 +83,7 @@ const EditTopic = () => {
             <Box sx={{ mt : 5, maxWidth : 300,display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <Button variant="contained" onClick={save} disabled={saving}>Save</Button>
             </Box>
+            <DeleTePrompt open={deletePromptOpen} onClose={e => setDeletePromptOpen(false)} onConfirm={deleteTopic} />
             {/* <Footer /> */}
         </CardContent>
     </Card>
