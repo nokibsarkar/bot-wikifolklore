@@ -1,4 +1,4 @@
-import BaseServer from "../Server.ts";
+import BaseServer from "../Server";
 type Country = string
 type ID = number
 type Article = {
