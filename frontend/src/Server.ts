@@ -5,6 +5,7 @@ type Permission = number;
 const LANGUAGE_KEY = "tk-lang"
 const COUNTRY_KEY = "tk-country";
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth';
+const HIDDEN_USERNAME = "USERNAME HIDDEN";
 const checkToken = (token: string) => {
     try {
         const decoded: { exp: number; } = jwt_decode(token);
@@ -40,6 +41,10 @@ class BaseServer {
             const decoded = checkToken(token);
             return decoded;
         }
+    }
+    static isUsernameHidden(){
+        const user = BaseServer.loginnedUser();
+        return user && user.username == HIDDEN_USERNAME;
     }
     static hasAccess(rights: Permission, permission: Permission) {
         return (rights & permission) == permission;

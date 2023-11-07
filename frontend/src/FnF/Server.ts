@@ -1,4 +1,4 @@
-
+import BaseServer from "../Server.ts";
 type Country = string
 type ID = number
 type Article = {
@@ -87,6 +87,7 @@ class FnF {
     static languages : Object | null = null;
     static countries : Object | null= null;
     static RIGHTS = PERMISSIONS;
+    static BaseServer = BaseServer;
     static async init(){
         if(!FnF.languages || !FnF.countries){
             if(!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY)){

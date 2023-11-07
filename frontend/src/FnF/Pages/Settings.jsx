@@ -15,7 +15,8 @@ import Server from "../Server.ts";
 import { useCallback, useState } from "react";
 import Footer from "../../Layout/Footer.jsx";
 const Settings = () => {
-    const [users, setUsers] = useState([])
+    const [users, setUsers] = useState([]);
+    const [usernameHidden, setUsernameHidden] = useState(Server.BaseServer.isUsernameHidden());
     const hideUsername = useCallback((e) => {
         const message = `
         Are you want to hide your username from all the records?
@@ -59,6 +60,7 @@ const Settings = () => {
                 m: 1
             }}
                 onClick={hideUsername}
+                disabled={usernameHidden}
             >
                 <HideIcon /> &nbsp; Hide my username
             </Button>
