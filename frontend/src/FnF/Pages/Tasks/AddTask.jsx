@@ -29,6 +29,7 @@ function AddTask() {
     const [resultElement, setResultElement] = useState(null);
     const statusRef = React.useRef(false);
     const wiki = []
+    
     for (const [key, value] of Object.entries(Server.languages)) {
         wiki.push({ id: key, label: `${value} (${key})` })
     }
