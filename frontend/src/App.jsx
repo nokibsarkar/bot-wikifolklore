@@ -10,6 +10,7 @@ import Loading from './Layout/LoadingPage.jsx';
 import AppDrawer from './Layout/AppDrawer';
 import Footer from './Layout/Footer';
 import Server from './Server.ts';
+import PeopleIcon from '@mui/icons-material/People';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -61,7 +62,7 @@ const FnFTopicRoutes = {
 };
 const FnFUserRoutes = {
   name: 'Users',
-  icon: null,
+  icon: <PeopleIcon />,
   path: '/fnf/user',
   children: [
     {
