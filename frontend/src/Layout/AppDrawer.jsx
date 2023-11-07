@@ -29,8 +29,7 @@ const Tool = (comp) => {
             backgroundColor: expanded? '#e0e0e0' : 'inherit',
         }}
     >
-
-        <ListItemButton onClick={ e=> setExpanded(!expanded)}>
+        <ListItemButton onClick={ e=> setExpanded(!expanded)} component={Link} to={comp?.path}>
             <ListItemIcon>
                 {comp?.icon}
             </ListItemIcon>

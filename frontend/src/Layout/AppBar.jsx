@@ -87,8 +87,9 @@ export default function PrimarySearchAppBar({ username, toolName, open, setOpen 
           <Typography
             variant="h6"
             noWrap
-            component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
+            component={Link}
+            to="/fnf"
           >
             {toolName}
           </Typography>
