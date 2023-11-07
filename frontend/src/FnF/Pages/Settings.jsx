@@ -67,7 +67,7 @@ const Settings = () => {
                 onClick={hideUsername}
                 disabled={usernameHidden}
             >
-                <HideIcon /> &nbsp; Hide my username
+                <HideIcon /> &nbsp; { usernameHidden ?  "Username Already Hidden" : "Hide my username"}
             </Button>
 
             {/* <Footer /> */}
