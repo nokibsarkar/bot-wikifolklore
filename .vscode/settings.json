@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///media/nokib/Data/Projects/Wikipedia/folklore-lover/.github/workflows/deploy.yml"
+    }
+}
