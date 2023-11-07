@@ -87,9 +87,10 @@ export default function PrimarySearchAppBar({ username, toolName, open, setOpen 
           <Typography
             variant="h6"
             noWrap
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, textDecoration: 'none', color: 'inherit' }}
             component={Link}
             to="/fnf"
+            title={"Go to " + toolName}
           >
             {toolName}
           </Typography>
