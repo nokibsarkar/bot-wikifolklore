@@ -30,7 +30,7 @@ function AddTask() {
     const statusRef = React.useRef(false);
     const wiki = []
     for (const [key, value] of Object.entries(Server.languages)) {
-        wiki.push({ id: key, label: value })
+        wiki.push({ id: key, label: `${value} (${key})` })
     }
     wiki.sort((a, b) => a.label.localeCompare(b.label));
     useEffect(() => {
@@ -117,25 +117,13 @@ function AddTask() {
                             {countries.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
                         </Select>
                     </FormControl>
-                    {/* <FormControl sx={{ width: 300, ml: 0.5 }} size="small">
-                        <InputLabel>Target Wiki</InputLabel>
-                        <Select
-                            fullWidth
-                            disabled={disabled}
-                            error={targetWikiError}
-                            value={targetwiki}
-                            label="Target Wiki"
-                            onChange={e => e.target.value && setTargetwiki(e.target.value)}
-                        >
-                            {wiki.map(v => <MenuItem key={v.id} value={v.id}>{v.label}</MenuItem>)}
-                        </Select>
-                    </FormControl> */}
                     <Autocomplete
                         sx={{ width: 300, ml: 0.5 }}
                         disablePortal
                         size="small"
                         options={wiki}
                         value={targetwiki}
+                        isOptionEqualToValue={(option, value) =>option.id === value}
                         onChange={(event, newValue) => {
                             if (newValue) {
                                 setTargetwiki(newValue.id);
