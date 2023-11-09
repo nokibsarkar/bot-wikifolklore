@@ -67,7 +67,9 @@ const Tool = (comp) => {
 }
 const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, components }) => {
 
-
+    const gotoHome = () => {
+        window.location.href = '/';
+    }
 
 
     return (
@@ -98,7 +100,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                         <ListItemText primary={user?.username} />
                     </ListItem>
                     <ListItem key='home' disablePadding>
-                        <ListItemButton component={Link} to="/">
+                        <ListItemButton onClick={gotoHome}>
                             <ListItemIcon>
                                 <HomeIcon />
                             </ListItemIcon>
