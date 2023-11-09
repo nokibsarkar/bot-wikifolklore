@@ -67,7 +67,7 @@ class Country(Enum):
     Cura_ao   =   "CW"
     Cyprus   =   "CY"
     Czechia   =   "CZ"
-    C_te_d_Ivoire   =   "CI"
+    Cte_dIvoire   =   "CI"
     Denmark   =   "DK"
     Djibouti   =   "DJ"
     Dominica   =   "DM"
