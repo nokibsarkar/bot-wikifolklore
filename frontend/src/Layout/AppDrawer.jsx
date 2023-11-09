@@ -13,6 +13,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import Collapse from '@mui/material/Collapse';
 import BugIcon from '@mui/icons-material/BugReport';
+import HomeIcon from '@mui/icons-material/Home';
 const Tool = (comp) => {
     const [expanded, setExpanded] = React.useState(true);
     return <List>
@@ -95,6 +96,14 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                             <AccountCircle />
                         </ListItemIcon>
                         <ListItemText primary={user?.username} />
+                    </ListItem>
+                    <ListItem key='home' disablePadding>
+                        <ListItemButton component={Link} to="/">
+                            <ListItemIcon>
+                                <HomeIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Home' />
+                        </ListItemButton>
                     </ListItem>
                 </List>
                 <Divider />
