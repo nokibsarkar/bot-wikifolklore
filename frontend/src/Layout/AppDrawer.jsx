@@ -54,7 +54,7 @@ const Tool = (comp) => {
                         backgroundColor: child?.active ? '#e0e0e0' : 'inherit',
                     }}
                 >
-                    <ListItemButton component={Link} to={child?.path}>
+                    <ListItemButton component={Link} to={child?.path} onClick={e => setExpanded(false)}>
                         <ListItemIcon>
                             {child?.icon}
                         </ListItemIcon>
