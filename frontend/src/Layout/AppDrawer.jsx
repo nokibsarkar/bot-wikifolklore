@@ -54,7 +54,7 @@ const Tool = (comp) => {
                         backgroundColor: child?.active ? '#e0e0e0' : 'inherit',
                     }}
                 >
-                    <ListItemButton component={Link} to={child?.path} onClick={e => setExpanded(false)}>
+                    <ListItemButton onClick={comp?.closeDrawer} component={Link} to={child?.path}>
                         <ListItemIcon>
                             {child?.icon}
                         </ListItemIcon>
@@ -70,7 +70,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
     const gotoHome = () => {
         window.location.href = '/';
     }
-
+    const closeDrawer = () => setOpen(false)
 
     return (
         <SwipeableDrawer
@@ -89,7 +89,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
             <Box
                 sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
                 role="presentation"
-              onClick={() => setOpen(false)}
+              
             >
                 <List>
                     <ListItem key='username'>
@@ -108,7 +108,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                     </ListItem>
                 </List>
                 <Divider />
-                {components?.map((comp, index) => comp && <Tool key={comp?.name} {...comp} />)}
+                {components?.map((comp, index) => comp && <Tool key={comp?.name} {...comp} closeDrawer={closeDrawer} />)}
                 <Divider />
                 <List>
                     <ListItem key='report' disablePadding>
