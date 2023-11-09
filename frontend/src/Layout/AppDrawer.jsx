@@ -12,63 +12,63 @@ import ListItem from '@mui/material/ListItem';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import Collapse from '@mui/material/Collapse';
-import Footer from './Footer';
+import BugIcon from '@mui/icons-material/BugReport';
 const Tool = (comp) => {
     const [expanded, setExpanded] = React.useState(true);
     return <List>
-    <ListItem key={comp?.name} disablePadding
-        sx={{
-            '&:hover': {
-                backgroundColor: '#e0e0e0',
-                color: '#000000'
-            },
-            '&.Mui-selected': {
-                backgroundColor: '#e0e0e0',
-                color: '#000000'
-            },
-            backgroundColor: expanded? '#e0e0e0' : 'inherit',
-        }}
-    >
-        <ListItemButton onClick={ e=> setExpanded(!expanded)} component={Link} to={comp?.path}>
-            <ListItemIcon>
-                {comp?.icon}
-            </ListItemIcon>
-            <ListItemText primary={comp?.name} />
-            {expanded? <CollapseIcon /> : <ExpandedIcon />}
-        </ListItemButton>
+        <ListItem key={comp?.name} disablePadding
+            sx={{
+                '&:hover': {
+                    backgroundColor: '#e0e0e0',
+                    color: '#000000'
+                },
+                '&.Mui-selected': {
+                    backgroundColor: '#e0e0e0',
+                    color: '#000000'
+                },
+                backgroundColor: expanded ? '#e0e0e0' : 'inherit',
+            }}
+        >
+            <ListItemButton onClick={e => setExpanded(!expanded)} component={Link} to={comp?.path}>
+                <ListItemIcon>
+                    {comp?.icon}
+                </ListItemIcon>
+                <ListItemText primary={comp?.name} />
+                {expanded ? <CollapseIcon /> : <ExpandedIcon />}
+            </ListItemButton>
 
-    </ListItem>
-    <Collapse in={expanded}>
-        {comp?.children?.map((child, index) => (
-            <ListItem key={child?.name} disablePadding
-                sx={{
-                    '&:hover': {
-                        backgroundColor: '#e0e0e0',
-                        color: '#000000'
-                    },
-                    '&.Mui-selected': {
-                        backgroundColor: '#e0e0e0',
-                        color: '#000000'
-                    },
-                    backgroundColor: child?.active ? '#e0e0e0' : 'inherit',
-                }}
-            >
-                <ListItemButton component={Link} to={child?.path}>
-                    <ListItemIcon>
-                        {child?.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={child?.name} />
-                </ListItemButton>
-            </ListItem>
-        ))}
-    </Collapse>
-</List>
+        </ListItem>
+        <Collapse in={expanded}>
+            {comp?.children?.map((child, index) => (
+                <ListItem key={child?.name} disablePadding
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: '#e0e0e0',
+                            color: '#000000'
+                        },
+                        '&.Mui-selected': {
+                            backgroundColor: '#e0e0e0',
+                            color: '#000000'
+                        },
+                        backgroundColor: child?.active ? '#e0e0e0' : 'inherit',
+                    }}
+                >
+                    <ListItemButton component={Link} to={child?.path}>
+                        <ListItemIcon>
+                            {child?.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={child?.name} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
+        </Collapse>
+    </List>
 }
 const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, components }) => {
-    
-    
-    
-    
+
+
+
+
     return (
         <SwipeableDrawer
             anchor="left"
@@ -99,7 +99,17 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                 </List>
                 <Divider />
                 {components?.map((comp, index) => comp && <Tool key={comp?.name} {...comp} />)}
-
+                <Divider />
+                <List>
+                    <ListItem key='report' disablePadding>
+                        <ListItemButton component={Link} to="https://github.com/nokibsarkar/bot-wikifolklore/issues">
+                            <ListItemIcon>
+                                <BugIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Report Bug' />
+                        </ListItemButton>
+                    </ListItem>
+                </List>
             </Box>
         </SwipeableDrawer>
     )
