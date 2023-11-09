@@ -24,7 +24,7 @@ const AddTopic = () => {
             alreadyAvailableCountries.forEach(country => {
                 delete allCountries[country.id];
             });
-            const result = Object.entries(allCountries).map(([id, name]) => ({ id, label: name }));
+            const result = Object.entries(allCountries).map(([id, name]) => ({ id, label: `${name} (${id})` }));
             result.sort((a, b) => a.label.localeCompare(b.label));
             setAvailableCountries(result);
         })
