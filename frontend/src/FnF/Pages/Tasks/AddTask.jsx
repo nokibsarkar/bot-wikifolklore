@@ -28,6 +28,7 @@ function AddTask() {
     const [defaultCategories, setDefaultCategories] = useState([]);
     const [resultElement, setResultElement] = useState(null);
     const statusRef = React.useRef(false);
+    const targetWikiRef = React.useRef(null);
     const wiki = []
     
     for (const [key, value] of Object.entries(Server.languages)) {
@@ -63,6 +64,7 @@ function AddTask() {
             return;
         if(!targetwiki){
             setTargetWikiError(true);
+            targetWikiRef.current.focus();
             return;
         } else {
             setTargetWikiError(false);
@@ -130,7 +132,7 @@ function AddTask() {
                                 setTargetwiki(newValue.id);
                             }
                         }}
-                        renderInput={(params) => <TextField {...params} label="Target Wiki" />}
+                        renderInput={(params) => <TextField {...params} inputRef={targetWikiRef} label="Target Wiki" placeholder="Select Target Wiki" error={targetWikiError} />}
                     />
                     <Button
                         variant="contained"
