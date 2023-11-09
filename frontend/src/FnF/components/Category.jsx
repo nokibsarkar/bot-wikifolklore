@@ -64,7 +64,7 @@ const AddCategory = ({ onAdd, disabled }) => {
         </Box>
     )
 }
-const _CategoryList = ({ categoryListRef, initialCategories, disabled = false }) => {
+const CategoryList = ({ categoryListRef, initialCategories, disabled = false, preventDefaultRemoved = false }) => {
     const [categoryObject, setCategoryObject] = React.useState({});// {categoryName: {categoryObject}
     const [selectedIds, setSelectedIds] = React.useState([]);// [id1, id2
     const [loading, setLoading] = React.useState(false);// [id1, id2
@@ -74,8 +74,9 @@ const _CategoryList = ({ categoryListRef, initialCategories, disabled = false })
     const onRemove = React.useCallback((catIds) => {
         if (!catIds)
             return
-        for(let catID of catIds)
-            delete categoryObject[catID];
+        for (let catID of catIds)
+            if (!(categoryObject[catID]?.isDefault && preventDefaultRemoved))
+                delete categoryObject[catID];
         setCategoryObject({ ...categoryObject });
     }, [categoryObject]);
     const onAdd = React.useCallback((category) => {
@@ -154,9 +155,12 @@ const _CategoryList = ({ categoryListRef, initialCategories, disabled = false })
                                         <AccountTreeIcon />
                                     </Button>
                                 }
-                                <Button size="small" variant="outlined" color="error" onClick={e => onRemove([params.row?.id])}>
-                                    <DeleteIcon />
-                                </Button>
+                                {
+                                    !(preventDefaultRemoved  && params?.row?.isDefault) &&
+                                    <Button size="small" variant="outlined" color="error" onClick={e => onRemove([params.row?.id])}>
+                                        <DeleteIcon />
+                                    </Button>
+                                }
                             </>
                         ),
                     },
@@ -170,4 +174,4 @@ const _CategoryList = ({ categoryListRef, initialCategories, disabled = false })
         </Paper>
     )
 }
-export default _CategoryList
+export default CategoryList

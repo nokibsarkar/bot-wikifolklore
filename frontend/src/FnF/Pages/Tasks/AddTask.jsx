@@ -50,7 +50,10 @@ function AddTask() {
         Server.getCategories({ country: country, topic: topicName })
             .then(categories => {
                 setDisabled(false);
-                setDefaultCategories(categories)
+                setDefaultCategories(categories.map(v => {
+                    v.isDefault = true;
+                    return v;
+                }));
             }).finally(e => {
                 // console.log(e)
                 setDisabled(false);
@@ -155,7 +158,7 @@ function AddTask() {
                             categoryListRef={categoryListRef}
                             Server={Server}
                             initialCategories={defaultCategories}
-
+                            preventDefaultRemoved
                         />
                     )}
                 </Collapse>
