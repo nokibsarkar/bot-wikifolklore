@@ -30,7 +30,7 @@ const Tool = (comp) => {
                 backgroundColor: expanded ? '#e0e0e0' : 'inherit',
             }}
         >
-            <ListItemButton onClick={e => setExpanded(!expanded)} component={Link} to={comp?.path}>
+            <ListItemButton component={Link} to={comp?.path}>
                 <ListItemIcon>
                     {comp?.icon}
                 </ListItemIcon>
@@ -89,8 +89,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
             <Box
                 sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
                 role="presentation"
-            //   onClick={toggleDrawer}
-            //   onKeyDown={toggleDrawer}
+              onClick={() => setOpen(false)}
             >
                 <List>
                     <ListItem key='username'>
