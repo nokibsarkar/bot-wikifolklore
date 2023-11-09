@@ -113,7 +113,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                 <Divider />
                 <List>
                     <ListItem key='report' disablePadding>
-                        <ListItemButton component={Link} to="https://github.com/nokibsarkar/bot-wikifolklore/issues">
+                        <ListItemButton component={Link} target='_blank' rel="noopener noreferrer" to="https://github.com/nokibsarkar/bot-wikifolklore/issues">
                             <ListItemIcon>
                                 <BugIcon />
                             </ListItemIcon>
