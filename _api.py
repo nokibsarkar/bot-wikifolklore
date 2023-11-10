@@ -29,13 +29,40 @@ sess.headers = {
     "User-Agent": f"TukTukBot/{VERSION} ({HOSTNAME}) (python-requests) " ,
     "Authorization" : f"Bearer {BOT_AUTH_TOKEN}"
 }
+postpile_sess = Session()
+postpile_sess.headers = {
+    "User-Agent": f"TukTukBot/{VERSION} ({HOSTNAME}) (python-requests) " ,
+}
 URL = "https://en.wikipedia.org/w/api.php"
+PAGE_PILE_URL =  "https://pagepile.toolforge.org/index.php"
 #---------------------------- API Session ----------------------------
 
 
     
 #---------------------------- Result Exporting Functions ----------------------------
+def _export_to_pagepile(res):
+    """
+    Export the result set to pagepile
+    """
+    language = "en"
+    project = "wikipedia"
+    manual_list = ""
 
+    for row in res:
+        manual_list += f"{row['title']}\n"
+    data = {
+        "language": language,
+        "project": project,
+        "manual_list": manual_list,
+        "pagepile_format": "json",
+        "doit" : "Do it!"
+    }
+    response = postpile_sess.post(PAGE_PILE_URL, data=data)
+    response = response.json()
+    if 'id' in response:
+        return response['id']
+    else:
+        return None
 def _export_to_wikitext(res):
     """
     Export the result set to wikitext
@@ -93,6 +120,8 @@ def get_task_result(task_id, format : TaskResultFormat =TaskResultFormat.json) -
         return export_to_csv(res)
     elif format == TaskResultFormat.wikitext:
         return _export_to_wikitext(res)
+    elif format == TaskResultFormat.pagepile:
+        return _export_to_pagepile(res)
 
 
 #---------------------------- Task Related Functions ----------------------------
@@ -199,8 +228,10 @@ def execute_task(task_id, cats, target_wiki : Language):
             translateable = {x['title'] : x['id'] for x in tr}
         translate_titles(translateable, target_wiki)
         print("Translation Done")
+        pagepile_id = get_task_result(task_id, TaskResultFormat.pagepile)
         with Server.get_parmanent_db() as conn:
             # Article
+            Task.add_pagepile_id(conn, id=task_id, pagepile_id=pagepile_id)
             Task.update_status(conn, id=task_id, status=TaskStatus.done)
             User.update_stats(conn, task_id)
             conn.commit()

@@ -66,16 +66,16 @@ const headers = [
     { field: 'country', headerName: 'Country',  flex : 1 },
     { field: 'targetwiki', headerName: 'Language', minWidth : 100, flex : 1},
     { field: 'download', headerName: 'Download', renderCell : (params) => params.value},
-    { field: 'category_count', headerName: 'Category', maxWidth: 100, flex : 1 },
+    { field: 'pagepile_id', headerName: 'PagePile ID', maxWidth: 100, flex : 1, renderCell : (params) => params.value  && <a href={`https://pagepile.toolforge.org/api.php?id=${params.value}&action=get_data&format=html`} target="_blank">{params.value}</a>},
     {field : 'article_count', headerName : 'Article', maxWidth : 100, flex : 1},
 ]
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
     const [fetching, setFetching] = useState(false);
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'medium',
-        timeStyle: 'medium'
-    });
+    // const formatter = new Intl.DateTimeFormat('en-US', {
+    //     dateStyle: 'medium',
+    //     timeStyle: 'medium'
+    // });
     useEffect(() => {
         setFetching(true)
         Server.getTasks().then(tasks => {

@@ -91,6 +91,8 @@ package () {
     # cp *.sh $TEMP_PATH
     echo "Copying .env"
     cp production.env $TEMP_PATH/.env
+    echo "Copying VERSION"
+    cp VERSION $TEMP_PATH
     echo "Packaging done"
 }
 if [ "$CMD" == "setup" ]; then
