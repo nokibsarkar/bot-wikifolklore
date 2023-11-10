@@ -25,23 +25,29 @@ import Footer from '../../../Layout/Footer.jsx';
 const columns = [
     { field: 'id', headerName: 'ID', minWidth: 100, flex: 1 },
     { field: 'username', headerName: 'Username', flex: 1, minWidth: 300 },
+    
     { field: 'rights', headerName: 'Rights', flex : 1, renderCell: (params) => {
         const rights = params.value;
         const chips = [];
         if (Server.hasAccess(rights, Server.RIGHTS.GRANT))
-            chips.push(<Chip label="Grant" color="success" key="grant" />);
-        if (Server.hasAccess(rights, Server.RIGHTS.TASK))
-            chips.push(<Chip label="Task" color="success" key="task" />);
-        if (Server.hasAccess(rights, Server.RIGHTS.ARTICLE))
-            chips.push(<Chip label="Article" color="success" key="article" />);
-        if (Server.hasAccess(rights, Server.RIGHTS.CATEGORY))
-            chips.push(<Chip label="Category" color="success" key="category" />);
-        return <>{chips}</>
-    } },
+            chips.push(<Chip label="G" color="error" key="grant" size='small' />);
+        // if (Server.hasAccess(rights, Server.RIGHTS.TASK))
+        //     chips.push(<Chip label="T" color="success" key="task" size='small'/>);
+        // if (Server.hasAccess(rights, Server.RIGHTS.ARTICLE))
+        //     chips.push(<Chip label="A" color="success" key="article" size='small'/>);
+        // if (Server.hasAccess(rights, Server.RIGHTS.CATEGORY))
+        //     chips.push(<Chip label="C" color="success" key="category" size='small'/>);
+        if (Server.hasAccess(rights, Server.RIGHTS.STATS))
+            chips.push(<Chip label="S" color="success" key="stats" size='small'/>);
+        if (Server.hasAccess(rights, Server.RIGHTS.TOPIC))
+            chips.push(<Chip label="T" color="success" key="topic" size='small'/>);
+        return <div>{chips}</div>
+    }, minWidth: 130},
     { field: 'action', headerName: 'Action', width: 130, renderCell: (params) => params.value },
+    
     { field: 'task_count', headerName: 'Task Count', minWidth: 130, flex: 1 },
     { field: 'article_count', headerName: 'Article Count', minWidth: 130, flex: 1 },
-    { field: 'category_count', headerName: 'Category Count', minWidth: 130, flex: 1 },
+    // { field: 'category_count', headerName: 'Category Count', minWidth: 130, flex: 1 },
 ];
 const ListUser = ({ user }) => {
     const [users, setUsers] = useState([]);
@@ -86,6 +92,15 @@ const ListUser = ({ user }) => {
                     </Button>
                 } />
                 <CardContent>
+                    <Box sx={{ border : '1px solid gray', p: 2 }}>
+                        <Chip label="G" color="error" key="grant" /> : This user can grant rights to other users.<br /><br/>
+                        {/* <Chip label="T" color="success" key="task"/> : This user can create tasks.<br />
+                        <Chip label="A" color="success" key="article"  /> : This user can create articles.<br />
+                        <Chip label="C" color="success" key="category" /> : This user can create categories.<br /> */}
+                        <Chip label="S" color="success" key="stats"  /> : This user can view stats.<br /><br/>
+                        <Chip label="T" color="success" key="topic"  /> : This user can create topics.<br />
+                    </Box>
+                    <Divider />
                     <DataGrid
                         rows={rows}
                         columns={columns}
