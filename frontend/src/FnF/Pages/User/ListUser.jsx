@@ -46,7 +46,7 @@ const columns = [
 const ListUser = ({ user }) => {
     const [users, setUsers] = useState([]);
     const hasStatAccess = Server.hasAccess(user.rights, Server.RIGHTS.STATS);
-    const hasGrantAccess = !Server.hasAccess(user.rights, Server.RIGHTS.GRANT);
+    const hasGrantAccess = Server.hasAccess(user.rights, Server.RIGHTS.GRANT);
     const hasAccess = hasStatAccess || hasGrantAccess;
     useState(() => {
         Server.getUsers().then(users => {
