@@ -46,7 +46,7 @@ const columns = [
 const ListUser = ({ user }) => {
     const [users, setUsers] = useState([]);
     const hasStatAccess = Server.hasAccess(user.rights, Server.RIGHTS.STATS);
-    const hasGrantAccess = Server.hasAccess(user.rights, Server.RIGHTS.GRANT);
+    const hasGrantAccess = !Server.hasAccess(user.rights, Server.RIGHTS.GRANT);
     const hasAccess = hasStatAccess || hasGrantAccess;
     useState(() => {
         Server.getUsers().then(users => {
@@ -61,7 +61,7 @@ const ListUser = ({ user }) => {
                 username: user.username,
                 rights: user.rights,
                 action: <Link to={ hasGrantAccess ? `/fnf/user/edit?id=${user.id}` : ''}>
-                    <Button color="secondary" variant="contained" disabled={!hasGrantAccess}>
+                    <Button color="primary" variant="contained" disabled={!hasGrantAccess} size="small">
                         <EditIcon />
                     </Button>
                 </Link>
@@ -104,6 +104,8 @@ const ListUser = ({ user }) => {
                         rowsPerPageOptions={[5]}
                         checkboxSelection={false}
                         disableSelectionOnClick
+                        hideFooterSelectedRowCount
+                        density='compact'
                     />
                     {/* <Footer /> */}
                 </CardContent>
