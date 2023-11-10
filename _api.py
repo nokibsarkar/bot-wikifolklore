@@ -26,7 +26,7 @@ logger.handlers[0].setFormatter(formatter)
 #---------------------------- API Session ----------------------------
 sess = Session()
 sess.headers = {
-    "User-Agent": f"TukTukBot/{VERSION} (Linux x86_64)",
+    "User-Agent": f"TukTukBot/{VERSION} ({HOSTNAME}) (python-requests) " ,
     "Authorization" : f"Bearer {BOT_AUTH_TOKEN}"
 }
 URL = "https://en.wikipedia.org/w/api.php"
