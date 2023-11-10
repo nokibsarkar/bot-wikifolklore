@@ -54,7 +54,7 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
             <DialogTitle>{data.title}</DialogTitle>
             <DialogContent>
                 <Typography variant="body1" gutterBottom >
-                    <b>English : <a href={"https://en.wikipedia.org/wiki/" + englishTitle} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'none' }}>{englishTitle}</a></b>
+                    <b>English : <a href={"https://en.wikipedia.org/wiki/" + englishTitle} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'none', color: '#3366cc' }}>{englishTitle}</a></b>
                 </Typography>
                 <TextField
                     id="outlined-multiline-static"
@@ -82,7 +82,7 @@ const Popup = ({ open, onClose, englishTitle, suggestedTargetTitle, languageCode
 const COLUMNS = [
     { field: 'id', headerName: 'ID', maxWidth: 70, flex: 1, hideable: false },
     { field: 'action', headerName: 'Action', flex: 1, minWidth: 150, hideable: false, renderCell: (params) => params.value },
-    { field: 'title', headerName: 'Title', flex: 1, hideable: false, minWidth: 300 },
+    { field: 'title', headerName: 'Title', flex: 1, hideable: false, minWidth: 300 , renderCell : ({row : {title : englishTitle}}) => <a href={"https://en.wikipedia.org/wiki/" + englishTitle} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'none', color: '#3366cc' }}>{englishTitle}</a>},
     // { field: 'wikidata', headerName: 'Wikidata', width : 120},
     { field: 'target', headerName: 'Target', flex: 1, minWidth: 300 },
    
