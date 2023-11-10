@@ -56,7 +56,6 @@ export default function Description({ user }) {
             </Button>
         </Box>
         );
-    if(Server.hasAccess(user.rights, Server.RIGHTS.STATS))
         sections.push(
             <Box key="user" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
             <legend>User Management</legend>
@@ -69,6 +68,7 @@ export default function Description({ user }) {
             >
                 <SettingIcon /> &nbsp; Settings
             </Button>
+            {(Server.hasAccess(user.rights, Server.RIGHTS.STATS) || Server.hasAccess(user.rights, Server.RIGHTS.GRANT) ) && 
             <Button variant="contained" color="secondary" size="small" sx={{
                 padding: 1,
                 m: 1
@@ -77,7 +77,7 @@ export default function Description({ user }) {
                 to="/fnf/user"
             >
                 <PeopleIcon /> &nbsp; See All Users
-            </Button>
+            </Button>}
         </Box>
         );
     return (
