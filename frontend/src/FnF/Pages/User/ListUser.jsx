@@ -31,12 +31,6 @@ const columns = [
         const chips = [];
         if (Server.hasAccess(rights, Server.RIGHTS.GRANT))
             chips.push(<Chip label="G" color="error" key="grant" size='small' />);
-        // if (Server.hasAccess(rights, Server.RIGHTS.TASK))
-        //     chips.push(<Chip label="T" color="success" key="task" size='small'/>);
-        // if (Server.hasAccess(rights, Server.RIGHTS.ARTICLE))
-        //     chips.push(<Chip label="A" color="success" key="article" size='small'/>);
-        // if (Server.hasAccess(rights, Server.RIGHTS.CATEGORY))
-        //     chips.push(<Chip label="C" color="success" key="category" size='small'/>);
         if (Server.hasAccess(rights, Server.RIGHTS.STATS))
             chips.push(<Chip label="S" color="success" key="stats" size='small'/>);
         if (Server.hasAccess(rights, Server.RIGHTS.TOPIC))
