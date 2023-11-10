@@ -8,6 +8,7 @@ class TaskResultFormat(Enum):
     json : str = "json"
     wikitext : str = "wikitext"
     csv : str = "csv"
+    pagepile : str = "pagepile"
 
 @dataclass
 class ArticleSceme:
@@ -82,6 +83,7 @@ class TaskScheme:
     country : Country
     created_at : str
     task_data : list[CategoryScheme] | str | None
+    pagepile_id : int | None = None
     pass
 @dataclass
 class TopicCreate:

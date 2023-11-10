@@ -283,6 +283,9 @@ class Task:
     def update_status(conn : sqlite3.Cursor, id, status : TaskStatus):
         conn.execute("UPDATE `task` SET `status` = ? WHERE `id` = ?", (status.value, id))
     @staticmethod
+    def add_pagepile_id(conn : sqlite3.Cursor, id, pagepile_id):
+        conn.execute("UPDATE `task` SET `pagepile_id` = ? WHERE `id` = ?", (pagepile_id, id))
+    @staticmethod
     def update_article_count(conn : sqlite3.Cursor, id, new_added : int, category_done : int, last_category : str):
         conn.execute(SQL1_TASK_UPDATE_ARTICLE_COUNT, {
             'task_id': id,
