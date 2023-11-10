@@ -25,7 +25,7 @@ import Footer from '../../../Layout/Footer.jsx';
 const columns = [
     { field: 'id', headerName: 'ID', minWidth: 100, flex: 1 },
     { field: 'username', headerName: 'Username', flex: 1, minWidth: 300 },
-    { field: 'rights', headerName: 'Rights', width: 130, renderCell: (params) => {
+    { field: 'rights', headerName: 'Rights', flex : 1, renderCell: (params) => {
         const rights = params.value;
         const chips = [];
         if (Server.hasAccess(rights, Server.RIGHTS.GRANT))
