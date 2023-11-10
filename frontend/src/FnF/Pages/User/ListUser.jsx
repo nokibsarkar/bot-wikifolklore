@@ -88,7 +88,7 @@ const ListUser = ({ user }) => {
                     </Button>
                 } />
                 <CardContent>
-                    <Box sx={{ border : '1px solid gray', p: 2, width:'fit-content' }}>
+                    <Box sx={{ border : '1px solid gray', p: 2, width:'fit-content', mb: 5 }}>
                         <Chip label="G" color="error" key="grant" /> : This user can grant rights to other users.<br /><br/>
                         {/* <Chip label="T" color="success" key="task"/> : This user can create tasks.<br />
                         <Chip label="A" color="success" key="article"  /> : This user can create articles.<br />
