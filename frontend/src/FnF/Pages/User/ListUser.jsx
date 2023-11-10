@@ -51,6 +51,9 @@ const columns = [
 ];
 const ListUser = ({ user }) => {
     const [users, setUsers] = useState([]);
+    const hasStatAccess = Server.hasAccess(user.rights, Server.RIGHTS.STATS);
+    const hasGrantAccess = Server.hasAccess(user.rights, Server.RIGHTS.GRANT);
+    const hasAccess = hasStatAccess || hasGrantAccess;
     useState(() => {
         Server.getUsers().then(users => {
             setUsers(users)
@@ -63,8 +66,8 @@ const ListUser = ({ user }) => {
                 id: user.id,
                 username: user.username,
                 rights: user.rights,
-                action: <Link to={`/fnf/user/edit?id=${user.id}`}>
-                    <Button color="secondary" variant="contained">
+                action: <Link to={ hasGrantAccess ? `/fnf/user/edit?id=${user.id}` : ''}>
+                    <Button color="secondary" variant="contained" disabled={!hasGrantAccess}>
                         <EditIcon />
                     </Button>
                 </Link>
@@ -80,14 +83,13 @@ const ListUser = ({ user }) => {
         a.download = 'users.json';
         a.click();
     })
-    if (Server.hasAccess(user.rights, Server.RIGHTS.GRANT) === false)
+    if (hasAccess === false)
         return <h1>Access Denied</h1>;
-
     return (
         <Box>
             <Card>
                 <CardHeader title="List Users" action={
-                    <Button variant="contained" onClick={download}>
+                    <Button variant="contained" onClick={download} disabled={!hasStatAccess}>
                         <DownloadIcon /> Download Stats
                     </Button>
                 } />
