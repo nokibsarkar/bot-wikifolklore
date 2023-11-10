@@ -66,7 +66,7 @@ const headers = [
     { field: 'country', headerName: 'Country',  flex : 1 },
     { field: 'targetwiki', headerName: 'Language', minWidth : 100, flex : 1},
     { field: 'download', headerName: 'Download', renderCell : (params) => params.value},
-    { field: 'pagepile_id', headerName: 'PagePile ID', maxWidth: 100, flex : 1, renderCell : (params) => params.value  && <a href={`https://pagepile.toolforge.org/api.php?id=${params.value}&action=get_data&format=html`} target="_blank">{params.value}</a>},
+    { field: 'pagepile_id', headerName: 'PagePile ID', maxWidth: 100, flex : 1, renderCell : (params) => params.value  && <a href={`https://pagepile.toolforge.org/api.php?id=${params.value}&action=get_data&format=html`} target="_blank" style={{ 'color' : 'white'}} >{params.value}</a>},
     {field : 'article_count', headerName : 'Article', maxWidth : 100, flex : 1},
 ]
 const TaskList = () => {
