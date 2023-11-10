@@ -25,7 +25,19 @@ import Footer from '../../../Layout/Footer.jsx';
 const columns = [
     { field: 'id', headerName: 'ID', minWidth: 100, flex: 1 },
     { field: 'username', headerName: 'Username', flex: 1, minWidth: 300 },
-    { field: 'rights', headerName: 'Rights', width: 130, renderCell: (params) => params.value },
+    { field: 'rights', headerName: 'Rights', width: 130, renderCell: (params) => {
+        const rights = params.value;
+        const chips = [];
+        if (Server.hasAccess(rights, Server.RIGHTS.GRANT))
+            chips.push(<Chip label="Grant" color="success" key="grant" />);
+        if (Server.hasAccess(rights, Server.RIGHTS.TASK))
+            chips.push(<Chip label="Task" color="success" key="task" />);
+        if (Server.hasAccess(rights, Server.RIGHTS.ARTICLE))
+            chips.push(<Chip label="Article" color="success" key="article" />);
+        if (Server.hasAccess(rights, Server.RIGHTS.CATEGORY))
+            chips.push(<Chip label="Category" color="success" key="category" />);
+        return <>{chips}</>
+    } },
     { field: 'action', headerName: 'Action', width: 130, renderCell: (params) => params.value },
     { field: 'task_count', headerName: 'Task Count', minWidth: 130, flex: 1 },
     { field: 'article_count', headerName: 'Article Count', minWidth: 130, flex: 1 },

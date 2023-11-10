@@ -74,7 +74,8 @@ type Topic = {
 const LANGUAGE_KEY = "tk-lang"
 const COUNTRY_KEY = "tk-country"
 type Permission = number;
-const PERMISSIONS : {[key : string] : Permission} = {
+type PermissionKey = "TASK" | "STATS" | "CATEGORY" | "TOPIC" | "GRANT" | "REVOKE";
+const PERMISSIONS : {[key in PermissionKey] : Permission} = {
     TASK : 1 << 0,
     STATS : 1 << 1,
     CATEGORY : 1 << 2,
