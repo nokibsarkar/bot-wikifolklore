@@ -2,6 +2,14 @@ from requests import Session
 import time, csv, io, os, logging
 from models import *
 from translation import translate
+VERSION = "1.0.0"
+try:
+    with open("VERSION", "r") as f:
+        VERSION = f.read().strip()
+        print(f"Version {VERSION}")
+except:
+    print("VERSION file not found")
+    pass
 #---------------------------- Load the constants ----------------------------
 # Assuming .env is loaded already
 BOT_AUTH_TOKEN = os.getenv("BOT_AUTH_TOKEN") # The credentails to request to the API
@@ -18,7 +26,7 @@ logger.handlers[0].setFormatter(formatter)
 #---------------------------- API Session ----------------------------
 sess = Session()
 sess.headers = {
-    "User-Agent": "FnF/1.0 (Linux x86_64)",
+    "User-Agent": f"TukTukBot/{VERSION} (Linux x86_64)",
     "Authorization" : f"Bearer {BOT_AUTH_TOKEN}"
 }
 URL = "https://en.wikipedia.org/w/api.php"
