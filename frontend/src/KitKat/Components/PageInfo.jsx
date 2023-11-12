@@ -51,7 +51,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo }) => {
         setCreatedBy(pageinfo.createdBy);
     });
     return (
-        <Box  sx={{
+        <Box sx={{
             display: 'inline-block',
             p: 1,
             m: 1,
