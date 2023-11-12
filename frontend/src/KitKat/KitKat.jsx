@@ -9,6 +9,13 @@ const KitKat = ({ user }) => {
     )
 }
 export const KitKatRoutes = (user) => {
-    
+    const routes = {
+        name: 'KitKat (development)',
+        icon: null,
+        path: '/kitkat',
+        children: [
+        ]
+    }
+    return routes;
 }
 export default KitKat

@@ -19,17 +19,18 @@ import {
   BrowserRouter
 } from "react-router-dom";
 import theme from './Layout/theme';
-import { FnFRoutes as FnFRoutes } from './FnF/FnF.jsx';
+import { FnFRoutes } from './FnF/FnF.jsx';
+import { KitKatRoutes } from './KitKat/KitKat.jsx';
 const FnF = React.lazy(() => import('./FnF/FnF.jsx'));
 const KitKat = React.lazy(() => import('./KitKat/KitKat.jsx'));
 function ToolSelector() {
   const url = new URL(window.location.href);
-  const tool = url.searchParams.get('tool');
+  const tool = url.searchParams.get('tool') || url.pathname.split('/')[1]
   switch (tool) {
     case 'fnf':
       return ['FnF', FnF]
     case 'kitkat':
-      return ['KitKat', KitKat]
+      return ['KitKat (development)', KitKat]
     default:
       return ['FnF', () => <FnF /> || <div>Unknown tool: {tool}</div>];
   }
@@ -44,6 +45,7 @@ function App() {
     if (decoded) {
       setUser(decoded);
       Tools[0] = FnFRoutes(decoded);
+      Tools[1] = KitKatRoutes(decoded);
     } else {
       console.log("Please login to continue")
     }
@@ -64,6 +66,7 @@ function App() {
         <React.Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/fnf/*" element={<FnF {...commonProps} />} />
+            <Route path="/kitkat/*" element={<KitKat {...commonProps} />} />
           </Routes>
         </React.Suspense>
       </BrowserRouter>
