@@ -8,7 +8,6 @@ import Server from "./Server.ts"
 const AddTopic = lazy(() => import('./Pages/Topics/CreateTopic.jsx'))
 const EditTopic = lazy(() => import('./Pages/Topics/EditTopic.jsx'))
 const ListTopic = lazy(() => import('./Pages/Topics/ListTopics.jsx'))
-
 const ListUser = lazy(() => import('./Pages/User/ListUser.jsx'));
 const EditUser = lazy(() => import('./Pages/User/EditUser.jsx'));
 Server.init()

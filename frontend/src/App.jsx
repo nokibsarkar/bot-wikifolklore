@@ -23,12 +23,15 @@ import {
 import theme from './Layout/theme';
 
 const FnF = React.lazy(() => import('./FnF/FnF.jsx'));
+const KitKat = React.lazy(() => import('./KitKat/KitKat.jsx'));
 function ToolSelector() {
   const url = new URL(window.location.href);
   const tool = url.searchParams.get('tool');
   switch (tool) {
     case 'fnf':
       return ['FnF', FnF]
+    case 'kitkat':
+      return ['KitKat', KitKat]
     default:
       return ['FnF', () => <FnF /> || <div>Unknown tool: {tool}</div>];
   }
@@ -109,9 +112,7 @@ const FnFTaskRoutes = {
     }
   ]
 };
-const Tools = [
-
-]
+const Tools = []
 function App() {
   const [user, setUser] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
