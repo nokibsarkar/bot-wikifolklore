@@ -5,6 +5,9 @@ import ListTask from "./Pages/Tasks/ListTask.jsx"
 import Setting from "./Pages/Settings.jsx";
 import DashBoard from "./Dashboard.jsx";
 import Server from "./Server.ts"
+
+import PeopleIcon from '@mui/icons-material/People';
+import SettingIcon from '@mui/icons-material/Settings';
 const AddTopic = lazy(() => import('./Pages/Topics/CreateTopic.jsx'))
 const EditTopic = lazy(() => import('./Pages/Topics/EditTopic.jsx'))
 const ListTopic = lazy(() => import('./Pages/Topics/ListTopics.jsx'))
@@ -38,5 +41,97 @@ const FnF = ({ user }) => {
         </Routes>
     )
 }
-
+const FnFTopicRoutes = {
+    name: 'Topics',
+    icon: null,
+    path: '/fnf/topic',
+    children: [
+        {
+            name: 'Create',
+            icon: null,
+            path: '/fnf/topic/create'
+        },
+        {
+            name: 'Edit',
+            icon: null,
+            path: '/fnf/topic/:id/edit'
+        },
+        {
+            name: 'View',
+            icon: null,
+            path: '/fnf/topic/:id'
+        },
+        {
+            name: 'List',
+            icon: null,
+            path: '/fnf/topic'
+        }
+    ]
+};
+const FnFUserRoutes = {
+    name: 'Users',
+    icon: <PeopleIcon />,
+    path: '/fnf/user',
+    children: [
+        {
+            name: 'Edit',
+            icon: null,
+            path: '/fnf/user/:id/edit'
+        },
+        {
+            name: 'List',
+            icon: null,
+            path: '/fnf/user'
+        }
+    ]
+};
+const FnFSettingRoutes = {
+    name: 'Settings',
+    icon: <SettingIcon />,
+    path: '/fnf/setting'
+};
+const FnFTaskRoutes = {
+    name: 'Tasks',
+    icon: null,
+    path: '/fnf/task',
+    children: [
+        {
+            name: 'Create',
+            icon: null,
+            path: '/fnf/task/create'
+        },
+        {
+            name: 'Edit',
+            icon: null,
+            path: '/fnf/task/:id/edit'
+        },
+        {
+            name: 'View',
+            icon: null,
+            path: '/fnf/task/:id'
+        },
+        {
+            name: 'List',
+            icon: null,
+            path: '/fnf/task'
+        }
+    ]
+};
+export const FnFRoutes = (user) => {
+    const routes = {
+        name: 'FnF',
+        icon: null,
+        path: '/fnf',
+        children: [
+        ]
+    }
+    if (Server.hasAccess(user.rights, Server.RIGHTS.TASK))
+        routes.children.push(FnFTaskRoutes);
+    if (Server.hasAccess(user.rights, Server.RIGHTS.TOPIC))
+        routes.children.push(FnFTopicRoutes);
+    if (Server.hasAccess(user.rights, Server.RIGHTS.GRANT))
+        routes.children.push(FnFUserRoutes);
+    routes.children.push(FnFSettingRoutes);
+    return routes
+}
 export default FnF
