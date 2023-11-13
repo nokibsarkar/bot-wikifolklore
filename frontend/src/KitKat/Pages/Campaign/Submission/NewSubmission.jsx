@@ -6,6 +6,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Button, CircularProgress, LinearProgress, Typography } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import CampaignHeader from "../../../Components/CampaignHeader";
+import { AllButton, DetailsButton } from "../../../Components/CampaignButtons";
 
 const ArticleSubmissionSuccess = ({ campaignID }) => {
     return <div style={{ textAlign: 'center' }}>
@@ -62,6 +63,10 @@ const ArticleSubmissionPage = () => {
     return (
         <div>
             <CampaignHeader campaign={campaign} />
+            <div style={{ textAlign: 'center' }}>
+                <DetailsButton campaign={campaign} />
+                <AllButton campaign={campaign} />
+            </div>
             <Typography variant="h5" component="p" sx={{ flexGrow: 1, textAlign: 'center', m: 2, fontWeight: 'bold' }}>
                 Article submission
             </Typography>

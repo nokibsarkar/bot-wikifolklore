@@ -43,6 +43,7 @@ type Campaign = {
     end: string;
     active: boolean;
     language: string;
+    rules : string[];
 };
 type SubmissionRequest = {
     campaignID: number;
@@ -73,9 +74,30 @@ const sampleCampaign: Campaign = {
     start: "2021-10-01",
     end: "2021-10-31",
     active: true,
-    language: "en"
-
+    language: "en",
+    rules: [
+        "No vandalism",
+        `<CampaignHeader campaign={campaign} />
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1px',
+            p: 1,
+            m: 1
+        }}>
+            <Typography variant='h5' sx={{ textAlign: 'center', m: 1 }}>Rules</Typography>
+            <Rules rules={campaign.rules} />
+        </Box>
+`
+    ],
 }
+const sampleUsernames = [
+    'User:Example',
+    'User:Example2',
+    'User:Example3',
+]
 const samplePageInfo: PageInfo = {
     totalWords: 100,
     totalBytes: 1000,
@@ -150,6 +172,9 @@ class CampaignServer {
     }
     static async getSubmissions(campaignID: number): Promise<Submission[]> {
         return [sampleSubmission];
+    }
+    static async getJury(campaignID: number): Promise<string[]> {
+        return sampleUsernames;
     }
 }
 class PageServer {
