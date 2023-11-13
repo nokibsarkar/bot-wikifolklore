@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard.jsx"
 import ArticleSubmissionPage from "./Pages/Campaign/Submission/NewSubmission.jsx"
 const JudgeSubmission = lazy(() => import("./Pages/Campaign/Submission/JudgeSubmission.jsx"))
 const SubmissionList = lazy(() => import("./Pages/Campaign/Submission/index.jsx"))
+const CampaignList = lazy(() => import("./Pages/Campaign/index.jsx"))
 const KitKat = ({ user }) => {
     const CampaignRoutes = (
         <Route path='campaign'>
@@ -15,8 +16,9 @@ const KitKat = ({ user }) => {
                     <Route path=":submissionID" element={<JudgeSubmission />} />
                     <Route path="" element={<SubmissionList />} />
                 </Route>
-                <Route path="*" element={<div>Unknown Campaign Page</div>} />
+
             </Route>
+            <Route path="" element={<CampaignList />} />
         </Route>
     )
     return (
@@ -33,10 +35,10 @@ export const KitKatRoutes = (user) => {
         path: '/kitkat',
         children: [
             {
-                name : 'Campaign',
+                name: 'Campaign',
                 icon: <CampaignIcon />,
                 path: '/kitkat/campaign',
-                children:[]
+                children: []
             }
         ]
     }
