@@ -17,7 +17,7 @@ import Server from '../Server.ts';
 
 
 
-export default function PrimarySearchAppBar({ username, toolName, open, setOpen }) {
+export default function PrimarySearchAppBar({ username, toolName, open, setOpen, toolPath }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -89,7 +89,7 @@ export default function PrimarySearchAppBar({ username, toolName, open, setOpen 
             noWrap
             sx={{ display: { xs: 'none', sm: 'block' }, textDecoration: 'none', color: 'inherit' }}
             component={Link}
-            to="/fnf"
+            to={toolPath}
             title={"Go to " + toolName}
           >
             {toolName}
