@@ -7,10 +7,15 @@ const JudgeSubmission = lazy(() => import("./Pages/Campaign/JudgeSubmission.jsx"
 
 const KitKat = ({ user }) => {
     const CampaignRoutes = (
-        <Route path='campaign/*'>
-            <Route path="submit" element={<ArticleSubmissionPage />} />
-            <Route path="judge" element={<JudgeSubmission />} />
-            <Route path="*" element={<div>Unknown Campaign Page</div>} />
+        <Route path='campaign'>
+            <Route path=":campaignID">
+                <Route path="submission" >
+                    <Route path=":submissionID" element={<JudgeSubmission />} />
+                    <Route path="new" element={<ArticleSubmissionPage />} />
+                    <Route path="*" element={<ArticleSubmissionPage />} />
+                </Route>
+                <Route path="*" element={<div>Unknown Campaign Page</div>} />
+            </Route>
         </Route>
     )
     return (
