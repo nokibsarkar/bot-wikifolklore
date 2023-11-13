@@ -55,8 +55,31 @@ export default function Description({ user }) {
     //         </Button>
     //     </Box>
     //     );
-        sections.push(
-            <Box key="user" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
+    sections.push(
+        <Box key="campaign" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
+            <legend>Campaign Management</legend>
+            <Button variant="contained" color="primary" size="small" sx={{
+                padding: 1,
+                m: 1
+            }}
+                component={Link}
+                to="/kitkat/campaign/create"
+            >
+                <AddIcon /> &nbsp; Create New Campaign
+            </Button>
+            <Button variant="contained" color="secondary" size="small" sx={{
+                padding: 1,
+                m: 1
+            }}
+                component={Link}
+                to="/kitkat/campaign"
+            >
+                <ListIcon /> &nbsp; See All Campaigns
+            </Button>
+        </Box>
+    );
+    sections.push(
+        <Box key="user" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
             <legend>User Management</legend>
             <Button variant="contained" color="primary" size="small" sx={{
                 padding: 1,
@@ -78,7 +101,7 @@ export default function Description({ user }) {
                 <PeopleIcon /> &nbsp; See All Users
             </Button>} */}
         </Box>
-        );
+    );
     return (
         <Paper sx={{
             height: "100%",
@@ -92,16 +115,16 @@ export default function Description({ user }) {
                 textAlign: 'center',
                 m: 2
             }}>
-                Welcome {user.username},<br/>
+                Welcome {user.username},<br />
             </Typography>
             <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
-            Introducing a powerful tool that identifies articles in the English Wikipedia that are absent from your native language Wikipedia.
-            You can customize your selection criteria, and our tool will provide you with a table displaying the missing articles along with suggested titles.
-            You also have the option to download the list in both CSV and wikitables formats.
-            Explore the gap and enhance your language's Wikipedia with ease.
+                Introducing a powerful tool that identifies articles in the English Wikipedia that are absent from your native language Wikipedia.
+                You can customize your selection criteria, and our tool will provide you with a table displaying the missing articles along with suggested titles.
+                You also have the option to download the list in both CSV and wikitables formats.
+                Explore the gap and enhance your language's Wikipedia with ease.
             </Typography>
             <hr />
-            
+
             {sections}
             {/* <Footer /> */}
         </Paper>

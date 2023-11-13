@@ -30,7 +30,7 @@ const Tool = (comp) => {
                 backgroundColor: expanded ? '#e0e0e0' : 'inherit',
             }}
         >
-            <ListItemButton component={Link} to={comp?.path}>
+            <ListItemButton component={Link} to={comp?.path} onClick={() => setExpanded(!expanded)}>
                 <ListItemIcon>
                     {comp?.icon}
                 </ListItemIcon>
@@ -52,6 +52,8 @@ const Tool = (comp) => {
                             color: '#000000'
                         },
                         backgroundColor: child?.active ? '#e0e0e0' : 'inherit',
+                        textDecoration: 'none',
+                        
                     }}
                 >
                     <ListItemButton onClick={comp?.closeDrawer} component={Link} to={child?.path}>

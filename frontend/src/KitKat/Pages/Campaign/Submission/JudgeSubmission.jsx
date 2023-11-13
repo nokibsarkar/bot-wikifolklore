@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import KitKatServer from "../../Server";
-import PageInfo from "../../Components/PageInfo";
+import KitKatServer from "../../../Server";
+import PageInfo from "../../../Components/PageInfo";
 import CheckIcon from '@mui/icons-material/Check';
 import CrossIcon from '@mui/icons-material/Close';
 import ListIcon from '@mui/icons-material/List';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, Paper, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, LinearProgress, Paper, TextField } from "@mui/material";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
+import GavelIcon from '@mui/icons-material/Gavel';
 const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [point, setPoint] = useState(0);
@@ -27,14 +28,26 @@ const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
     const [note, setNote] = useState('');
     return (
         <div style={{ textAlign: 'center', height: '10%', position: 'relative' }}>
+            <Fab variant="extended" color="primary" size="small"
+            disabled={dialogOpen}
+                sx={{
+                    position: "fixed",
+                    bottom: (theme) => theme.spacing(3),
+                    right: (theme) => theme.spacing(2)
+                  }}
+                onClick={e => setDialogOpen(true)}
+            >
+                <GavelIcon fontSize='small' /> Judgement
+            </Fab>
             <Button variant="contained" color="primary" size="small"
                 sx={{
                     m: 2,
                     p: 1
                 }}
                 onClick={e => setDialogOpen(true)}
+                disabled={dialogOpen}
             >
-                <CheckIcon fontSize='small' />
+                <GavelIcon fontSize='small' />
                 Add Judgement
             </Button>
             {submitted && <Dialog
@@ -161,7 +174,6 @@ const JudgeSubmission = () => {
         )
     }, [submission]);
     useEffect(() => {
-        console.log('judge submission');
         KitKatServer.addWikiStyle();
         const newBase = document.createElement('base');
         const currentBase = window.location.origin;
@@ -181,6 +193,7 @@ const JudgeSubmission = () => {
         return () => newBase.remove();
     }, []);
     return <div>
+        
         <div style={{ textAlign: 'center', height: '10%', position: 'relative' }}>
             {campaign && <PageInfo title={title} campaign={campaign} />}
         </div>
@@ -192,7 +205,8 @@ const JudgeSubmission = () => {
                 padding: '15px',
                 margin: 2,
                 alignSelf: 'center',
-                height: '80%'
+                height: '80%',
+                overflowX : 'revert'
             }}
         />
         <JudgeMentBox judge={judge} campaignID={campaignID} submissionID={submissionID} />

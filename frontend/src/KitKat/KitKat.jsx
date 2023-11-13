@@ -1,18 +1,19 @@
 import { Routes, Route } from "react-router-dom"
 import React, { lazy } from "react"
 import KitKatServer from "./Server.ts"
+import CampaignIcon from '@mui/icons-material/Campaign';
 import Dashboard from "./Dashboard.jsx"
-import ArticleSubmissionPage from "./Pages/Campaign/ArticleSubmission.jsx"
-const JudgeSubmission = lazy(() => import("./Pages/Campaign/JudgeSubmission.jsx"))
-
+import ArticleSubmissionPage from "./Pages/Campaign/Submission/NewSubmission.jsx"
+const JudgeSubmission = lazy(() => import("./Pages/Campaign/Submission/JudgeSubmission.jsx"))
+const SubmissionList = lazy(() => import("./Pages/Campaign/Submission/index.jsx"))
 const KitKat = ({ user }) => {
     const CampaignRoutes = (
         <Route path='campaign'>
             <Route path=":campaignID">
                 <Route path="submission" >
-                    <Route path=":submissionID" element={<JudgeSubmission />} />
                     <Route path="new" element={<ArticleSubmissionPage />} />
-                    <Route path="*" element={<ArticleSubmissionPage />} />
+                    <Route path=":submissionID" element={<JudgeSubmission />} />
+                    <Route path="" element={<SubmissionList />} />
                 </Route>
                 <Route path="*" element={<div>Unknown Campaign Page</div>} />
             </Route>
@@ -31,6 +32,12 @@ export const KitKatRoutes = (user) => {
         icon: null,
         path: '/kitkat',
         children: [
+            {
+                name : 'Campaign',
+                icon: <CampaignIcon />,
+                path: '/kitkat/campaign',
+                children:[]
+            }
         ]
     }
     return routes;

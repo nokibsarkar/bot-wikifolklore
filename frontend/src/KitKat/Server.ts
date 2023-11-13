@@ -68,7 +68,7 @@ const sampleCampaign: Campaign = {
     id: 1,
     name: "Sample Campaign",
     description: "This is a sample campaign",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/KitKat_4_Finger_%28cropped%29.jpg/800px-KitKat_4_Finger_%28cropped%29.jpg",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/71/Wikipedia_Asian_Month_Logo.svg",
     link: "https://en.wikipedia.org/wiki/Kit_Kat",
     start: "2021-10-01",
     end: "2021-10-31",
@@ -148,6 +148,9 @@ class CampaignServer {
         return sampleSubmission;
 
     }
+    static async getSubmissions(campaignID: number): Promise<Submission[]> {
+        return [sampleSubmission];
+    }
 }
 class PageServer {
     static async getPageInfo({ language, submitter, title }: PageInfoRequest): Promise<PageInfo> {
@@ -156,6 +159,7 @@ class PageServer {
     static async getSubmission(submissionID: number): Promise<Submission> {
         return sampleSubmission;
     }
+    
     static async judgeSubmission(submissionID: number, point : number, note?: string): Promise<Submission> {
         return sampleSubmission;
     }
