@@ -1,19 +1,20 @@
 import { createRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import ArticleInput from "../../Components/ArticleInput";
-import KitKatServer from "../../Server";
-import PageInfo from "../../Components/PageInfo";
+import ArticleInput from "../../../Components/ArticleInput";
+import KitKatServer from "../../../Server";
+import PageInfo from "../../../Components/PageInfo";
 import CheckIcon from '@mui/icons-material/Check';
 import { Button, CircularProgress, LinearProgress, Typography } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
+import CampaignHeader from "../../../Components/CampaignHeader";
 
 const ArticleSubmissionSuccess = ({ campaignID }) => {
     return <div style={{ textAlign: 'center' }}>
         <CheckIcon variant="contained" fontSize='large' color='success' />
-        <Typography variant="h6" component="div" color="success.main" sx={{ mb:3, flexGrow: 1, textAlign: 'center' }}>
+        <Typography variant="h6" component="div" color="success.main" sx={{ mb: 3, flexGrow: 1, textAlign: 'center' }}>
             Article submitted successfully!
         </Typography>
         <Button variant="outlined" color="primary" size="small"
-        sx={{mr: 2}}
+            sx={{ mr: 2 }}
             component={Link}
             to={`/kitkat/campaign/${campaignID}`}
         >
@@ -31,7 +32,7 @@ const ArticleSubmissionSuccess = ({ campaignID }) => {
     </div>
 }
 const ArticleSubmissionPage = () => {
-    const {campaignID} = useParams()
+    const { campaignID } = useParams()
     const [campaign, setCampaign] = useState(null);
     const [loading, setLoading] = useState(false);
     const [pageinfo, setPageInfo] = useState(null);
@@ -60,9 +61,11 @@ const ArticleSubmissionPage = () => {
     </div>
     return (
         <div>
-            <Typography variant="h5" component="p" sx={{ flexGrow: 1, textAlign: 'center', m:2, fontWeight:'bold' }}>
-                Submit Article for {campaign.name}
+            <CampaignHeader campaign={campaign} />
+            <Typography variant="h5" component="p" sx={{ flexGrow: 1, textAlign: 'center', m: 2, fontWeight: 'bold' }}>
+                Article submission
             </Typography>
+
             {loading ? <div style={{ textAlign: 'center' }}><CircularProgress /></div> : (
                 articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} /> :
                     <>

@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router";
 import { lazy } from "react";
-import ArticleSubmissionPage from "./ArticleSubmission";
-import JudgeSubmission from "./JudgeSubmission";
-// const JudgeSubmission = lazy(() => import("./JudgeSubmission"));
+import ArticleSubmissionPage from "./Submission/NewSubmission";
+import JudgeSubmission from "./Submission/JudgeSubmission";
+// 
 const Campaign = () => {
     return (
         <Routes>
