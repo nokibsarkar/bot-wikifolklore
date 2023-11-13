@@ -28,11 +28,11 @@ function ToolSelector() {
   const tool = url.searchParams.get('tool') || url.pathname.split('/')[1]
   switch (tool) {
     case 'fnf':
-      return ['FnF','/fnf', FnF]
+      return ['FnF', FnF]
     case 'kitkat':
-      return ['KitKat (development)', '/kitkat', KitKat]
+      return ['KitKat (development)', KitKat]
     default:
-      return ['FnF', '/fnf', () => <FnF /> || <div>Unknown tool: {tool}</div>];
+      return ['FnF', () => <FnF /> || <div>Unknown tool: {tool}</div>];
   }
 }
 
@@ -50,12 +50,11 @@ function App() {
       console.log("Please login to continue")
     }
   }, [])
-  const [toolName, toolPath, Tool] = ToolSelector();
+  const [toolName, Tool] = ToolSelector();
   const commonProps = {
     user,
     setUser,
     toolName,
-    toolPath,
     setOpen: setDrawerOpen,
     open: drawerOpen
   }
