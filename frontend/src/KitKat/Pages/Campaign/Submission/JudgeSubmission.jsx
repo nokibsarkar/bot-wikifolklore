@@ -8,6 +8,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, LinearP
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import GavelIcon from '@mui/icons-material/Gavel';
+import CampaignHeader from "../../../Components/CampaignHeader";
+import { AllButton, DetailsButton, JudgeButton } from "../../../Components/CampaignButtons";
 const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [point, setPoint] = useState(0);
@@ -29,12 +31,12 @@ const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
     return (
         <div style={{ textAlign: 'center', height: '10%', position: 'relative' }}>
             <Fab variant="extended" color="primary" size="small"
-            disabled={dialogOpen}
+                disabled={dialogOpen}
                 sx={{
                     position: "fixed",
                     bottom: (theme) => theme.spacing(3),
                     right: (theme) => theme.spacing(2)
-                  }}
+                }}
                 onClick={e => setDialogOpen(true)}
             >
                 <GavelIcon fontSize='small' /> Judgement
@@ -192,10 +194,15 @@ const JudgeSubmission = () => {
         })();
         return () => newBase.remove();
     }, []);
+    if (!submission || !campaign) return <div>Loading Submission</div>
     return <div>
-        
+        {/* <CampaignHeader campaign={campaign} /> */}
+        <div style={{ textAlign: 'center' }}>
+            <DetailsButton campaign={campaign} />
+            <AllButton campaign={campaign} />
+        </div>
         <div style={{ textAlign: 'center', height: '10%', position: 'relative' }}>
-            {campaign && <PageInfo title={title} campaign={campaign} />}
+            <PageInfo title={title} campaign={campaign} />
         </div>
         <Paper
             dangerouslySetInnerHTML={{ __html: previewText }}
@@ -206,7 +213,7 @@ const JudgeSubmission = () => {
                 margin: 2,
                 alignSelf: 'center',
                 height: '80%',
-                overflowX : 'revert'
+                overflowX: 'revert'
             }}
         />
         <JudgeMentBox judge={judge} campaignID={campaignID} submissionID={submissionID} />

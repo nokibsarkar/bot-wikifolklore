@@ -7,6 +7,16 @@ const theme = createTheme({
         },
         secondary: {
             main : '#9a0000'
+        },
+        rules : {
+            main : '#b2c9ed',
+            light : '#dce6f5',
+            dark : '#2b4670'
+        },
+        list : {
+            main : '#b2c9ed',
+            light : '#dce6f5',
+            dark : '#2b4670'
         }
     },
 });

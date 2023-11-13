@@ -12,7 +12,7 @@ const CampaignHeader = ({ campaign }) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            bgcolor: 'background.paper',
+            bgcolor: 'list.light',
             // borderRadius: 5,
             // border: 1,
             // boxShadow: 1,
@@ -25,37 +25,7 @@ const CampaignHeader = ({ campaign }) => {
                 <img src={campaign.image} alt={campaign.name} style={{ width: '100%', maxHeight: '150px' }} />
                 <figcaption>{campaign.imageCaption}</figcaption>
             </figure>}
-            <div style={{ textAlign: 'center' }}>
-                <Button variant="contained" color="primary" size="small" sx={{
-                    p: 1,
-                    pr: 2,
-                    m: 1
-                }}
-                    component={Link}
-                    to={`/kitkat/campaign/${campaign.id}`}
-                >
-                    <CampaignIcon />&nbsp; See Details
-                </Button>
-                <Button variant="contained" color="success" size="small" sx={{
-                    p: 1,
-                    pr: 2,
-                    m: 1
-                }}
-                    component={Link}
-                    to={`/kitkat/campaign/${campaign.id}/submission/new`}
-                >
-                    <AddIcon /> &nbsp; Submit new Article
-                </Button>
-                <Button variant="contained" color="primary" size="small" sx={{
-                    padding: 1,
-                    m: 1
-                }}
-                    component={Link}
-                    to={`/kitkat/campaign`}
-                >
-                    <ListIcon /> &nbsp; All Campaigns
-                </Button>
-            </div>
+            
         </Box>
     )
 }
