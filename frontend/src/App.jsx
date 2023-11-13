@@ -45,7 +45,7 @@ function App() {
     if (decoded) {
       setUser(decoded);
       Tools[0] = FnFRoutes(decoded);
-      Tools[1] = KitKatRoutes(decoded);
+      // Tools[1] = KitKatRoutes(decoded);
     } else {
       console.log("Please login to continue")
     }
