@@ -4,9 +4,9 @@ import KitKatServer from "../../Server";
 import PageInfo from "../../Components/PageInfo";
 import CheckIcon from '@mui/icons-material/Check';
 import { Button, CircularProgress, LinearProgress, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-const ArticleSubmissionSuccess = ({ campaign }) => {
+const ArticleSubmissionSuccess = ({ campaignID }) => {
     return <div style={{ textAlign: 'center' }}>
         <CheckIcon variant="contained" fontSize='large' color='success' />
         <Typography variant="h6" component="div" color="success.main" sx={{ mb:3, flexGrow: 1, textAlign: 'center' }}>
@@ -15,14 +15,15 @@ const ArticleSubmissionSuccess = ({ campaign }) => {
         <Button variant="outlined" color="primary" size="small"
         sx={{mr: 2}}
             component={Link}
-            to="/kitkat/campaign"
+            to={`/kitkat/campaign/${campaignID}`}
         >
             Back to Campaign
         </Button>
         <Button variant="contained" color="success" size="small"
             component={Link}
-            to="/kitkat/campaign/submit"
+            to={`/kitkat/campaign/${campaignID}/submission/new`}
             target="_self"
+            onClick={e => window.location.reload()}
         >
             Submit Another Article
         </Button>
@@ -30,7 +31,7 @@ const ArticleSubmissionSuccess = ({ campaign }) => {
     </div>
 }
 const ArticleSubmissionPage = () => {
-    const campaignID = KitKatServer.getParameter('campaignID');
+    const {campaignID} = useParams()
     const [campaign, setCampaign] = useState(null);
     const [loading, setLoading] = useState(false);
     const [pageinfo, setPageInfo] = useState(null);
@@ -63,7 +64,7 @@ const ArticleSubmissionPage = () => {
                 Submit Article for {campaign.name}
             </Typography>
             {loading ? <div style={{ textAlign: 'center' }}><CircularProgress /></div> : (
-                articleSubmitted ? <ArticleSubmissionSuccess campaign={campaign} /> :
+                articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} /> :
                     <>
                         {!article && <ArticleInput language={campaign?.language} onNewArticle={setArticle} submitButtonLabel="Check" />}
                         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

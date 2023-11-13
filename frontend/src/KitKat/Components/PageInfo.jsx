@@ -41,7 +41,6 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo }) => {
         campaignID: campaign.id
     }
     KitKatServer.Page.getPageInfo(infoRequest).then(pageinfo => {
-        console.log(setPageInfo)
         if(setPageInfo) setPageInfo(pageinfo);
         setAddedBytes(pageinfo.addedBytes);
         setAddedWords(pageinfo.addedWords);
