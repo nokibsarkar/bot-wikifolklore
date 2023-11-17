@@ -40,47 +40,48 @@ const CampaignList = () => {
                         }
                     },
                     { field: 'language', headerName: 'Language', flex: 0.5 },
-                    { field: 'endedAt', headerName: 'Ends at', flex: 1 },
-                    {
-                        field: 'actions', headerName: 'Actions', flex: 1, renderCell: (params) => {
-                            return <Box sx={{
-                                display: 'block',
-                                // flexDirection: 'row',
-                                // justifyContent: 'center',
-                                // alignItems: 'center',
-                                // gap: '1px'
-                            }}>
+                    { field: 'startedAt', headerName: 'Start Date', flex: 1 },
+                    { field: 'endedAt', headerName: 'Finish Date', flex: 1 },
+                    // {
+                    //     field: 'actions', headerName: 'Actions', flex: 1, renderCell: (params) => {
+                    //         return <Box sx={{
+                    //             display: 'block',
+                    //             // flexDirection: 'row',
+                    //             // justifyContent: 'center',
+                    //             // alignItems: 'center',
+                    //             // gap: '1px'
+                    //         }}>
 
-                                <Button variant="contained" color="primary" size="small" sx={{
-                                    padding: 1,
-                                    m: 1
-                                }}
-                                    component={Link}
-                                    to={`/kitkat/campaign/${params.row.id}/submission/new`}
-                                >
-                                    <AddIcon />
-                                </Button>
-                                <Button variant="contained" color="primary" size="small" sx={{
-                                    padding: 1,
-                                    m: 1
-                                }}
-                                    component={Link}
-                                    to={`/kitkat/campaign/${params.row.id}/submission`}
-                                >
-                                    <GavelIcon />
-                                </Button>
-                                <Button variant="contained" color="primary" size="small" sx={{
-                                    padding: 1,
-                                    m: 1
-                                }}
-                                    component={Link}
-                                    to={`/kitkat/campaign/${params.row.id}`}
-                                >
-                                    <CampaignIcon />
-                                </Button>
-                            </Box>
-                        }
-                    },
+                    //             <Button variant="contained" color="primary" size="small" sx={{
+                    //                 padding: 1,
+                    //                 m: 1
+                    //             }}
+                    //                 component={Link}
+                    //                 to={`/kitkat/campaign/${params.row.id}/submission/new`}
+                    //             >
+                    //                 <AddIcon />
+                    //             </Button>
+                    //             <Button variant="contained" color="primary" size="small" sx={{
+                    //                 padding: 1,
+                    //                 m: 1
+                    //             }}
+                    //                 component={Link}
+                    //                 to={`/kitkat/campaign/${params.row.id}/submission`}
+                    //             >
+                    //                 <GavelIcon />
+                    //             </Button>
+                    //             <Button variant="contained" color="primary" size="small" sx={{
+                    //                 padding: 1,
+                    //                 m: 1
+                    //             }}
+                    //                 component={Link}
+                    //                 to={`/kitkat/campaign/${params.row.id}`}
+                    //             >
+                    //                 <CampaignIcon />
+                    //             </Button>
+                    //         </Box>
+                    //     }
+                    // },
                     { field: 'status', headerName: 'Status', flex: 0.5 },
                     
                 ]}
