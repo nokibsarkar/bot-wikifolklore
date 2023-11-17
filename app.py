@@ -94,7 +94,15 @@ async def logout():
     return redirect_to(redirect_uri, {
         cookie_name : cookie_value
     })
-
+#------------------------------- Credit ------------------------------------
+@app.get("/credit", response_class=responses.HTMLResponse)
+async def credit(request : Request):
+    # user = User.logged_in_user(request.cookies)
+    return app.templates.TemplateResponse("credit.html", context= {
+        'request' : request,
+        # 'user' : user,
+        'login_url' : User.generate_login_url('/credit')
+    })
 @app.get("/fnf/{optional_path:path}", response_class=responses.HTMLResponse)
 async def fnf(req : Request, optional_path : str = ''):
     user = User.logged_in_user(req.cookies)
