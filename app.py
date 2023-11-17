@@ -95,10 +95,10 @@ async def logout():
         cookie_name : cookie_value
     })
 #------------------------------- Credit ------------------------------------
-@app.get("/credit", response_class=responses.HTMLResponse)
+@app.get("/credits", response_class=responses.HTMLResponse)
 async def credit(request : Request):
     # user = User.logged_in_user(request.cookies)
-    return app.templates.TemplateResponse("credit.html", context= {
+    return app.templates.TemplateResponse("credits.html", context= {
         'request' : request,
         # 'user' : user,
         'login_url' : User.generate_login_url('/credit')
