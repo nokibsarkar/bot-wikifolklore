@@ -26,15 +26,17 @@ setup (){
 }
 build_landing_page (){
     LANDING_PAGE_PATH=$CURRENT_PATH/landing_page
-    LANDING_PAGE_STATIC_PATH=$LANDING_PAGE_PATH/src/static
-    LANDING_PAGE_TEMPATE_PATH=$LANDING_PAGE_PATH/src/index.html
+    LANDING_PAGE_SRC_PATH=$LANDING_PAGE_PATH/src
+    LANDING_PAGE_STATIC_PATH=$LANDING_PAGE_SRC_PATH/static
+    LANDING_PAGE_TEMPATE_PATH=$LANDING_PAGE_SRC_PATH/index.html
     # Build landing page
     echo "Building landing page"
     cd $LANDING_PAGE_PATH
     npm run build
     # Move the build static files to static directory
     cp -rf $LANDING_PAGE_STATIC_PATH/* $TARGET_STATIC_PATH
-    cp -f $LANDING_PAGE_TEMPATE_PATH $TARGET_TEMPLATE_PATH
+    rm -rf $LANDING_PAGE_STATIC_PATH
+    cp -f $LANDING_PAGE_SRC_PATH/*.html $TARGET_TEMPLATE_PATH
     cd $CURRENT_PATH
     echo '  Landing page build completed'
 }
