@@ -41,8 +41,8 @@ const CampaignList = () => {
                         }
                     },
                     { headerAlign : 'center' , field: 'language', headerName: 'Language', minWidth : 100, hideSortIcons : true , flex : 1},
-                    { headerAlign : 'center' ,field: 'startedAt', headerName: 'Start Date', minWidth : 200, flex: 1 },
-                    { headerAlign : 'center' ,field: 'endedAt', headerName: 'Finish Date', minWidth : 200,flex: 1 },
+                    { headerAlign : 'center' ,field: 'startDate', headerName: 'Start Date', minWidth : 200, flex: 1 },
+                    { headerAlign : 'center' ,field: 'endDate', headerName: 'Finish Date', minWidth : 200,flex: 1 },
                     // {
                     //     field: 'actions', headerName: 'Actions', flex: 1, renderCell: (params) => {
                     //         return <Box sx={{
@@ -83,7 +83,7 @@ const CampaignList = () => {
                     //         </Box>
                     //     }
                     // },
-                    { field: 'status', headerName: 'Status', flex: 0.5 },
+                    { headerAlign : 'center', field: 'status', headerName: 'Status', flex: 0.5, minWidth : 150 },
                     
                 ]}
             />

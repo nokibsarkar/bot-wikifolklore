@@ -23,6 +23,7 @@ import { FnFRoutes } from './FnF/FnF.jsx';
 import { KitKatRoutes } from './KitKat/KitKat.jsx';
 const FnF = React.lazy(() => import('./FnF/FnF.jsx'));
 const KitKat = React.lazy(() => import('./KitKat/KitKat.jsx'));
+Server.init();
 function ToolSelector() {
   const url = new URL(window.location.href);
   const tool = url.searchParams.get('tool') || url.pathname.split('/')[1]

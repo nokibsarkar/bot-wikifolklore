@@ -1,4 +1,6 @@
 import BaseServer from "../Server";
+const LANGUAGE_KEY = "tk-lang"
+const COUNTRY_KEY = "tk-country"
 type APIResponseSingle<T> = {
     success: true;
     data: T;
@@ -33,17 +35,20 @@ type WikiTextParseResponse = {
         };
     };
 }
+type CampaignStatus = "under_approval" | "scheduled" |  "rejected" | "active"| "judging" | "ended" | "cancelled" ;
+type SubmissionStatus = "pending" | "approved" | "rejected";
 type Campaign = {
     id: number;
     name: string;
     description: string;
     image: string;
     link: string;
-    start: string;
-    end: string;
+    startDate : string;
+    endDate: string;
     active: boolean;
     language: string;
     rules : string[];
+    status: CampaignStatus;
 };
 type SubmissionRequest = {
     campaignID: number;
@@ -57,7 +62,7 @@ type Submission = {
     title: string;
     createdAt: string;
     language: string;
-    status: "pending" | "approved" | "rejected";
+    status: SubmissionStatus;
     approvedAt?: string;
     approvedBy?: string;
     rejectedAt?: string;
@@ -71,27 +76,15 @@ const sampleCampaign: Campaign = {
     description: "This is a sample campaign",
     image: "https://upload.wikimedia.org/wikipedia/commons/7/71/Wikipedia_Asian_Month_Logo.svg",
     link: "https://en.wikipedia.org/wiki/Kit_Kat",
-    start: "2021-10-01",
-    end: "2021-10-31",
+    startDate: "2021-10-01",
+    endDate: "2021-10-31",
     active: true,
     language: "en",
     rules: [
         "No vandalism",
-        `<CampaignHeader campaign={campaign} />
-        <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '1px',
-            p: 1,
-            m: 1
-        }}>
-            <Typography variant='h5' sx={{ textAlign: 'center', m: 1 }}>Rules</Typography>
-            <Rules rules={campaign.rules} />
-        </Box>
-`
+        "No spam",
     ],
+    status: "active",
 }
 const sampleUsernames = [
     'User:Example',
@@ -192,12 +185,16 @@ class PageServer {
 
 
 }
+
 class KitKatServer {
     static BaseServer = BaseServer;
     static Wiki = Wiki;
     static Campaign = CampaignServer;
     static Page = PageServer;
-    static init() {
+    static languages: Record<string, string> = {};
+    static countries: Record<string, string> = {};
+    static async init() {
+       
     }
     static getParameter(key: string): string | null {
         const url = new URL(window.location.href);
