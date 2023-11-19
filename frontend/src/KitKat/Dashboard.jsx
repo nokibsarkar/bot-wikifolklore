@@ -63,7 +63,7 @@ export default function Description({ user }) {
                 m: 1
             }}
                 component={Link}
-                to="/kitkat/campaign/create"
+                to="/kitkat/campaign/new"
             >
                 <AddIcon /> &nbsp; Create New Campaign
             </Button>
