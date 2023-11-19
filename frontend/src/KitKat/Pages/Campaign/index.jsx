@@ -84,6 +84,7 @@ const CampaignList = () => {
                     //     }
                     // },
                     { headerAlign : 'center', field: 'status', headerName: 'Status', flex: 0.5, minWidth : 150 },
+
                     
                 ]}
             />
