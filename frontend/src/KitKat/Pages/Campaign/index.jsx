@@ -33,15 +33,16 @@ const CampaignList = () => {
                 loading={loading}
                 rows={campaigns}
                 autoHeight
+                disableColumnMenu
                 columns={[
                     {
-                        field: 'name', headerName: 'Name', flex: 1, renderCell: (params) => {
+                        field: 'name', headerName: 'Name', flex: 1, minWidth : 300, renderCell: (params) => {
                             return <Link to={`/kitkat/campaign/${params.row.id}`} style={{ textDecoration: 'none' }}>{params.value}</Link>
                         }
                     },
-                    { field: 'language', headerName: 'Language', flex: 0.5 },
-                    { field: 'startedAt', headerName: 'Start Date', flex: 1 },
-                    { field: 'endedAt', headerName: 'Finish Date', flex: 1 },
+                    { headerAlign : 'center' , field: 'language', headerName: 'Language', minWidth : 100, hideSortIcons : true , flex : 1},
+                    { headerAlign : 'center' ,field: 'startDate', headerName: 'Start Date', minWidth : 200, flex: 1 },
+                    { headerAlign : 'center' ,field: 'endDate', headerName: 'Finish Date', minWidth : 200,flex: 1 },
                     // {
                     //     field: 'actions', headerName: 'Actions', flex: 1, renderCell: (params) => {
                     //         return <Box sx={{
@@ -82,7 +83,8 @@ const CampaignList = () => {
                     //         </Box>
                     //     }
                     // },
-                    { field: 'status', headerName: 'Status', flex: 0.5 },
+                    { headerAlign : 'center', field: 'status', headerName: 'Status', flex: 0.5, minWidth : 150 },
+
                     
                 ]}
             />

@@ -6,9 +6,10 @@ const LANGUAGE_KEY = "tk-lang"
 const COUNTRY_KEY = "tk-country";
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth';
 const HIDDEN_USERNAME = "USERNAME HIDDEN";
+
 const checkToken = (token: string) => {
     try {
-        const decoded: { exp: number; username : string; } = jwt_decode(token);
+        const decoded: { exp: number; username: string; } = jwt_decode(token);
         // check if token is expired
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
@@ -21,9 +22,9 @@ const checkToken = (token: string) => {
         return null;
     }
 }
-const deleteCookie = (name : string) => {
+const deleteCookie = (name: string) => {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-  }
+}
 const PERMISSIONS: { [key: string]: Permission } = {
     TASK: 1 << 0,
     STATS: 1 << 1,
@@ -34,6 +35,20 @@ const PERMISSIONS: { [key: string]: Permission } = {
 };
 class BaseServer {
     static RIGHTS = PERMISSIONS;
+    static languages: Object | null = null;
+    static countries: Object | null = null;
+    static async init() {
+        if (!BaseServer.languages || !BaseServer.countries) {
+            if (!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY)) {
+                console.log("Fetching languages and countries")
+                localStorage.setItem(COUNTRY_KEY, JSON.stringify(await fetch("/api/country").then(res => res.json()).then(res => res.data)))
+                localStorage.setItem(LANGUAGE_KEY, JSON.stringify(await fetch("/api/language").then(res => res.json()).then(res => res.data)))
+            }
+            BaseServer.languages = JSON.parse(localStorage.getItem(LANGUAGE_KEY) || "{}");
+            BaseServer.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
+        }
+        console.log("BaseServer init done", BaseServer.languages, BaseServer.countries);
+    }
     static loginnedUser() {
         const authCookie = document.cookie.split('; ').find(row => row.startsWith(AUTH_COOKIE_NAME));
         if (authCookie) {
@@ -42,7 +57,7 @@ class BaseServer {
             return decoded;
         }
     }
-    static isUsernameHidden(){
+    static isUsernameHidden() {
         const user = BaseServer.loginnedUser();
         return user && user.username == HIDDEN_USERNAME;
     }
