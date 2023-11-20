@@ -47,7 +47,8 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
                     disablePortal
                     options={suggestedUsers}
                     loading={loading}
-                    sx={{ minWidth: 300, m: 0.5 }}
+                    sx={{ minWidth: {
+                        xs : '100%', sm : 300}, m: 0.5 }}
                     loadingText="Loading Users..."
                     noOptionsText="No users found"
                     renderInput={(params) => <TextField {...params} sx={{...params.sx, color : color}}  error={!!error} label="User" variant="outlined" fullWidth size="small" />}
