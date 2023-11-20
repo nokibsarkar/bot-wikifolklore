@@ -71,7 +71,7 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
                         onChange(values);
                         setValue('');
                         setError('');
-                        
+
                     }}
                 >
                     <AddIcon />
@@ -80,6 +80,7 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
             <ul style={{ textAlign: 'left' }}>
                 {users?.map((judge, index) => (
                     <Chip sx={{color : color}} key={index} label={judge} onDelete={() => {
+
                         onChange(users.filter(j => j !== judge));
                     }} />
                 ))}

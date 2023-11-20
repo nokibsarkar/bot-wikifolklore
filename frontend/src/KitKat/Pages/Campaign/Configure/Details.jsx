@@ -182,6 +182,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
                     variant="outlined"
                     sx={{
                         m: 1,
+
                     }}
                     inputProps={{ type: 'date' }}
                     value={campaign.startDate}

@@ -215,6 +215,7 @@ class UserServer {
         return res.query.allusers;
     }
 }
+
 class KitKatServer {
     static BaseServer = BaseServer;
     static Wiki = Wiki;
