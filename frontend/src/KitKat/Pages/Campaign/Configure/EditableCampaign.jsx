@@ -116,7 +116,7 @@ const EditableCampaign = ({ initialCampaign = defaultCampaign, minimumStep = 0, 
             <Steps activeStep={step} setActiveStep={linear ? () => null : setStep} minimumStep={minimumStep} />
             <StepSelector step={step} props={{ campaign, campaignDispatch: dispatchCampaign }} />
             {
-                linear ? <p>
+                linear && step + 1 < steps.length ? <p>
                     <Button disabled={step - 1 < minimumStep} variant="contained" color="success" onClick={() => setStep(step - 1)} sx={{ m: 1 }}>
                         <ArrowBackIcon /> Back
                     </Button>
@@ -124,8 +124,8 @@ const EditableCampaign = ({ initialCampaign = defaultCampaign, minimumStep = 0, 
                          Next <ArrowForwardIcon />
                     </Button>
                     }
-                </p> : <Button variant="contained" color="success" onClick={() => null} sx={{ m: 1 }}>
-                    <SaveIcon /> Save
+                </p> : <Button variant="contained" color="success" onClick={() => null} sx={{ m: 1, minWidth : '33%' }}>
+                    <SaveIcon /> &nbsp;Save
                 </Button>
 
             }
