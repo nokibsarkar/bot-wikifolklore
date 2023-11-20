@@ -35,7 +35,7 @@ type WikiTextParseResponse = {
         };
     };
 }
-type CampaignStatus = "under_approval" | "scheduled" |  "rejected" | "active"| "judging" | "ended" | "cancelled" ;
+type CampaignStatus = "under_approval" | "scheduled" | "rejected" | "active" | "judging" | "ended" | "cancelled";
 type SubmissionStatus = "pending" | "approved" | "rejected";
 type Campaign = {
     id: number;
@@ -43,11 +43,11 @@ type Campaign = {
     description: string;
     image: string;
     link: string;
-    startDate : string;
+    startDate: string;
     endDate: string;
     active: boolean;
     language: string;
-    rules : string[];
+    rules: string[];
     status: CampaignStatus;
 };
 type SubmissionRequest = {
@@ -69,6 +69,16 @@ type Submission = {
     rejectedBy?: string;
     rejectedReason?: string;
     note?: string;
+}
+
+type WikimediaUser = {
+    userid: number;
+    name: string;
+    id?: number;
+    centralids: {
+        CentralAuth: number;
+        local: number;
+    };
 }
 const sampleCampaign: Campaign = {
     id: 1,
@@ -100,7 +110,7 @@ const samplePageInfo: PageInfo = {
     addedBytes: 100,
     addedWords: 10
 }
-const sampleSubmission : Submission = {
+const sampleSubmission: Submission = {
     submissionID: 1,
     campaignID: 1,
     submitter: "User:Example",
@@ -177,29 +187,50 @@ class PageServer {
     static async getSubmission(submissionID: number): Promise<Submission> {
         return sampleSubmission;
     }
-    
-    static async judgeSubmission(submissionID: number, point : number, note?: string): Promise<Submission> {
+
+    static async judgeSubmission(submissionID: number, point: number, note?: string): Promise<Submission> {
         return sampleSubmission;
     }
-    
+
 
 
 }
-
+class UserServer {
+    static fetching = false;
+    static async searchUsersByPrefix(language: string = 'bn', prefix: string, previous: WikimediaUser[]): Promise<WikimediaUser[]> {
+        if (UserServer.fetching) return previous;
+        UserServer.fetching = true;
+        const params = new URLSearchParams({
+            action: "query",
+            list: "allusers",
+            auprefix: prefix,
+            format: "json",
+            utf8: "1",
+            aulimit: "10",
+            origin: "*"
+        });
+        const url = `https://${language}.wikipedia.org/w/api.php?${params.toString()}`;
+        const res = await fetch(url).then(res => res.json());
+        UserServer.fetching = false;
+        return res.query.allusers;
+    }
+}
 class KitKatServer {
     static BaseServer = BaseServer;
     static Wiki = Wiki;
     static Campaign = CampaignServer;
     static Page = PageServer;
+    static User = UserServer;
     static languages: Record<string, string> = {};
     static countries: Record<string, string> = {};
     static async init() {
-       
+        await BaseServer.init();
     }
     static getParameter(key: string): string | null {
         const url = new URL(window.location.href);
         return url.searchParams.get(key);
     }
+
     static addCSS(url: string) {
         const id = url.replace(/[^a-zA-Z0-9]/g, "");
         if (document.getElementById(id)) return;
@@ -218,7 +249,7 @@ class KitKatServer {
         document.head.appendChild(script);
     }
     async init() {
-        
+
     }
     static addWikiStyle() {
         KitKatServer.addCSS("https://en.wikipedia.org/w/load.php?lang=en&modules=ext.cite.styles%7Cext.echo.styles.badge%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cjquery.makeCollapsible.styles%7Coojs-ui.styles.icons-alerts%7Cskins.vector.styles.legacy%7Cwikibase.client.init&only=styles&skin=vector");
