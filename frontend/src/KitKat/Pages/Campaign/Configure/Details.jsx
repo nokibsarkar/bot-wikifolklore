@@ -1,69 +1,10 @@
-import { Autocomplete, Box, Button, Chip, CircularProgress, Step, StepLabel, TextField, Typography } from "@mui/material";
-import { useCallback, useRef, useState } from "react";
+import { Autocomplete, Box, CircularProgress, TextField, Typography } from "@mui/material";
+import { useRef, useState } from "react";
 import KitKatServer from "../../../Server";
 import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
 import RightArrow from '@mui/icons-material/ArrowForward'
-import GavelIcon from '@mui/icons-material/Gavel';
-import AddIcon from '@mui/icons-material/Add';
-import UserInput from "../../../Components/UserInput";
 
-// const Jury = ({ jury, onChange }) => {
-//     const [value, setValue] = useState('');
-//     return (
-//         <Box sx={{
-//             display: 'flex',
-//             flexDirection: 'column',
-//             alignItems: 'center',
-//             justifyContent: 'center',
-//             gap: '1px',
-//             p: 1,
-//             m: 1,
-//             border: 1,
-//             backgroundColor: 'rules.main',
-//             // color : 'black'
-//         }}>
-//             <Typography variant='h5' sx={{ textAlign: 'center', m: 1 }}>
-//                 <GavelIcon />
-//                 Jury</Typography>
-//             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1px' }}>
-//                 <TextField
-//                     label="Jury"
-//                     variant="outlined"
-//                     fullWidth
-//                     size="small"
-//                     value={value}
-//                     onChange={(e) => {
-//                         setValue(e.target.value)
-//                     }}
-//                 />
-//                 <Button variant="contained" color="success" size="small" sx={{
-//                     m: 1
-//                 }}
-//                     onClick={() => {
-//                         if (!value)
-//                             return;
-//                         if (jury.includes(value))
-//                             return;
-//                         const values = [...jury, value];
-//                         onChange(values);
-//                         setValue('');
-//                     }}
-//                 >
-//                     <AddIcon />
-//                 </Button>
-//             </div>
-//             <ul style={{ textAlign: 'left' }}>
-//                 {jury?.map((judge, index) => (
-//                     <Chip key={index} label={judge} onDelete={() => {
-//                         onChange(jury.filter(j => j !== judge));
-//                     }} />
-//                 ))}
-//             </ul>
-//         </Box>
-//     )
 
-// }
 const Rules = ({ rules, setRules }) => {
     const [editing, setEditing] = useState(false);
     const [value, setValue] = useState(rules?.join("\n"));
