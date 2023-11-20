@@ -102,16 +102,20 @@ const StepSelector = ({ step, props }) => {
     }
 
 }
-const EditableCampaign = ({ defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true , showActions = false}) => {
+const EditableCampaign = ({ defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null }) => {
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    if (loading)
-        return <CircularProgress />;
+    if (loading || !campaign)
+        return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <CircularProgress />
+        </div>
     if (error)
-        return <div>{error}</div>;
-    const SaveButton = <Button variant="contained" color="success" onClick={() => null} sx={{ m: 1 }}>
+        return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            {error}
+        </div>
+    const SaveButton = <Button variant="contained" color="success" onClick={e => onSave(campaign, setLoading)} sx={{ m: 1 }}>
         <SaveIcon /> Save
     </Button>
     return (
@@ -128,7 +132,7 @@ const EditableCampaign = ({ defaultStep = 0, initialCampaign = defaultCampaign, 
                         Next <ArrowForwardIcon />
                     </Button> : SaveButton
                     }
-                </p> : SaveButton 
+                </p> : SaveButton
 
             }
         </div>

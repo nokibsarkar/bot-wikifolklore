@@ -179,6 +179,12 @@ class CampaignServer {
     static async getJury(campaignID: number): Promise<string[]> {
         return sampleUsernames;
     }
+    static async createCampaign(campaign: Campaign): Promise<Campaign> {
+        return campaign;
+    }
+    static async updateCampaign(campaign: Campaign): Promise<Campaign> {
+        return campaign;
+    }
 }
 class PageServer {
     static async getPageInfo({ language, submitter, title }: PageInfoRequest): Promise<PageInfo> {
