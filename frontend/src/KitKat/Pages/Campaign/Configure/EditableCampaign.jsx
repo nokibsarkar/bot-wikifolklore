@@ -103,6 +103,7 @@ const StepSelector = ({ step, props }) => {
 
 }
 const EditableCampaign = ({ defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null }) => {
+
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
@@ -133,6 +134,7 @@ const EditableCampaign = ({ defaultStep = 0, initialCampaign = defaultCampaign, 
                     </Button> : SaveButton
                     }
                 </p> : SaveButton
+
 
             }
         </div>
