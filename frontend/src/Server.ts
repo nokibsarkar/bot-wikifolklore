@@ -39,7 +39,7 @@ class BaseServer {
     static countries: Object | null = null;
     static async init() {
         if (!BaseServer.languages || !BaseServer.countries) {
-            if (!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY)) {
+            if (!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY) || localStorage.getItem(LANGUAGE_KEY) == "undefined" || localStorage.getItem(COUNTRY_KEY) == "undefined") {
                 console.log("Fetching languages and countries")
                 localStorage.setItem(COUNTRY_KEY, JSON.stringify(await fetch("/api/country").then(res => res.json()).then(res => res.data)))
                 localStorage.setItem(LANGUAGE_KEY, JSON.stringify(await fetch("/api/language").then(res => res.json()).then(res => res.data)))
