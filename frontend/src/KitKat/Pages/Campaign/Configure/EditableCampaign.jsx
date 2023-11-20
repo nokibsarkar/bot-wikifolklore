@@ -110,23 +110,24 @@ const EditableCampaign = ({ initialCampaign = defaultCampaign, minimumStep = 0, 
         return <CircularProgress />;
     if (error)
         return <div>{error}</div>;
+    const SaveButton = <Button variant="contained" color="success" onClick={() => null} sx={{ m: 1, minWidth: '33%' }}>
+        <SaveIcon /> &nbsp;Save
+    </Button>
     return (
         <div style={{ textAlign: 'center' }}>
 
             <Steps activeStep={step} setActiveStep={linear ? () => null : setStep} minimumStep={minimumStep} />
             <StepSelector step={step} props={{ campaign, campaignDispatch: dispatchCampaign }} />
             {
-                linear && step + 1 < steps.length ? <p>
+                linear ? <p>
                     <Button disabled={step - 1 < minimumStep} variant="contained" color="success" onClick={() => setStep(step - 1)} sx={{ m: 1 }}>
                         <ArrowBackIcon /> Back
                     </Button>
-                    {step + 1 < steps.length && <Button variant="contained" color="success" onClick={() => setStep(step + 1)} sx={{ m: 1 }}>
-                         Next <ArrowForwardIcon />
-                    </Button>
+                    {step + 1 < steps.length ? <Button variant="contained" color="success" onClick={() => setStep(step + 1)} sx={{ m: 1 }}>
+                        Next <ArrowForwardIcon />
+                    </Button> : SaveButton
                     }
-                </p> : <Button variant="contained" color="success" onClick={() => null} sx={{ m: 1, minWidth : '33%' }}>
-                    <SaveIcon /> &nbsp;Save
-                </Button>
+                </p> : { SaveButton }
 
             }
         </div>
