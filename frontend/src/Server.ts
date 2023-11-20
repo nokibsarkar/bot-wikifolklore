@@ -47,7 +47,6 @@ class BaseServer {
             BaseServer.languages = JSON.parse(localStorage.getItem(LANGUAGE_KEY) || "{}");
             BaseServer.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
         }
-        console.log("BaseServer init done", BaseServer.languages, BaseServer.countries);
     }
     static loginnedUser() {
         const authCookie = document.cookie.split('; ').find(row => row.startsWith(AUTH_COOKIE_NAME));
