@@ -4,7 +4,10 @@ import AddIcon from '@mui/icons-material/Add';
 import ListIcon from '@mui/icons-material/List';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GavelIcon from '@mui/icons-material/Gavel';
+import CheckIcon from '@mui/icons-material/Check';
+import CrossIcon from '@mui/icons-material/Close';
 import { Link } from 'react-router-dom';
+import { Typography } from '@mui/material';
 export const DetailsButton = ({ campaign }) => (
     <Button variant="contained" color="primary" size="small" sx={{
         p: 1,
