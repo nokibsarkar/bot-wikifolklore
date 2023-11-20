@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom"
-import React, { lazy } from "react"
+import React, { lazy, useEffect } from "react"
 import KitKatServer from "./Server.ts"
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Dashboard from "./Dashboard.jsx"
@@ -11,6 +11,9 @@ const Campaign = lazy(() => import("./Pages/Campaign/Campaign.jsx"));
 const CampaignEdit = lazy(() => import("./Pages/Campaign/Configure/Edit.jsx"));
 const CampaignCreate = lazy(() => import("./Pages/Campaign/Configure/Create.jsx"));
 const KitKat = ({ user }) => {
+    useEffect(() => {
+        document.title = "KitKat"
+    }, []);
     const CampaignRoutes = (
         <Route path='campaign'>
             <Route path=":campaignID">

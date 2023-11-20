@@ -2,7 +2,10 @@ import { Button, CircularProgress, Step, StepLabel, Stepper } from "@mui/materia
 import { useReducer, useState } from "react";
 import CampainEditableDetails from "./Details";
 import CampaignRestrictions from "./Restrictions";
-import SendIcon from '@mui/icons-material/Send';
+// import SendIcon from '@mui/icons-material/Send';
+import SaveIcon from '@mui/icons-material/Save';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import JuryPage from "./Jury";
 const defaultCampaign = {
     name: 'Campaign Name',
@@ -12,15 +15,12 @@ const defaultCampaign = {
         'Rule 2',
         'Rule 3'
     ],
-    jury: ['Jury 1', 'Jury 2', 'Jury 3'],
+    jury: [],
     startDate: '',
     endDate: '',
     status: 'active',
     maximumSubmissionOfSameArticle: 1,
     blackListedUsers: [
-        'user1',
-        'user2',
-        'user3'
     ],
     allowExpansions: true, // Allow users to submit articles that were not created rather expanded
     minimumTotalBytes: 1000, // Minimum total bytes of all articles
@@ -71,7 +71,7 @@ const campaignReducer = (state, action) => {
     }
 
 };
-const steps = ['Overview', 'Details', 'Restrictions', 'Jury'];
+const steps = ['Details', 'Restrictions', 'Jury', 'Overview'];
 
 const Steps = ({ activeStep, setActiveStep, minimumStep }) => {
     return (
@@ -88,11 +88,11 @@ const Steps = ({ activeStep, setActiveStep, minimumStep }) => {
 }
 const StepSelector = ({ step, props }) => {
     switch (step) {
-        case 1:
+        case 0:
             return <CampainEditableDetails {...props} />;
-        case 2:
+        case 1:
             return <CampaignRestrictions {...props} />;
-        case 3:
+        case 2:
             return <JuryPage {...props} />;
         case 3:
             return <CampainEditableDetails {...props} />;
@@ -101,7 +101,7 @@ const StepSelector = ({ step, props }) => {
     }
 
 }
-const EditableCampaign = ({ initialCampaign = defaultCampaign, minimumStep = 1, linear = true }) => {
+const EditableCampaign = ({ initialCampaign = defaultCampaign, minimumStep = 0, linear = true }) => {
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(minimumStep);
     const [loading, setLoading] = useState(false);
@@ -118,14 +118,14 @@ const EditableCampaign = ({ initialCampaign = defaultCampaign, minimumStep = 1, 
             {
                 linear ? <p>
                     <Button disabled={step - 1 < minimumStep} variant="contained" color="success" onClick={() => setStep(step - 1)} sx={{ m: 1 }}>
-                        Back
+                        <ArrowBackIcon /> Back
                     </Button>
                     {step + 1 < steps.length && <Button variant="contained" color="success" onClick={() => setStep(step + 1)} sx={{ m: 1 }}>
-                        <SendIcon /> Next
+                         Next <ArrowForwardIcon />
                     </Button>
                     }
                 </p> : <Button variant="contained" color="success" onClick={() => null} sx={{ m: 1 }}>
-                    <SendIcon /> Submit
+                    <SaveIcon /> Save
                 </Button>
 
             }

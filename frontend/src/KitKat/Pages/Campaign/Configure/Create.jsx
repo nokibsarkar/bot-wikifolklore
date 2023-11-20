@@ -4,7 +4,8 @@ const CampaignCreate = () => {
     return (
         <div>
             <h1>Create Campaign</h1>
-            <EditableCampaign minimumStep={1} linear={true} />
+            <EditableCampaign minimumStep={0} linear={true} />
+
         </div>
     )
 }

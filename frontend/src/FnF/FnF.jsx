@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom"
-import React, { lazy } from "react"
+import React, { lazy, useEffect } from "react"
 import AddTask from "./Pages/Tasks/AddTask.jsx";
 import ListTask from "./Pages/Tasks/ListTask.jsx"
 import Setting from "./Pages/Settings.jsx";
@@ -15,6 +15,9 @@ const ListUser = lazy(() => import('./Pages/User/ListUser.jsx'));
 const EditUser = lazy(() => import('./Pages/User/EditUser.jsx'));
 Server.init()
 const FnF = ({ user }) => {
+    useEffect(() => {
+        document.title = "FnF"
+    }, []);
     const TopicRoutes = (
         <Route path='topic/*'>
             <Route path="create" element={<AddTopic />} />

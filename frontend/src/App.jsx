@@ -26,14 +26,14 @@ const KitKat = React.lazy(() => import('./KitKat/KitKat.jsx'));
 Server.init();
 function ToolSelector() {
   const url = new URL(window.location.href);
-  const tool = url.searchParams.get('tool') || url.pathname.split('/')[1]
+  const tool = url.searchParams.get('tool') || url.pathname.split('/')[1];
   switch (tool) {
     case 'fnf':
       return ['FnF', '/fnf', FnF]
     case 'kitkat':
       return ['KitKat (development)', '/kitkat', KitKat]
     default:
-      return ['FnF', '', () => <FnF /> || <div>Unknown tool: {tool}</div>];
+      return ['FnF', '', () => <FnF />];
   }
 }
 
@@ -50,7 +50,7 @@ function App() {
     } else {
       console.log("Please login to continue")
     }
-  }, [])
+  }, []);
   const [toolName,toolPath, Tool] = ToolSelector();
   const commonProps = {
     user,
@@ -67,7 +67,7 @@ function App() {
         <AppDrawer {...commonProps} components={Tools} />
         <React.Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/fnf/*" element={<FnF {...commonProps} />} />
+            <Route path="/fnf/*" element={<FnF {...commonProps} />} title="FnF" />
             <Route path="/kitkat/*" element={<KitKat {...commonProps} />} />
           </Routes>
         </React.Suspense>
