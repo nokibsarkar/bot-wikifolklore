@@ -13,8 +13,8 @@ const defaultCampaign = {
         'Rule 3'
     ],
     jury: ['Jury 1', 'Jury 2', 'Jury 3'],
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
+    startDate: '',
+    endDate: '',
     status: 'active',
     maximumSubmissionOfSameArticle: 1,
     blackListedUsers: [
