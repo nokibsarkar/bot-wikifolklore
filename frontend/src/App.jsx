@@ -24,7 +24,6 @@ import { KitKatRoutes } from './KitKat/KitKat.jsx';
 const FnF = React.lazy(() => import('./FnF/FnF.jsx'));
 const KitKat = React.lazy(() => import('./KitKat/KitKat.jsx'));
 Server.init();
-console.log("Environment: ", process.env.NODE_ENV);
 Sentry.init({
   dsn: "https://d5f72a7651486fb43aef6fded21f5385@o249367.ingest.sentry.io/4506264792727552",
   environment: process.env.NODE_ENV || 'development',
@@ -35,7 +34,7 @@ Sentry.init({
     }
     // Check if it is an exception, and if so, show the report dialog
     if (event.exception) {
-      Sentry.showReportDialog({ eventId: event.event_id });
+      Sentry.showReportDialog({ eventId: event.event_id ,labelEmail: "Wikipedia Username", labelName: "Name", });
     }
     return event;
 
