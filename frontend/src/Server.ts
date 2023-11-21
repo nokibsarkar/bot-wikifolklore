@@ -1,4 +1,4 @@
-import {setUser} from "@sentry/react"
+import { setUser } from "@sentry/react"
 
 import jwt_decode from "jwt-decode";
 type Permission = number;
@@ -10,7 +10,7 @@ const HIDDEN_USERNAME = "USERNAME HIDDEN";
 
 const checkToken = (token: string) => {
     try {
-        const decoded: { exp: number; username: string; id:number; } = jwt_decode(token);
+        const decoded: { exp: number; username: string; id: number; } = jwt_decode(token);
         // check if token is expired
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
@@ -59,7 +59,8 @@ class BaseServer {
                 id: decoded?.id
             });
             return decoded;
-        }
+        } else
+            setUser(null);
     }
     static isUsernameHidden() {
         const user = BaseServer.loginnedUser();
