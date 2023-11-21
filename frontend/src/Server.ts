@@ -1,4 +1,4 @@
-import ListGeneratorServer from './FnF/Server';
+import {setUser} from "@sentry/react"
 
 import jwt_decode from "jwt-decode";
 type Permission = number;
@@ -7,9 +7,10 @@ const COUNTRY_KEY = "tk-country";
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth';
 const HIDDEN_USERNAME = "USERNAME HIDDEN";
 
+
 const checkToken = (token: string) => {
     try {
-        const decoded: { exp: number; username: string; } = jwt_decode(token);
+        const decoded: { exp: number; username: string; id:number; } = jwt_decode(token);
         // check if token is expired
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
@@ -53,6 +54,10 @@ class BaseServer {
         if (authCookie) {
             const token = authCookie.split('=')[1];
             const decoded = checkToken(token);
+            setUser({
+                username: decoded?.username,
+                id: decoded?.id
+            });
             return decoded;
         }
     }
