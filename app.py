@@ -110,14 +110,18 @@ async def fnf(req : Request, optional_path : str = ''):
     if user is None:
         redirect_uri = User.generate_login_url('/fnf')
         return redirect_to(redirect_uri)
-    return responses.FileResponse("static/index.html")
+    return responses.FileResponse("static/index.html", headers = {
+        'Document-Policy' : 'js-profiling'
+    })
 @app.get("/kitkat/{optional_path:path}", response_class=responses.HTMLResponse)
 async def kitkat(req : Request, optional_path : str = ''):
     user = User.logged_in_user(req.cookies)
     if user is None:
         redirect_uri = User.generate_login_url('/kitkat')
         return redirect_to(redirect_uri)
-    return responses.FileResponse("static/index.html")
+    return responses.FileResponse("static/index.html", headers = {
+        'Document-Policy' : 'js-profiling'
+    })
 
 
 if __name__ == "__main__":
