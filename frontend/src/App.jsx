@@ -21,11 +21,13 @@ import {
 import theme from './Layout/theme';
 import { FnFRoutes } from './FnF/FnF.jsx';
 import { KitKatRoutes } from './KitKat/KitKat.jsx';
+import UserfeedBackForm from './UserfeedBackForm.jsx';
 const FnF = React.lazy(() => import('./FnF/FnF.jsx'));
 const KitKat = React.lazy(() => import('./KitKat/KitKat.jsx'));
+const dsn = "https://d5f72a7651486fb43aef6fded21f5385@o249367.ingest.sentry.io/4506264792727552";
 Server.init();
 Sentry.init({
-  dsn: "https://d5f72a7651486fb43aef6fded21f5385@o249367.ingest.sentry.io/4506264792727552",
+  dsn: dsn,
   environment: process.env.NODE_ENV || 'development',
   beforeSend(event, hint) {
     //prevent reporting of errors from development
@@ -98,7 +100,8 @@ function App() {
     open: drawerOpen
   }
   return (
-    <Sentry.ErrorBoundary fallback={<div>Something went wrong</div>}>
+    <Sentry.ErrorBoundary fallback={<div>Something went wrong</div>} showDialog>
+      {/* <UserfeedBackForm user={user}  projectId={Sentry.getCurrentHub().getClient().getDsn().projectId} /> */}
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <AppBar {...commonProps} />
