@@ -4,3 +4,4 @@ pyjwt
 python-dotenv
 fastapi
 uvicorn
+sentry-sdk[fastapi]

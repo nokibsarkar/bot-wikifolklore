@@ -1,19 +1,20 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes as _Routes, Route } from "react-router-dom"
 import React, { lazy, useEffect } from "react"
 import AddTask from "./Pages/Tasks/AddTask.jsx";
 import ListTask from "./Pages/Tasks/ListTask.jsx"
 import Setting from "./Pages/Settings.jsx";
 import DashBoard from "./Dashboard.jsx";
 import Server from "./Server.ts"
-
 import PeopleIcon from '@mui/icons-material/People';
 import SettingIcon from '@mui/icons-material/Settings';
+import {withSentryReactRouterV6Routing} from "@sentry/react";
+const Routes = withSentryReactRouterV6Routing(_Routes);
 const AddTopic = lazy(() => import('./Pages/Topics/CreateTopic.jsx'))
 const EditTopic = lazy(() => import('./Pages/Topics/EditTopic.jsx'))
 const ListTopic = lazy(() => import('./Pages/Topics/ListTopics.jsx'))
 const ListUser = lazy(() => import('./Pages/User/ListUser.jsx'));
 const EditUser = lazy(() => import('./Pages/User/EditUser.jsx'));
-Server.init()
+Server.init();
 const FnF = ({ user }) => {
     useEffect(() => {
         document.title = "FnF"
