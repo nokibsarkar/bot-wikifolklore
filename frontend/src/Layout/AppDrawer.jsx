@@ -14,7 +14,8 @@ import { Link } from 'react-router-dom';
 import Collapse from '@mui/material/Collapse';
 import BugIcon from '@mui/icons-material/BugReport';
 import HomeIcon from '@mui/icons-material/Home';
-const Tool = (comp) => {
+import { showReportDialog } from '@sentry/react';
+const Tool = (comp, user) => {
     const [expanded, setExpanded] = React.useState(true);
     return <List>
         <ListItem key={comp?.name} disablePadding
@@ -114,7 +115,12 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                 <Divider />
                 <List>
                     <ListItem key='report' disablePadding>
-                        <ListItemButton component={Link} target='_blank' rel="noopener noreferrer" to="https://github.com/nokibsarkar/bot-wikifolklore/issues">
+                        <ListItemButton onClick={e => showReportDialog({
+                            user: {
+                                name: user?.username,
+                                email: user?.email
+                            }
+                        })}>
                             <ListItemIcon>
                                 <BugIcon />
                             </ListItemIcon>
