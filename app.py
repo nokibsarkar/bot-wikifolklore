@@ -136,7 +136,12 @@ def get_language_list():
         success=True,
         data=countries
     )
-
+@app.get('/all-categories/{optional_path:path}')
+def get_all_categories(req : Request):
+    print(req.cookies)
+    print(req.headers)
+    print(req.scope)
+    return 'No offense'
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="", port=5000)
