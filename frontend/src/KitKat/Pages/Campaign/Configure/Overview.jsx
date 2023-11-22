@@ -144,10 +144,10 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
                 <legend>Jury</legend>
                 {campaign.jury?.map((judge, index) => <Chip key={index} label={judge} />)}
             </Typography>
-            <Typography variant='body1' sx={{ m: 1, backgroundColor: 'pink' }} component='fieldset'>
+            {/* <Typography variant='body1' sx={{ m: 1, backgroundColor: 'pink' }} component='fieldset'>
                 <legend>Blacklist</legend>
                 {campaign.blackListedUsers?.map((judge, index) => <Chip key={index} label={judge} />)}
-            </Typography>
+            </Typography> */}
             <Typography variant='body1' sx={{ m: 1, textAlign: 'left', width: 'max-content' }} component='fieldset'>
                 <legend>Rules</legend>
                 <ol style={{ textAlign: 'left' }}>
