@@ -40,10 +40,14 @@ class BaseServer {
     static countries: Object | null = null;
     static async init() {
         if (!BaseServer.languages || !BaseServer.countries) {
-            if (!localStorage.getItem(LANGUAGE_KEY) || !localStorage.getItem(COUNTRY_KEY) || localStorage.getItem(LANGUAGE_KEY) == "undefined" || localStorage.getItem(COUNTRY_KEY) == "undefined") {
+            const localStorageCountries = localStorage.getItem(COUNTRY_KEY);
+            const localStorageLanguages = localStorage.getItem(LANGUAGE_KEY);
+            if (!localStorageCountries || !localStorageLanguages || localStorageCountries === "undefined" || localStorageLanguages === "undefined") {
                 console.log("Fetching languages and countries")
-                localStorage.setItem(COUNTRY_KEY, JSON.stringify(await fetch("/api/country").then(res => res.json()).then(res => res.data)))
-                localStorage.setItem(LANGUAGE_KEY, JSON.stringify(await fetch("/api/language").then(res => res.json()).then(res => res.data)))
+                const countries = await fetch("/api/country").then(res => res.json()).then(res => res.data);
+                const languages = await fetch("/api/language").then(res => res.json()).then(res => res.data);
+                localStorage.setItem(LANGUAGE_KEY, JSON.stringify(languages));
+                localStorage.setItem(COUNTRY_KEY, JSON.stringify(countries));
             }
             BaseServer.languages = JSON.parse(localStorage.getItem(LANGUAGE_KEY) || "{}");
             BaseServer.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
