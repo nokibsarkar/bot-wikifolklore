@@ -126,14 +126,14 @@ const CampaignRestrictions = ({ campaign, campaignDispatch }) => {
                 label="Can the same article be submitted multiple times?"
             /> */}
 
-            <UserInput
+            {/* <UserInput
             backgroundColor="pink"
             // color="white"
                 users={campaign.blackListedUsers}
                 onChange={blackListedUsers => campaignDispatch({ type: 'blackListedUsers', payload: blackListedUsers })}
                 icon={<BlackListIcon />}
                 fieldName='Block the follwoing users from participating in the campaign (optional)'
-            />
+            /> */}
         </FormGroup>
     )
 }
