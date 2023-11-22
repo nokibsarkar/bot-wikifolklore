@@ -4,7 +4,7 @@ if not load_dotenv():
     raise Exception("Failed to load .env file")
 #------------------------------------ .env file loaded------------------------------------
 from settings import *
-from api import api, Server, User
+from api import api, Server, User, ResponseSingle, Country, Language
 from fastapi import FastAPI, responses, Request, staticfiles
 from fastapi.templating import Jinja2Templates
 class FnF(FastAPI):
@@ -122,7 +122,20 @@ async def kitkat(req : Request, optional_path : str = ''):
     return responses.FileResponse("static/index.html", headers = {
         'Document-Policy' : 'js-profiling'
     })
-
+@app.get('/api/country', response_model=ResponseSingle[dict[Country, str]])
+def get_country_list():
+    countries = Country.get()
+    return ResponseSingle[dict[Country, str]](
+        success=True,
+        data=countries
+    )
+@app.get('/api/language', response_model=ResponseSingle[dict[Language, str]])
+def get_language_list():
+    countries = Language.get()
+    return ResponseSingle[dict[Language, str]](
+        success=True,
+        data=countries
+    )
 
 if __name__ == "__main__":
     import uvicorn
