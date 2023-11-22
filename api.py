@@ -349,20 +349,7 @@ def get_stats(req : Request):
     )
 # ------------------------------------ Fetch Public Stats ------------------------------------
 
-@api.get('/country', response_model=ResponseSingle[dict[Country, str]])
-def get_country_list():
-    countries = Country.get()
-    return ResponseSingle[dict[Country, str]](
-        success=True,
-        data=countries
-    )
-@api.get('/language', response_model=ResponseSingle[dict[Language, str]])
-def get_language_list():
-    countries = Language.get()
-    return ResponseSingle[dict[Language, str]](
-        success=True,
-        data=countries
-    )
+
 
 api.include_router(user_router)
 api.include_router(topic_router)
