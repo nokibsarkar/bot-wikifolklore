@@ -3,7 +3,10 @@ workers = 5
 worker_class = 'uvicorn.workers.UvicornWorker'
 worker_connections = 1000
 keepalive = 5
+
+access_logformat = '%({x-real-ip}i)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 accesslog = 'access.log'
-access_log_format = '%({x-real-ip}i)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 errorlog = 'error.log'
 loglevel = 'error'
+disable_redirect_access_to_syslog = True
+disable_existing_loggers = False
