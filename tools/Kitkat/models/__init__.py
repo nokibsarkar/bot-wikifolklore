@@ -7,6 +7,7 @@ VERIFIER_OAUTH_CLIENT_SECRET    =   os.environ['VERIFIER_OAUTH_CLIENT_SECRET']
 JWT_SECRET_KEY                  =   os.environ['JWT_SECRET_KEY']
 HOSTNAME                        =   os.getenv('HOSTNAME', 'http://localhost:5000')
 #---------------------------- LOADED the constants ----------------------------
+
 class Server:
     PERMANENT_DB = 'data.db'
     TEMPORARY_DB = 'articles.db'
@@ -231,7 +232,7 @@ class Task:
     }
     @staticmethod
     def create(conn : sqlite3.Cursor, *, submitted_by : int, topic_id : str, task_data : str, target_wiki : Language, country : Country, category_count : int) -> int:
-        Article.cleanup(7) # Cleanup articles older than 7 days
+        Submission.cleanup(7) # Cleanup articles older than 7 days
         cur = conn.execute(SQL1_CREATE_TASK, {
             'status': TaskStatus.pending.value,
             'topic_id': topic_id,
@@ -294,7 +295,7 @@ class Task:
             'last_category': last_category
         })
 
-class Article:
+class Submission:
     @staticmethod
     def cleanup( timeframe : int = 7):
         # tasks = Task.get_tasks_by_created_at(conn, time.time() - timeframe)
@@ -317,45 +318,14 @@ class Article:
     def get_all_by_task_id(conn : sqlite3.Cursor, task_id):
         return conn.execute(SQL2_GET_ARTICLES_BY_TASK_ID, {'task_id': task_id}).fetchall()
     
-class Category:
-    @staticmethod
-    def create(conn : sqlite3.Cursor, *, categories):
-        if type(categories) == dict:
-            cur = conn.execute(SQL1_INSERT_CATEGORY, categories)
-            return cur.lastrowid
-        else:
-            conn.executemany(SQL1_INSERT_CATEGORY, categories)
-    @staticmethod
-    def get_by_topic_title(conn : sqlite3.Cursor, topic_title):
-        return conn.execute(SQL1_GET_CATEGORIES_BY_TOPIC_ID, {'topic_title': topic_title}).fetchall()
-    @staticmethod
-    def get_by_id(conn : sqlite3.Cursor, id):
-        return conn.execute("SELECT * FROM `category` WHERE `id` = ?", (id,)).fetchone()
-    @staticmethod
-    def get_by_ids(conn : sqlite3.Cursor, ids):
-        return conn.execute("SELECT * FROM `category` WHERE `id` IN ({})".format(','.join('?' * len(ids))), ids).fetchall()
-    @staticmethod
-    def get_by_title(conn : sqlite3.Cursor, title):
-        return conn.execute("SELECT * FROM `category` WHERE `title` = ?", (title,)).fetchone()
-    @staticmethod
-    def get_by_topic_id(conn : sqlite3.Cursor, topic_id : str):
-        return conn.execute(SQL1_GET_CATEGORY_BY_TOPIC_ID, {'topic_id': topic_id}).fetchall()
-    @staticmethod
-    def get_rel_by_topic_id(conn : sqlite3.Cursor, topic_id : str):
-        return conn.execute(SQL1_GET_CATEGORY_REL_BY_TOPIC_ID, {'topic_id': topic_id}).fetchall()
-    @staticmethod
-    def normalize_name(cat : str) -> str:
-        if cat.startswith("Category:") or cat.startswith("category:") or cat.startswith("CATEGORY:"):
-            cat = cat[9:]
-        return "Category:" + cat
-class Topic:
+class Campaign:
     @staticmethod
     def normalize_id(name, country : Country):
         name = name.lower()
         return f"{name}/{country.value}"
     @staticmethod
     def create(conn : sqlite3.Cursor, *, topic_name : str, country : Country):
-        topic_id = Topic.normalize_id(topic_name, country)
+        topic_id = Campaign.normalize_id(topic_name, country)
         topic_title = f"{topic_name} ({country.name.replace('_', ' ')})"
         cur = conn.execute(SQL1_INSERT_TOPIC, {
             'id' : topic_id, 
@@ -418,9 +388,9 @@ class Topic:
             if cat['title'] not in updated_cat_titles:
                 removable_categories.append(cat)
         if len(removable_categories) > 0:
-            Topic.remove_categories(conn, topic_id, removable_categories)
+            Campaign.remove_categories(conn, topic_id, removable_categories)
         if len(added_categories) > 0:
-            Topic.add_categories(conn, topic_id, added_categories)
+            Campaign.add_categories(conn, topic_id, added_categories)
         return len(removable_categories), len(added_categories)
     @staticmethod
     def get_countries(conn : sqlite3.Cursor, topic_prefix : str):

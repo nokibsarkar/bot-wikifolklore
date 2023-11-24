@@ -9,16 +9,46 @@ class TaskResultFormat(Enum):
     wikitext : str = "wikitext"
     csv : str = "csv"
     pagepile : str = "pagepile"
-
+class CampaignStatus(Enum):
+    pending = "pending"
+    scheduled = "scheduled"
+    rejected = "rejected"
+    cancelled = "cancelled"
+    running = "running"
+    ended = "ended"
 @dataclass
-class ArticleSceme:
+class SubmissionScheme:
     """
     A class to store the article that was gathered
     """
-    id : int = None
+    id : int = None # Submission ID
+    page_id : int = None # Page ID of the article
+    campaign_id : str = None # Campaign ID of the article
     title : str = None
+    old_id : int = None # Revision ID of the article
+    target_wiki : Language = None # Target wiki of the article, this must be as same as the campaign's target wiki
+    # Statistics
+    submitted_at : datetime = None # When was the article submitted
+    submitter_id : int = None # User ID of the user who submitted the article
+    submitter_username : str = None # Username of the user who submitted the article
+    created_at : datetime = None # When was the article created
+    creator_id : int = None # User ID of the user who created the article
+    creator_username : str = None # Username of the user who created the article
+    # Article statistics
+    total_bytes : int = 0 # Total bytes of the article
+    total_words : int = 0 # Total words of the article
+    added_bytes : int = 0 # Added bytes of the article
+    added_words : int = 0 # Added words of the article
+    points : int = 0 # Points of the article as of now
+    positive_votes : int = 0 # Positive votes of the article as of now
+    negative_votes : int = 0 # Negative votes of the article as of now
+    total_votes : int = 0 # Total votes of the article as of now
+    # Is the article judgable?
+    # If multiple judgements are allowed, 
+    # this will be True all the time before the campaign ends
+    judgable : bool = True 
 @dataclass
-class CategoryScheme(ArticleSceme):
+class CategoryScheme(SubmissionScheme):
     pass
 @dataclass
 class UserScheme:
@@ -46,7 +76,7 @@ class UserUpdate:
 class TaskCreate:
     """
     `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `submitted_by` INTEGER NOT NULL,
+    `submitter` INTEGER NOT NULL,
     `status`	TEXT NOT NULL,
     `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `topic_id`	INTEGER NOT NULL,
@@ -77,7 +107,7 @@ class TaskScheme:
     category_done : int
     last_category : str | None
     article_count : int
-    submitted_by : int
+    submitter : int
     topic_id : str
     target_wiki : Language
     country : Country
@@ -86,21 +116,28 @@ class TaskScheme:
     pagepile_id : int | None = None
     pass
 @dataclass
-class TopicCreate:
-    country : Country
-    title : str 
-    categories : List[CategoryScheme] | None
-    id : str | None = None
+class _Campaign:
+    title : str
+    language : Language
+    start_at : datetime
+    end_at : datetime
+    approved_by : int
+    approved_at : datetime
+    description : str
+    rules : str | list[str]
+    blacklist : list[str] | None
+    image : str | None
+@dataclass
+class CampaignCreate(_Campaign):
+    jury : list[str] | None = None
     
 @dataclass
-class TopicUpdate:
-    categories : List[CategoryScheme]
+class CampaignUpdate(CampaignCreate):
+    id : str | None = None
 @dataclass
-class TopicScheme:
-    title : str
-    country : Country
+class CampaignScheme(_Campaign):
     id : str
-    categories : List[CategoryScheme] | None = None
+    status : CampaignStatus = CampaignStatus.pending
     pass
 @dataclass
 class Statistics:
@@ -114,8 +151,18 @@ class Statistics:
     total_tasks : int
     total_articles_served : int
     total_categories : int
-TaskResult = Union[str, List[ArticleSceme]]
-T = TypeVar('T', str, TaskScheme, UserScheme, ArticleSceme, CategoryScheme, Country, TopicScheme, TaskResult, Statistics)
+@dataclass
+class JudgeScheme:
+    user_id : int
+    campaign_id : str
+    created_at : datetime
+    allowed : bool = True
+    judged_count : int = 0 # How many articles did this jury judged? (less or equal to submission count)
+    positive_votes : int = 0 # How many articles did this jury voted positive?
+    negative_votes : int = 0 # How many articles did this jury voted negative?
+    total_votes : int = 0 # How many articles did this jury voted?
+TaskResult = Union[str, List[SubmissionScheme]]
+T = TypeVar('T', str, TaskScheme, UserScheme, SubmissionScheme, CategoryScheme, Country, CampaignScheme, TaskResult, Statistics)
 @dataclass
 class ResponseMultiple(Generic[T]):
     success : bool

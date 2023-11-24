@@ -5,7 +5,7 @@ import logging
 from _api import *
 from schema import *
 from models import *
-from tools.Kitkat.__init__ import kitkat_router
+from tools.Kitkat import kitkat_router
 api = APIRouter(prefix="/api", dependencies=[Depends(authenticate)], tags=['api'])
 
 user_router = APIRouter(prefix="/user", tags=['user'])
