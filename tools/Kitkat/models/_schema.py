@@ -52,15 +52,6 @@ class CategoryScheme(SubmissionScheme):
     pass
 @dataclass
 class UserScheme:
-    """
-     `id` INTEGER PRIMARY KEY,
-    `username` TEXT NOT NULL,
-    `rights` INTEGER DEFAULT '0b100000', -- task-stats-category-topic-grant-revoke,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `article_count` INTEGER DEFAULT 0,
-    `category_count` INTEGER DEFAULT 0,
-    `task_count` INTEGER DEFAULT 0
-    """
     id : int
     username : str
     rights : int = 0
@@ -74,21 +65,6 @@ class UserUpdate:
     rights : int | None = None
 @dataclass
 class TaskCreate:
-    """
-    `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `submitter` INTEGER NOT NULL,
-    `status`	TEXT NOT NULL,
-    `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `topic_id`	INTEGER NOT NULL,
-    `task_data`	TEXT NOT NULL,
-    `category_count`    INTEGER NOT NULL DEFAULT 0,
-    `category_done`    INTEGER NOT NULL DEFAULT 0,
-    `last_category`    TEXT NULL DEFAULT NULL,
-    `home_wiki`    TEXT NOT NULL,
-    `target_wiki`    TEXT NOT NULL,
-    `article_count`    INTEGER NOT NULL DEFAULT 0,
-    `country`    TEXT NOT NULL,
-    """
     topic_id : str
     task_data : list[CategoryScheme]
     target_wiki : Language
@@ -134,6 +110,7 @@ class CampaignCreate(_Campaign):
 @dataclass
 class CampaignUpdate(CampaignCreate):
     id : str | None = None
+    status : CampaignStatus | None = None
 @dataclass
 class CampaignScheme(_Campaign):
     id : str

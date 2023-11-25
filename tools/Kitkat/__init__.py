@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 from .models.__init__ import *
-from .api._users import user_router
-from .api._campaign import campaign_router
-from .api._statistics import statistics_router
-from .api._submission import submission_router
+from .api import *
 kitkat_router = APIRouter(
     prefix="/kitkat",
     tags=["Kitkat"],
     responses={404: {"details": "Not found"}},
 )
+@kitkat_router.on_event("startup")
+async def startup():
+    Server.init()
 @kitkat_router.get("/")
 async def read_root():
     return {"message": "Hello World"}
