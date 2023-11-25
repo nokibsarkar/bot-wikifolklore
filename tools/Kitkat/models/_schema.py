@@ -105,11 +105,11 @@ class CampaignCreate(_Campaign):
     
 @dataclass
 class CampaignUpdate(CampaignCreate):
-    id : str | None = None
     status : CampaignStatus | None = None
 @dataclass
 class CampaignScheme(_Campaign):
-    id : str
+    id : int
+    
     creator_id : int
     created_at : datetime
     status : CampaignStatus = CampaignStatus.pending

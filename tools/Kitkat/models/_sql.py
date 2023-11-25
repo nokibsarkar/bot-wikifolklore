@@ -5,7 +5,7 @@ SQL1_CREATE_CAMPAIGN = """
 INSERT INTO
     `campaign`
 (
-    `id`,
+    --- `id`,
     `title`,
     `language`,
     `start_at`,
@@ -19,7 +19,7 @@ INSERT INTO
 )
 VALUES
 (
-    :id,
+    --- :id,
     :title,
     :language,
     :start_at,

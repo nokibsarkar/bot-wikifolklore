@@ -16,7 +16,7 @@ class Campaign:
         jury = campaign.jury or []
         # jury = map(str, jury)
         params = {
-            'id' : 3,
+            # 'id' : campaign.id,
             'title' : campaign.title,
             'language' : campaign.language.value,
             'start_at' : campaign.start_at,
