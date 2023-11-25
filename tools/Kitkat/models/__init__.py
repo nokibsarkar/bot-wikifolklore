@@ -13,6 +13,8 @@ class Campaign:
     @staticmethod
     def create(conn : sqlite3.Cursor, campaign : CampaignCreate) -> int:
         blacklist = campaign.blacklist and json.dumps(campaign.blacklist)
+        jury = campaign.jury or []
+        # jury = map(str, jury)
         params = {
             'id' : 3,
             'title' : campaign.title,
@@ -29,7 +31,25 @@ class Campaign:
             # 'approved_at' : campaign.approved_at,
         }
         cur = conn.execute(SQL1_CREATE_CAMPAIGN, params)
-        return cur.lastrowid
+        last_campaign_id = cur.lastrowid
+        Campaign.add_jury(conn, last_campaign_id, jury)
+        return last_campaign_id
+    @staticmethod
+    def add_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str]):
+        sql = SQL1_GET_USERS_BY_USERNAME_PREFIX + (
+            "(" + ",".join(["?"] * len(jury)) + ")"
+        )
+        users = conn.execute(sql, jury)
+        users = list(map(lambda x: x['id'], users))
+        conn.executemany(SQL1_ADD_JURY_TO_CAMPAIGN, zip(users, [campaign_id] * len(jury)))
+    @staticmethod
+    def remove_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str]):
+        sql = SQL1_GET_USERS_BY_USERNAME_PREFIX + (
+            "(" + ",".join(["?"] * len(jury)) + ")"
+        )
+        users = conn.execute(sql, jury)
+        users = list(map(lambda x: x['id'], users))
+        conn.executemany(SQL1_REMOVE_JURY_FROM_CAMPAIGN, zip(users, [campaign_id] * len(jury)))
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str) -> CampaignScheme:
         return conn.execute(SQL1_GET_CAMPAIGN_BY_ID, {'id': id}).fetchone()

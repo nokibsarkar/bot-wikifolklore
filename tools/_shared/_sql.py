@@ -60,6 +60,11 @@ CREATE TABLE IF NOT EXISTS `jury` (
     `user_id`	INTEGER NOT NULL, -- user id of the jury
     `campaign_id`	INTEGER NOT NULL, -- campaign id
     `created_at`	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- creation time of the jury
+    `allowed`	BOOLEAN NOT NULL DEFAULT TRUE, -- whether the jury is allowed to vote
+    `judged_count`	INTEGER NOT NULL DEFAULT 0, -- how many articles did this jury judged? (less or equal to submission count)
+    `positive_votes`	INTEGER NOT NULL DEFAULT 0, -- how many articles did this jury voted positive?
+    `negative_votes`	INTEGER NOT NULL DEFAULT 0, -- how many articles did this jury voted negative?
+    `total_votes`	INTEGER NOT NULL DEFAULT 0, -- how many articles did this jury voted?
     CONSTRAINT `jury_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
     CONSTRAINT `jury_user_id_fkey` FOREIGN KEY(`user_id`) REFERENCES `user`(`id`),
     CONSTRAINT `PK_jury` PRIMARY KEY (`user_id`,`campaign_id`)

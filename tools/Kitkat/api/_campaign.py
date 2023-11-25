@@ -8,11 +8,47 @@ campaign_router = APIRouter(
 @campaign_router.get("/", response_model=ResponseSingle[CampaignScheme])
 async def list_campaigns():
     return {"message": "Hello World"}
+
+
+
+#---------------------------------- GET A CAMPAIGN ----------------------------------#
 @campaign_router.get("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def get_campaign(campaign_id: int):
-    return {"message": "Hello World"}
+    """
+    This endpoint is used to get a campaign by id.
+    """
+    try:
+        with Server.get_parmanent_db() as conn:
+            campaign = Campaign.get_by_id(conn.cursor(), campaign_id)
+        if not campaign:
+            raise Exception("Campaign not found")
+        result = CampaignScheme(
+            id=campaign['id'],
+            title=campaign['title'],
+            language=campaign['language'],
+            start_at=campaign['start_at'],
+            end_at=campaign['end_at'],
+            status=campaign['status'],
+            description=campaign['description'],
+            rules=campaign['rules'],
+            blacklist=campaign['blacklist'] and json.loads(campaign['blacklist']),
+            image=campaign['image'],
+            creator_id=campaign['creator_id'],
+            approved_by=campaign['approved_by'],
+            approved_at=campaign['approved_at'],
+            created_at=campaign['created_at'],
+        )
+        return ResponseSingle[CampaignScheme](success=True, data=result)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+#------------------------------------------------------------------------------
+
+#---------------------------------- CREATE A CAMPAIGN ----------------------------------#
 @campaign_router.post("/", response_model=ResponseSingle[CampaignScheme])
 async def create_campaign(campaign: CampaignCreate):
+    """
+    This endpoint is used to create a new campaign.
+    """
     try:
         with Server.get_parmanent_db() as conn:
             new_campaign_id = Campaign.create(conn.cursor(), campaign)
@@ -26,7 +62,7 @@ async def create_campaign(campaign: CampaignCreate):
             status=new_campaign['status'],
             description=new_campaign['description'],
             rules=new_campaign['rules'],
-            blacklist=new_campaign['blacklist'],
+            blacklist=new_campaign['blacklist'] and json.loads(new_campaign['blacklist']),
             image=new_campaign['image'],
             creator_id=new_campaign['creator_id'],
             approved_by=new_campaign['approved_by'],
@@ -38,9 +74,16 @@ async def create_campaign(campaign: CampaignCreate):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+#------------------------------------------------------------------------------
+
+#---------------------------------- UPDATE A CAMPAIGN ----------------------------------#
 @campaign_router.post("/{campaign_id}", response_model=ResponseSingle[CampaignUpdate])
 async def update_campaign(campaign_id: int, campaign: CampaignUpdate):
     return {"message": "Hello World"}
+#------------------------------------------------------------------------------
+
+
+#---------------------------------- DELETE A CAMPAIGN ----------------------------------#
 @campaign_router.delete("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def delete_campaign(campaign_id: int):
     """Cancel or reject a campaign.
