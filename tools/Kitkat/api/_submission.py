@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from ..models import *
 submission_router = APIRouter(
     prefix="/submission",
@@ -6,11 +6,15 @@ submission_router = APIRouter(
     responses={404: {"details": "Not found"}},
 )
 @submission_router.get("/", response_model=ResponseSingle[SubmissionScheme])
-async def list_all_submissions():
+async def list_all_submissions(req : Request):
     """
     List all submissions.
     """
-    return {"message": "Hello World"}
+    submissions = await Submission.get_all_by_campaign_id(req.state.db, 1)
+    results = []
+    for submission in submissions:
+        results.append(SubmissionScheme(**submission))
+    return ResponseMultiple[SubmissionScheme](success=True, data=results)
 @submission_router.get("/{submission_id}", response_model=ResponseSingle[SubmissionScheme])
 async def get_submission(submission_id: int):
     return {"message": "Hello World"}
