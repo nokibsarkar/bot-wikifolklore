@@ -6,11 +6,31 @@ from ._sql import *
 VERIFIER_OAUTH_CLIENT_ID        =   os.environ['VERIFIER_OAUTH_CLIENT_ID']
 VERIFIER_OAUTH_CLIENT_SECRET    =   os.environ['VERIFIER_OAUTH_CLIENT_SECRET']
 JWT_SECRET_KEY                  =   os.environ['JWT_SECRET_KEY']
+BOT_AUTH_TOKEN = os.getenv("BOT_AUTH_TOKEN") # The credentails to request to the API
 HOSTNAME                        =   os.getenv('HOSTNAME', 'http://localhost:5000')
 META_OAUTH_AUTHORIZE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/authorize'
 META_OAUTH_ACCESS_TOKEN_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/access_token'
 META_PROFILE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/resource/profile'
+URL = "https://en.wikipedia.org/w/api.php"
+WIKIPEDIA_ENDPOINT_FORMAT = "https://{lang}.wikipedia.org/w/api.php"
 #---------------------------- LOADED the constants ----------------------------
+VERSION = "1.0.0"
+try:
+    with open("VERSION", "r") as f:
+        VERSION = f.read().strip()
+        print(f"Version {VERSION}")
+except:
+    print("VERSION file not found")
+    pass
+sess = requests.Session()
+sess.headers = {
+    "User-Agent": f"TukTukBot/{VERSION} ({HOSTNAME}) (python-requests) " ,
+    "Authorization" : f"Bearer {BOT_AUTH_TOKEN}"
+}
+
+
+
+#-
 class Permission(Enum):
     TASK =  1 << 0
     STATS = 1 << 1
@@ -100,6 +120,14 @@ class BaseServer:
             stats['total_categories'] = user_stats['total_categories']
             stats['total_tasks'] = user_stats['total_tasks']
         return stats
+    @staticmethod
+    def get(*lw, lang='en', **kw) -> dict:
+        url = WIKIPEDIA_ENDPOINT_FORMAT.format(lang=lang)
+        return sess.get(url, *lw, **kw).json()
+    @staticmethod
+    def post(*lw, lang='en', **kw) -> dict:
+        url = WIKIPEDIA_ENDPOINT_FORMAT.format(lang=lang)
+        return sess.post(url, *lw, **kw).json()
 class BaseUser:
     @staticmethod
     def generate_login_url(redirect_uri='/'):

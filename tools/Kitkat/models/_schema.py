@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import Generic, TypeVar, List, Type, Union, Optional
 from enum import Enum
-from datetime import datetime, timedelta
+from datetime import datetime
 from ..._shared._countries import Country
 from ..._shared._wiki import Language
+from ..._shared._model import BaseUserScheme
 class TaskResultFormat(Enum):
     json : str = "json"
     wikitext : str = "wikitext"
@@ -51,14 +52,8 @@ class SubmissionScheme:
 class CategoryScheme(SubmissionScheme):
     pass
 @dataclass
-class UserScheme:
-    id : int
-    username : str
-    rights : int = 0
-    article_count : int = 0
-    category_count : int = 0
-    task_count : int = 0
-    created_at : str = None
+class UserScheme(BaseUserScheme):
+    pass
 @dataclass
 class UserUpdate:
     username : str | None = None
