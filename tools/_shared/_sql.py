@@ -17,17 +17,17 @@ CREATE TABLE IF NOT EXISTS `campaign` (
     `end_at`    TEXT NOT NULL,
     `created_at`    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `creator_id`    INTEGER NOT NULL,
-    `approved_by`    INTEGER NOT NULL,
-    `approved_at`    TEXT NOT NULL,
-    `description`    TEXT NOT NULL,
-    `rules`    TEXT NOT NULL,
+    `approved_by`    INTEGER NULL DEFAULT NULL,
+    `approved_at`    TIMESTAMP NULL DEFAULT NULL,
+    `description`    TEXT NULL DEFAULT NULL,
+    `rules`    TEXT NULL DEFAULT NULL,
     `blacklist`    TEXT NULL DEFAULT NULL,
     `image`    TEXT NULL DEFAULT NULL,
     `jury`    TEXT NULL DEFAULT NULL,
     `status`    TEXT NOT NULL DEFAULT 'pending',
     CONSTRAINT `campaign_approved_by_fkey` FOREIGN KEY(`approved_by`) REFERENCES `user`(`id`),
     CONSTRAINT `campaign_creator_id_fkey` FOREIGN KEY(`creator_id`) REFERENCES `user`(`id`),
-    CONSTRAINT `campaign_start_end_check` CHECK(`start_at` < `end_at`),
+    CONSTRAINT `campaign_start_end_check` CHECK(NOT `start_at` > `end_at`),
     CONSTRAINT `campaign_approved_at_check` CHECK(`created_at` <= `approved_at` AND `approved_at` <= `start_at`)
 );
 CREATE TABLE IF NOT EXISTS `submission` (
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `topic_category` (
     `category_id`	INTEGER NOT NULL,
     PRIMARY KEY(`topic_id`,`category_id`)
 );
-
+INSERT OR IGNORE INTO `user` (`id`, `username`, `rights`) VALUES (1, 'admin', 1);
 """
 SQL2_INIT = """
 -- This Table would be used to store the article

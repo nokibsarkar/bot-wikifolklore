@@ -96,8 +96,9 @@ class _Campaign:
     approved_at : datetime
     description : str
     rules : str | list[str]
-    blacklist : list[str] | None
+    blacklist : list[str] | str | None
     image : str | None
+    
 @dataclass
 class CampaignCreate(_Campaign):
     jury : list[str] | None = None
@@ -109,7 +110,10 @@ class CampaignUpdate(CampaignCreate):
 @dataclass
 class CampaignScheme(_Campaign):
     id : str
+    creator_id : int
+    created_at : datetime
     status : CampaignStatus = CampaignStatus.pending
+    
     pass
 @dataclass
 class Statistics:

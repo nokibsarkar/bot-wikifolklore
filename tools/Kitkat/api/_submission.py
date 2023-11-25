@@ -1,16 +1,17 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Query
 from ..models import *
 submission_router = APIRouter(
     prefix="/submission",
     tags=["Submission"],
     responses={404: {"details": "Not found"}},
 )
-@submission_router.get("/", response_model=ResponseSingle[SubmissionScheme])
-async def list_all_submissions(req : Request):
+@submission_router.get("/", response_model=ResponseMultiple[SubmissionScheme])
+async def list_all_submissions(req : Request, campaign_id: str, judgable : bool = None, judged : bool = None ):
     """
-    List all submissions.
+    List all submissions.`
     """
-    submissions = await Submission.get_all_by_campaign_id(req.state.db, 1)
+    with Server.get_parmanent_db() as conn:
+        submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaign_id, judgable=judgable, judged=judged)
     results = []
     for submission in submissions:
         results.append(SubmissionScheme(**submission))
