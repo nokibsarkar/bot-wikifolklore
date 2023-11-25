@@ -22,26 +22,34 @@ async def get_campaign(campaign_id: int):
             campaign = Campaign.get_by_id(conn.cursor(), campaign_id)
         if not campaign:
             raise Exception("Campaign not found")
-        result = CampaignScheme(
-            id=campaign['id'],
-            title=campaign['title'],
-            language=campaign['language'],
-            start_at=campaign['start_at'],
-            end_at=campaign['end_at'],
-            status=campaign['status'],
-            description=campaign['description'],
-            rules=campaign['rules'],
-            blacklist=campaign['blacklist'] and json.loads(campaign['blacklist']),
-            image=campaign['image'],
-            creator_id=campaign['creator_id'],
-            approved_by=campaign['approved_by'],
-            approved_at=campaign['approved_at'],
-            created_at=campaign['created_at'],
-        )
+        result = CampaignScheme.from_dict(campaign)
         return ResponseSingle[CampaignScheme](success=True, data=result)
+    except Exception as e:
+        
+        raise HTTPException(status_code=404, detail=str(e))
+#------------------------------------------------------------------------------
+
+#---------------------------------- LIST ALL the Jury ----------------------------------#
+@campaign_router.get("/{campaign_id}/jury", response_model=ResponseMultiple[JudgeScheme])
+async def list_jury(campaign_id: int):
+    """
+    This endpoint is used to get a campaign by id.
+    """
+    try:
+        with Server.get_parmanent_db() as conn:
+            jury = Campaign.get_jury(conn.cursor(), campaign_id)
+        if not jury:
+            raise Exception("Jury not found")
+        result = []
+        for judge in jury:
+            result.append(JudgeScheme.from_dict(judge))
+        return ResponseMultiple[JudgeScheme](success=True, data=result)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
 #------------------------------------------------------------------------------
+
+#---------------------------------- Add or Remove a Jury ----------------------------------#
+
 
 #---------------------------------- CREATE A CAMPAIGN ----------------------------------#
 @campaign_router.post("/", response_model=ResponseSingle[CampaignScheme])
@@ -53,22 +61,7 @@ async def create_campaign(campaign: CampaignCreate):
         with Server.get_parmanent_db() as conn:
             new_campaign_id = Campaign.create(conn.cursor(), campaign)
             new_campaign = Campaign.get_by_id(conn.cursor(), new_campaign_id)
-        result = CampaignScheme(
-            id=new_campaign['id'],
-            title=new_campaign['title'],
-            language=new_campaign['language'],
-            start_at=new_campaign['start_at'],
-            end_at=new_campaign['end_at'],
-            status=new_campaign['status'],
-            description=new_campaign['description'],
-            rules=new_campaign['rules'],
-            blacklist=new_campaign['blacklist'] and json.loads(new_campaign['blacklist']),
-            image=new_campaign['image'],
-            creator_id=new_campaign['creator_id'],
-            approved_by=new_campaign['approved_by'],
-            approved_at=new_campaign['approved_at'],
-            created_at=new_campaign['created_at'],
-        )
+        result = CampaignScheme.from_dict(new_campaign)
         return ResponseSingle[CampaignScheme](success=True, data=result)
     except sqlite3.IntegrityError as e:
         raise HTTPException(status_code=400, detail=str(e))

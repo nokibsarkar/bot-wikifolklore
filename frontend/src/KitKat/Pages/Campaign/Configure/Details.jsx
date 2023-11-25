@@ -126,9 +126,9 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
 
                     }}
                     inputProps={{ type: 'date' }}
-                    value={campaign.startDate}
+                    value={campaign.start_at}
                     onChange={(e) => {
-                        campaignDispatch({ type: 'startDate', payload: e.target.value })
+                        campaignDispatch({ type: 'start_at', payload: e.target.value })
                     }}
                 />
                 <Typography sx={{
@@ -142,12 +142,11 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
                     label="End Date"
                     variant="outlined"
                     inputProps={{ type: 'date' }}
-                    value={campaign.endDate}
+                    value={campaign.end_at}
                     onChange={(e) => {
-                        campaignDispatch({ type: 'endDate', payload: e.target.value })
+                        campaignDispatch({ type: 'end_at', payload: e.target.value })
                     }}
                 />
-
             </div>
             <Rules
                 rules={campaign.rules}

@@ -8,9 +8,11 @@ import CampaignOverview from "./Overview";
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ErrorPage from "../../../Components/ErrorPage";
 
 const defaultCampaign = {
     name: 'Campaign Name',
+    description : null,
     language: 'bn',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/%E0%A6%89%E0%A6%87%E0%A6%95%E0%A6%BF%E0%A6%AA%E0%A6%BF%E0%A6%A1%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE_%E0%A6%8F%E0%A6%B6%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%AE%E0%A6%BE%E0%A6%B8_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%A9_%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%A8%E0%A6%BE%E0%A6%B0.svg/425px-%E0%A6%89%E0%A6%87%E0%A6%95%E0%A6%BF%E0%A6%AA%E0%A6%BF%E0%A6%A1%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE_%E0%A6%8F%E0%A6%B6%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%AE%E0%A6%BE%E0%A6%B8_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%A9_%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%A8%E0%A6%BE%E0%A6%B0.svg.png',
     rules: [
@@ -19,12 +21,11 @@ const defaultCampaign = {
         'Rule 3'
     ],
     jury: [],
-    startDate: '',
-    endDate: '',
+    start_at: '',
+    end_at: '',
     status: 'active',
-    maximumSubmissionOfSameArticle: 1,
-    blackListedUsers: [
-    ],
+    blacklist: [],
+    maximumSubmissionOfSameArticle: 1, // Maximum number of times an article can be submitted
     allowExpansions: true, // Allow users to submit articles that were not created rather expanded
     minimumTotalBytes: 1000, // Minimum total bytes of all articles
     minimumTotalWords: 100, // Minimum total words of all articles
@@ -42,16 +43,16 @@ const campaignReducer = (state, action) => {
             return { ...state, jury: action.payload };
         case 'name':
             return { ...state, name: action.payload };
-        case 'startDate':
-            return { ...state, startDate: action.payload };
-        case 'endDate':
-            return { ...state, endDate: action.payload };
+        case 'start_at':
+            return { ...state, start_at: action.payload };
+        case 'end_at':
+            return { ...state, end_at: action.payload };
         case 'language':
             return { ...state, language: action.payload };
         case 'maximumSubmissionOfSameArticle':
             return { ...state, maximumSubmissionOfSameArticle: action.payload };
-        case 'blackListedUsers':
-            return { ...state, blackListedUsers: action.payload };
+        case 'blacklist':
+            return { ...state, blacklist: action.payload };
         case 'allowExpansions':
             return { ...state, allowExpansions: action.payload };
         case 'minimumTotalBytes':
@@ -102,20 +103,19 @@ const StepSelector = ({ step, props }) => {
     }
 
 }
-const EditableCampaign = ({ defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null }) => {
+const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null }) => {
 
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     if (loading || !campaign)
         return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <CircularProgress />
         </div>
-    if (error)
-        return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            {error}
-        </div>
+    // if (error)
+    //     return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    //         {error}
+    //     </div>
     const SaveButton = <Button variant="contained" color="success" onClick={e => onSave(campaign, setLoading)} sx={{ m: 1 }}>
         <SaveIcon /> Save
     </Button>
@@ -124,6 +124,8 @@ const EditableCampaign = ({ defaultStep = 0, initialCampaign = defaultCampaign, 
 
             <Steps activeStep={step} setActiveStep={linear ? () => null : setStep} minimumStep={minimumStep} />
             <StepSelector step={step} props={{ campaign, campaignDispatch: dispatchCampaign, showActions }} />
+            
+            {error && <ErrorPage errorMsg={error} />}
             {
                 linear ? <p>
                     <Button disabled={step - 1 < minimumStep} variant="contained" color="success" onClick={() => setStep(step - 1)} sx={{ m: 1 }}>

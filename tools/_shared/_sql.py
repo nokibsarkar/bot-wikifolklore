@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 );
 CREATE TABLE IF NOT EXISTS `campaign` (
     `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `title`    TEXT NOT NULL,
+    `name`    TEXT NOT NULL,
     `language`    TEXT NOT NULL,
     `start_at`    TEXT NOT NULL,
     `end_at`    TEXT NOT NULL,
@@ -25,6 +25,15 @@ CREATE TABLE IF NOT EXISTS `campaign` (
     `image`    TEXT NULL DEFAULT NULL,
     `jury`    TEXT NULL DEFAULT NULL,
     `status`    TEXT NOT NULL DEFAULT 'pending',
+    `maximumSubmissionOfSameArticle`   INTEGER NOT NULL DEFAULT 1,
+    `allowExpansions`   BOOLEAN NOT NULL DEFAULT TRUE,
+    `minimumTotalBytes` INTEGER NOT NULL DEFAULT 1000,
+    `minimumTotalWords` INTEGER NOT NULL DEFAULT 100,
+    `minimumAddedBytes` INTEGER NOT NULL DEFAULT 100,
+    `minimumAddedWords` INTEGER NOT NULL DEFAULT 10,
+    `secretBallot`  BOOLEAN NOT NULL DEFAULT TRUE,
+    `allowJuryToParticipate`    BOOLEAN NOT NULL DEFAULT TRUE,
+    `allowMultipleJudgement`    BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT `campaign_approved_by_fkey` FOREIGN KEY(`approved_by`) REFERENCES `user`(`id`),
     CONSTRAINT `campaign_creator_id_fkey` FOREIGN KEY(`creator_id`) REFERENCES `user`(`id`),
     CONSTRAINT `campaign_start_end_check` CHECK(NOT `start_at` > `end_at`),
@@ -58,6 +67,7 @@ CREATE TABLE IF NOT EXISTS `submission` (
 );
 CREATE TABLE IF NOT EXISTS `jury` (
     `user_id`	INTEGER NOT NULL, -- user id of the jury
+    `username`    TEXT NOT NULL, -- username of the jury
     `campaign_id`	INTEGER NOT NULL, -- campaign id
     `created_at`	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- creation time of the jury
     `allowed`	BOOLEAN NOT NULL DEFAULT TRUE, -- whether the jury is allowed to vote

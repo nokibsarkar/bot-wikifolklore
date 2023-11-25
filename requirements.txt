@@ -6,3 +6,4 @@ fastapi
 uvicorn
 sentry-sdk[fastapi]
 jinja2
+dateparser

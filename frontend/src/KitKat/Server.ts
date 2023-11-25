@@ -119,6 +119,16 @@ const sampleSubmission: Submission = {
     language: "en",
     status: "pending"
 }
+const fetchWithErrorHandling= async (url: string, options?: RequestInit) => {
+    const res = await fetch(url, options);
+    if(res.ok){
+        const data = await res.json();
+        if(data.success) return data;
+        throw new Error(data.detail);
+    } else {
+        throw new Error(res.statusText);
+    }
+};
 class Wiki {
     static requestPool = Promise.resolve();
     static requestInterval = 500;
@@ -135,7 +145,7 @@ class Wiki {
             origin: "*"
         });
         const url = `${baseURL}?${params.toString()}`;
-        const response: WikiTextParseResponse = await fetch(url).then(res => res.json());
+        const response: WikiTextParseResponse = await fetchWithErrorHandling(url)
         return response.parse.text["*"];
     }
     static async suggestArticles(language: string, query: string): Promise<string[]> {
@@ -156,7 +166,7 @@ class Wiki {
             setTimeout(() => {
                 Wiki.frequentRequestQueued = false;
             }, Wiki.requestInterval);
-            const response = await fetch(url).then(res => res.json());
+            const response = await fetchWithErrorHandling(url)
             return response.query.prefixsearch.map((entry: any) => entry.title);
         }
         return []
@@ -167,7 +177,11 @@ class CampaignServer {
         return [sampleCampaign];
     }
     static async getCampaign(id: number): Promise<Campaign> {
-        return sampleCampaign;
+        const url = '/api/kitkat/campaign/' + id;
+        const res = await fetchWithErrorHandling(url)
+        const campaign = res.data;
+        if(typeof campaign.rules === 'string') campaign.rules = campaign.rules.split('\n');
+        return res.data;
     }
     static async submitArticle(req: SubmissionRequest): Promise<Submission> {
         return sampleSubmission;
@@ -177,10 +191,19 @@ class CampaignServer {
         return [sampleSubmission];
     }
     static async getJury(campaignID: number): Promise<string[]> {
-        return sampleUsernames;
+        const url = '/api/kitkat/campaign/' + campaignID + '/jury';
+        const res = await fetchWithErrorHandling(url)
+        return res.data.map((user: any) => user.username);
     }
     static async createCampaign(campaign: Campaign): Promise<Campaign> {
-        return campaign;
+        const newCampaign = await fetchWithErrorHandling('/api/kitkat/campaign/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(campaign)
+        })
+        return newCampaign.data;
     }
     static async updateCampaign(campaign: Campaign): Promise<Campaign> {
         return campaign;
@@ -202,10 +225,10 @@ class PageServer {
 
 }
 class UserServer {
-    static fetching = false;
+    static fetchWithErrorHandlinging = false;
     static async searchUsersByPrefix(language: string = 'bn', prefix: string, previous: WikimediaUser[]): Promise<WikimediaUser[]> {
-        if (UserServer.fetching) return previous;
-        UserServer.fetching = true;
+        if (UserServer.fetchWithErrorHandlinging) return previous;
+        UserServer.fetchWithErrorHandlinging = true;
         const params = new URLSearchParams({
             action: "query",
             list: "allusers",
@@ -216,8 +239,8 @@ class UserServer {
             origin: "*"
         });
         const url = `https://${language}.wikipedia.org/w/api.php?${params.toString()}`;
-        const res = await fetch(url).then(res => res.json());
-        UserServer.fetching = false;
+        const res = await fetchWithErrorHandling(url)
+        UserServer.fetchWithErrorHandlinging = false;
         return res.query.allusers;
     }
 }
@@ -256,7 +279,7 @@ class KitKatServer {
         document.head.appendChild(script);
     }
     async init() {
-
+        await BaseServer.init()
     }
     static addWikiStyle() {
         KitKatServer.addCSS("https://en.wikipedia.org/w/load.php?lang=en&modules=ext.cite.styles%7Cext.echo.styles.badge%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cjquery.makeCollapsible.styles%7Coojs-ui.styles.icons-alerts%7Cskins.vector.styles.legacy%7Cwikibase.client.init&only=styles&skin=vector");

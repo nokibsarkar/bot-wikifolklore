@@ -6,7 +6,7 @@ INSERT INTO
     `campaign`
 (
     --- `id`,
-    `title`,
+    `name`,
     `language`,
     `start_at`,
     `end_at`,
@@ -20,7 +20,7 @@ INSERT INTO
 VALUES
 (
     --- :id,
-    :title,
+    :name,
     :language,
     :start_at,
     :end_at,
@@ -36,9 +36,10 @@ SQL1_GET_CAMPAIGN_BY_ID = "SELECT * FROM `campaign` WHERE `id` = :id"
 SQL1_GET_USERS_BY_USERNAME_PREFIX = "SELECT * FROM `user` WHERE `username` IN "
 SQL1_ADD_JURY_TO_CAMPAIGN = """
     INSERT INTO
-        `jury` (`user_id`, `campaign_id`)
+        `jury` (`user_id`, `username`, `campaign_id`)
     VALUES
-        (:user_id, :campaign_id)
+        (:user_id, :username, :campaign_id)
     ON CONFLICT DO UPDATE SET `allowed` = TRUE
 """
 SQL1_REMOVE_JURY_FROM_CAMPAIGN = "UPDATE `jury` SET `allowed` = FALSE WHERE `user_id` = :user_id AND `campaign_id` = :campaign_id"
+SQL1_GET_JURY_BY_ALLOWED = "SELECT * FROM `jury` WHERE `campaign_id` = :campaign_id AND `allowed` = :allowed"
