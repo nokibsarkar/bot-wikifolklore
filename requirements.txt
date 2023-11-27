@@ -5,4 +5,5 @@ python-dotenv
 fastapi
 uvicorn
 sentry-sdk[fastapi]
-sqlmodel
+jinja2
+dateparser
