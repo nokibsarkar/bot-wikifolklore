@@ -53,6 +53,11 @@ class BaseServer {
             BaseServer.countries = JSON.parse(localStorage.getItem(COUNTRY_KEY) || "{}");
         }
     }
+    static getCurrentTime(days: number = 0) {
+        const date = new Date();
+        date.setDate(date.getDate() + days);
+        return date;
+    }
     static loginnedUser() {
         const authCookie = document.cookie.split('; ').find(row => row.startsWith(AUTH_COOKIE_NAME));
         if (authCookie) {
