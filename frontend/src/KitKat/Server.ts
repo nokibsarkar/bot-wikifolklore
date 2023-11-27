@@ -124,6 +124,7 @@ const fetchWithErrorHandling= async (url: string, options?: RequestInit) => {
     if(res.ok){
         const data = await res.json();
         if(data.success) return data;
+        console.log(data);
         throw new Error(data.detail);
     } else {
         throw new Error(res.statusText);
@@ -145,7 +146,7 @@ class Wiki {
             origin: "*"
         });
         const url = `${baseURL}?${params.toString()}`;
-        const response: WikiTextParseResponse = await fetchWithErrorHandling(url)
+        const response: WikiTextParseResponse = await fetch(url).then(res => res.json());
         return response.parse.text["*"];
     }
     static async suggestArticles(language: string, query: string): Promise<string[]> {
@@ -166,7 +167,7 @@ class Wiki {
             setTimeout(() => {
                 Wiki.frequentRequestQueued = false;
             }, Wiki.requestInterval);
-            const response = await fetchWithErrorHandling(url)
+            const response = await fetch(url).then(res => res.json());
             return response.query.prefixsearch.map((entry: any) => entry.title);
         }
         return []
@@ -239,8 +240,7 @@ class UserServer {
             origin: "*"
         });
         const url = `https://${language}.wikipedia.org/w/api.php?${params.toString()}`;
-        const res = await fetchWithErrorHandling(url)
-        UserServer.fetchWithErrorHandlinging = false;
+        const res = await fetch(url).then(res => res.json());
         return res.query.allusers;
     }
 }
