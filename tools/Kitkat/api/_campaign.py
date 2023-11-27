@@ -66,6 +66,7 @@ async def create_campaign(campaign: CampaignCreate):
     except sqlite3.IntegrityError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 #------------------------------------------------------------------------------
 
