@@ -129,7 +129,7 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
                 <legend>Duration</legend>
                 <Typography variant='body1' sx={{ m: 1, textAlign: 'left', width: 'max-content' }} component='fieldset'>
                     <legend>Start Date</legend>
-                    {campaign.startDate}
+                    {campaign.start_at}
                 </Typography>
                 <RightArrow sx={{
                     m: 1,
@@ -137,7 +137,7 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
                 }} />
                 <Typography variant='body1' sx={{ m: 1, textAlign: 'left', width: 'max-content' }} component='fieldset'>
                     <legend>End Date</legend>
-                    {campaign.endDate}
+                    {campaign.end_at}
                 </Typography>
             </Typography>
             <Typography variant='body1' sx={{ m: 1, }} component='fieldset'>

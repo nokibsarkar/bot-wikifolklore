@@ -1,21 +1,30 @@
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import EditableCampaign from "./EditableCampaign"
 import KitKatServer from "../../../Server";
+import ErrorPage from "../../../Components/ErrorPage";
 
 const CampaignCreate = () => {
+    const [error, setError] = useState(null);
     const handleSave = useCallback((campaign, setLoading) => {
         (async () => {
             setLoading(true);
-            const newCampaign = await KitKatServer.Campaign.createCampaign(campaign);
-            setLoading(false);
-            const url = new URL("/kitkat/campaign/" + newCampaign.id, window.location.origin);
-            document.location.href = url;
+            try {
+                const newCampaign = await KitKatServer.Campaign.createCampaign(campaign);
+                const url = new URL("/kitkat/campaign/" + newCampaign.id, window.location.origin);
+                setLoading(false);
+                document.location.href = url;
+                setError(null);
+            } catch (e) {
+                console.error(e);
+                setError(e.message);
+                setLoading(false);
+            }
         })();
     }, [])
     return (
         <div>
             <h1>Create Campaign</h1>
-            <EditableCampaign minimumStep={0} linear={true} defaultStep={0} showActions={false} onSave={handleSave} />
+            <EditableCampaign error={error} minimumStep={0} linear={true} defaultStep={0} showActions={false} onSave={handleSave} />
 
         </div>
     )

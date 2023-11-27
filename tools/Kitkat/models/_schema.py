@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import Generic, TypeVar, List, Type, Union, Optional
 from enum import Enum
-from datetime import datetime, timedelta
+from datetime import datetime, date
 from ..._shared._countries import Country
 from ..._shared._wiki import Language
+from ..._shared._model import BaseUserScheme
 class TaskResultFormat(Enum):
     json : str = "json"
     wikitext : str = "wikitext"
@@ -28,10 +29,10 @@ class SubmissionScheme:
     old_id : int = None # Revision ID of the article
     target_wiki : Language = None # Target wiki of the article, this must be as same as the campaign's target wiki
     # Statistics
-    submitted_at : datetime = None # When was the article submitted
+    submitted_at : datetime | date = None # When was the article submitted
     submitter_id : int = None # User ID of the user who submitted the article
     submitter_username : str = None # Username of the user who submitted the article
-    created_at : datetime = None # When was the article created
+    created_at : datetime | date = None # When was the article created
     creator_id : int = None # User ID of the user who created the article
     creator_username : str = None # Username of the user who created the article
     # Article statistics
@@ -51,44 +52,14 @@ class SubmissionScheme:
 class CategoryScheme(SubmissionScheme):
     pass
 @dataclass
-class UserScheme:
-    """
-     `id` INTEGER PRIMARY KEY,
-    `username` TEXT NOT NULL,
-    `rights` INTEGER DEFAULT '0b100000', -- task-stats-category-topic-grant-revoke,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `article_count` INTEGER DEFAULT 0,
-    `category_count` INTEGER DEFAULT 0,
-    `task_count` INTEGER DEFAULT 0
-    """
-    id : int
-    username : str
-    rights : int = 0
-    article_count : int = 0
-    category_count : int = 0
-    task_count : int = 0
-    created_at : str = None
+class UserScheme(BaseUserScheme):
+    pass
 @dataclass
 class UserUpdate:
     username : str | None = None
     rights : int | None = None
 @dataclass
 class TaskCreate:
-    """
-    `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `submitter` INTEGER NOT NULL,
-    `status`	TEXT NOT NULL,
-    `created_at`	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `topic_id`	INTEGER NOT NULL,
-    `task_data`	TEXT NOT NULL,
-    `category_count`    INTEGER NOT NULL DEFAULT 0,
-    `category_done`    INTEGER NOT NULL DEFAULT 0,
-    `last_category`    TEXT NULL DEFAULT NULL,
-    `home_wiki`    TEXT NOT NULL,
-    `target_wiki`    TEXT NOT NULL,
-    `article_count`    INTEGER NOT NULL DEFAULT 0,
-    `country`    TEXT NOT NULL,
-    """
     topic_id : str
     task_data : list[CategoryScheme]
     target_wiki : Language
@@ -117,27 +88,69 @@ class TaskScheme:
     pass
 @dataclass
 class _Campaign:
-    title : str
+    name : str
     language : Language
-    start_at : datetime
-    end_at : datetime
-    approved_by : int
-    approved_at : datetime
-    description : str
+    start_at : datetime | date
+    end_at : datetime | date
+    description : str | None
     rules : str | list[str]
-    blacklist : list[str] | None
+    blacklist : list[str] | str | None
     image : str | None
+    maximumSubmissionOfSameArticle : int 
+    allowExpansions : bool 
+    minimumTotalBytes : int 
+    minimumTotalWords : int
+    minimumAddedBytes : int 
+    minimumAddedWords : int 
+    secretBallot : bool 
+    allowJuryToParticipate : bool 
+    allowMultipleJudgement : bool 
+    
 @dataclass
 class CampaignCreate(_Campaign):
     jury : list[str] | None = None
     
 @dataclass
 class CampaignUpdate(CampaignCreate):
-    id : str | None = None
+    approved_by : int | None = None
+    approved_at : datetime | date | None = None
+    status : CampaignStatus | None = None
+    
 @dataclass
 class CampaignScheme(_Campaign):
-    id : str
+    id : int
+    approved_by : int
+    approved_at : datetime | date
+    creator_id : int
+    created_at : datetime | date
     status : CampaignStatus = CampaignStatus.pending
+    @staticmethod
+    def from_dict(data : dict):
+        return CampaignScheme(
+            id=data['id'],
+            name=data['name'],
+            language=data['language'],
+            start_at=data['start_at'],
+            end_at=data['end_at'],
+            status=CampaignStatus(data['status']),
+            description=data['description'],
+            rules=data['rules'] and data['rules'].split('\n'),
+            blacklist=data['blacklist'] and data['blacklist'].split(','),
+            image=data['image'],
+            creator_id=data['creator_id'],
+            approved_by=data['approved_by'],
+            approved_at=data['approved_at'],
+            created_at=data['created_at'],
+            maximumSubmissionOfSameArticle=data['maximumSubmissionOfSameArticle'],
+            allowExpansions=data['allowExpansions'],
+            minimumTotalBytes=data['minimumTotalBytes'],
+            minimumTotalWords=data['minimumTotalWords'],
+            minimumAddedBytes=data['minimumAddedBytes'],
+            minimumAddedWords=data['minimumAddedWords'],
+            secretBallot=data['secretBallot'],
+            allowJuryToParticipate=data['allowJuryToParticipate'],
+            allowMultipleJudgement=data['allowMultipleJudgement'],
+        )
     pass
 @dataclass
 class Statistics:
@@ -154,13 +167,27 @@ class Statistics:
 @dataclass
 class JudgeScheme:
     user_id : int
+    username : str
     campaign_id : str
-    created_at : datetime
+    created_at : datetime | date
     allowed : bool = True
     judged_count : int = 0 # How many articles did this jury judged? (less or equal to submission count)
     positive_votes : int = 0 # How many articles did this jury voted positive?
     negative_votes : int = 0 # How many articles did this jury voted negative?
     total_votes : int = 0 # How many articles did this jury voted?
+    @staticmethod
+    def from_dict(data : dict):
+        return JudgeScheme(
+            username=data['username'],
+            user_id=data['user_id'],
+            campaign_id=data['campaign_id'],
+            created_at=data['created_at'],
+            allowed=data['allowed'],
+            judged_count=data['judged_count'],
+            positive_votes=data['positive_votes'],
+            negative_votes=data['negative_votes'],
+            total_votes=data['total_votes'],
+        )
 TaskResult = Union[str, List[SubmissionScheme]]
 T = TypeVar('T', str, TaskScheme, UserScheme, SubmissionScheme, CategoryScheme, Country, CampaignScheme, TaskResult, Statistics)
 @dataclass
