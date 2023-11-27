@@ -18,18 +18,41 @@ class User(BaseUser):
         users = conn.execute(sql, usernames)
         return dict(map(lambda x: (x['username'], x), users))
     @staticmethod
+    def auto_create_users(conn : sqlite3.Cursor, usernames : set[str]) -> dict[str, UserScheme]:
+        params = {
+            'action': 'query',
+            'list': 'users',
+            'ususers': '|'.join(usernames),
+            'format': 'json',
+            'usprop': 'centralids',
+            'uslimit' : 'max'
+        }
+        res = Server.get(params=params)
+        users_dict = res['query']['users']
+        users = []
+        for user in users_dict:
+            users.append({
+                'id': user['centralids']['CentralAuth'],
+                'username': user['name'],
+                'rights': Permission.TASK.value
+            })
+        conn.executemany(SQL1_CREATE_USER, users)
+        user_map = User._get_username_map(conn, list(usernames))
+        return user_map
+    @staticmethod
     def get_username_map_guaranteed(conn : sqlite3.Cursor, usernames : list[str]) -> dict[str, UserScheme]:
         user_map = User._get_username_map(conn, usernames)
         if len(user_map) != len(usernames):
             included = set(user_map.keys())
             excluded = set(usernames) - included
-            print(f"Users not found: {excluded}")
+            new_map = User.auto_create_users(conn, excluded)
+            user_map = {**user_map, **new_map}
         return user_map
+    
 class Campaign:
     @staticmethod
     def create(conn: sqlite3.Cursor, campaign: CampaignCreate) -> int:
         blacklist = ','.join(campaign.blacklist or [])
-        print(blacklist)
         rules = '\n'.join(campaign.rules or [])
         jury = campaign.jury or []
         # jury = map(str, jury)
