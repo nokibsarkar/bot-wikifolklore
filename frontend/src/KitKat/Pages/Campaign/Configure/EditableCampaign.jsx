@@ -108,14 +108,14 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
-    if (loading || !campaign)
+    if (loading)
         return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <CircularProgress />
         </div>
-    // if (error)
-    //     return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-    //         {error}
-    //     </div>
+    if (error)
+        return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            {error}
+        </div>
     const SaveButton = <Button variant="contained" color="success" onClick={e => onSave(campaign, setLoading)} sx={{ m: 1 }}>
         <SaveIcon /> Save
     </Button>

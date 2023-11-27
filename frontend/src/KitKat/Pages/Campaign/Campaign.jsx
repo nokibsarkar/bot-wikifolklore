@@ -70,15 +70,28 @@ const Campaign = () => {
     const { campaignID } = useParams();
     const [campaign, setCampaign] = useState(null);
     const [jury, setJury] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     useEffect(() => {
         (async () => {
-            const campaign = await KitKatServer.Campaign.getCampaign(campaignID);
-            setCampaign(campaign);
-            const jury = await KitKatServer.Campaign.getJury(campaignID);
-            setJury(jury);
+            setLoading(true);
+            try {
+                const campaign = await KitKatServer.Campaign.getCampaign(campaignID);
+                if(!campaign) throw new Error("Campaign not found");
+                setCampaign(campaign);
+                const jury = await KitKatServer.Campaign.getJury(campaignID);
+                setJury(jury);
+                setError(null);
+            }
+            catch (e) {
+                setError(e.message);
+            } finally {
+                setLoading(false);
+            }
         })()
     }, [campaignID]);
-    if (!campaign) return <div>Loading Campaign</div>
+    if (loading) return <div>Loading Campaign</div>
+    if (error) return <div>{error}</div>
     return (
         <Box sx={{
             backgroundColor: 'list.light'
