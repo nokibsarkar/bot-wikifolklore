@@ -174,8 +174,10 @@ class Wiki {
     }
 }
 class CampaignServer {
-    static async getCampaigns(): Promise<Campaign[]> {
-        return [sampleCampaign];
+    static async getCampaigns({status } : {status : CampaignStatus}): Promise<Campaign[]> {
+        const url = '/api/kitkat/campaign/';
+        const res = await fetchWithErrorHandling(url)
+        return res.data;
     }
     static async getCampaign(id: number): Promise<Campaign> {
         const url = '/api/kitkat/campaign/' + id;
