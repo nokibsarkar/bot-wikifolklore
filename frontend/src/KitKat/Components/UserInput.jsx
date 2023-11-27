@@ -20,7 +20,6 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
                     id: u.name,
                     label: u.name
                 }));
-                console.log(mappedUsers);
                 setSuggestedUsers(mappedUsers);
             } catch (e) {
                 setError(e.message);

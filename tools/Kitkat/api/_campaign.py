@@ -38,7 +38,7 @@ async def list_jury(campaign_id: int):
     try:
         with Server.get_parmanent_db() as conn:
             jury = Campaign.get_jury(conn.cursor(), campaign_id)
-        if not jury:
+        if jury is None:
             raise Exception("Jury not found")
         result = []
         for judge in jury:
