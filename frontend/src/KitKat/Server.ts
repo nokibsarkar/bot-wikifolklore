@@ -226,10 +226,11 @@ class PageServer {
 
 }
 class UserServer {
-    static fetchWithErrorHandlinging = false;
+    static fetching = false;
     static async searchUsersByPrefix(language: string = 'bn', prefix: string, previous: WikimediaUser[]): Promise<WikimediaUser[]> {
-        if (UserServer.fetchWithErrorHandlinging) return previous;
-        UserServer.fetchWithErrorHandlinging = true;
+        if (UserServer.fetching){
+            return previous;
+        }
         const params = new URLSearchParams({
             action: "query",
             list: "allusers",
@@ -240,7 +241,9 @@ class UserServer {
             origin: "*"
         });
         const url = `https://${language}.wikipedia.org/w/api.php?${params.toString()}`;
+        UserServer.fetching = true;
         const res = await fetch(url).then(res => res.json());
+        UserServer.fetching = false;
         return res.query.allusers;
     }
 }

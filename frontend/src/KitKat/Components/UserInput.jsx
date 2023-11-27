@@ -20,6 +20,7 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
                     id: u.name,
                     label: u.name
                 }));
+                console.log(mappedUsers);
                 setSuggestedUsers(mappedUsers);
             } catch (e) {
                 setError(e.message);
@@ -81,7 +82,6 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
             <ul style={{ textAlign: 'left' }}>
                 {users?.map((judge, index) => (
                     <Chip sx={{color : color}} key={index} label={judge} onDelete={() => {
-
                         onChange(users.filter(j => j !== judge));
                     }} />
                 ))}
