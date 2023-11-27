@@ -59,3 +59,4 @@ VALUES
     :rights
 )
 """
+SQL1_GET_ALL_CAMPAIGN = "SELECT * FROM `campaign`"
