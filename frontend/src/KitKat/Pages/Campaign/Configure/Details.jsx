@@ -125,7 +125,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
                         m: 1,
 
                     }}
-                    inputProps={{ type: 'date' }}
+                    inputProps={{ type: 'date', min : new Date().toISOString().split('T')[0] }}
                     value={campaign.start_at}
                     onChange={(e) => {
                         campaignDispatch({ type: 'start_at', payload: e.target.value })
@@ -141,7 +141,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
                     }}
                     label="End Date"
                     variant="outlined"
-                    inputProps={{ type: 'date' }}
+                    inputProps={{ type: 'date', min : campaign.start_at }}
                     value={campaign.end_at}
                     onChange={(e) => {
                         campaignDispatch({ type: 'end_at', payload: e.target.value })

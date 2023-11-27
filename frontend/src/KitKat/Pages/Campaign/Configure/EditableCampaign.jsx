@@ -4,7 +4,6 @@ import CampainEditableDetails from "./Details";
 import CampaignRestrictions from "./Restrictions";
 import JuryPage from "./Jury";
 import CampaignOverview from "./Overview";
-// import SendIcon from '@mui/icons-material/Send';
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -21,8 +20,8 @@ const defaultCampaign = {
         'Rule 3'
     ],
     jury: [],
-    start_at: '',
-    end_at: '',
+    start_at: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    end_at: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     status: 'active',
     blacklist: [],
     maximumSubmissionOfSameArticle: 1, // Maximum number of times an article can be submitted
