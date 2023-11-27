@@ -11,12 +11,20 @@ class User(BaseUser):
     def get_all(conn : sqlite3.Cursor):
         return conn.execute(SQL1_GET_USER_SUMMARY).fetchall()
     @staticmethod
-    def get_username_map(conn : sqlite3.Cursor, usernames : list[str]) -> dict[str, UserScheme]:
+    def _get_username_map(conn : sqlite3.Cursor, usernames : list[str]) -> dict[str, UserScheme]:
         sql = SQL1_GET_USERS_BY_USERNAME_PREFIX + (
             "(" + ",".join(["?"] * len(usernames)) + ")"
         )
         users = conn.execute(sql, usernames)
         return dict(map(lambda x: (x['username'], x), users))
+    @staticmethod
+    def get_username_map_guaranteed(conn : sqlite3.Cursor, usernames : list[str]) -> dict[str, UserScheme]:
+        user_map = User._get_username_map(conn, usernames)
+        if len(user_map) != len(usernames):
+            included = set(user_map.keys())
+            excluded = set(usernames) - included
+            print(f"Users not found: {excluded}")
+        return user_map
 class Campaign:
     @staticmethod
     def create(conn: sqlite3.Cursor, campaign: CampaignCreate) -> int:
@@ -52,17 +60,22 @@ class Campaign:
         return lastCampaignId
     @staticmethod
     def add_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str]):
-        users = User.get_username_map(conn, jury)
+        users = User.get_username_map_guaranteed(conn, jury)
         users = map(lambda v: (v['id'], v['username'], campaign_id), users.values())
         conn.executemany(SQL1_ADD_JURY_TO_CAMPAIGN, users)
     @staticmethod
     def remove_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str]):
-        users = User.get_username_map(conn, jury)
+        users = User._get_username_map(conn, jury)
         users = map(lambda v: (v['id'], campaign_id), users.values())
         conn.executemany(SQL1_REMOVE_JURY_FROM_CAMPAIGN, users)
     @staticmethod
-    def get_jury(conn : sqlite3.Cursor, campaign_id : str):
-        return conn.execute(SQL1_GET_JURY_BY_ALLOWED, {'campaign_id': campaign_id, 'allowed' : True}).fetchall()
+    def get_jury(conn : sqlite3.Cursor, campaign_id : str, allowed : bool=True):
+        result = []
+        if allowed is None:
+            result = conn.execute(SQL1_GET_JURY_BY_CAMPAIGN_ID, {'campaign_id': campaign_id}).fetchall()
+        else:
+            result = conn.execute(SQL1_GET_JURY_BY_ALLOWED, {'campaign_id': campaign_id, 'allowed' : allowed}).fetchall()
+        return result
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str) -> CampaignScheme:
         return conn.execute(SQL1_GET_CAMPAIGN_BY_ID, {'id': id}).fetchone()
