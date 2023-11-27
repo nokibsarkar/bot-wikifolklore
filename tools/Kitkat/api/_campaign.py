@@ -5,9 +5,20 @@ campaign_router = APIRouter(
     tags=["Campaign"],
     responses={404: {"details": "Not found"}},
 )
-@campaign_router.get("/", response_model=ResponseSingle[CampaignScheme])
+@campaign_router.get("/", response_model=ResponseMultiple[CampaignScheme])
 async def list_campaigns():
-    return {"message": "Hello World"}
+    """
+    This endpoint is used to get all campaigns.
+    """
+    try:
+        with Server.get_parmanent_db() as conn:
+            campaigns = Campaign.get_all(conn.cursor())
+        result = []
+        for campaign in campaigns:
+            result.append(CampaignScheme.from_dict(campaign))
+        return ResponseMultiple[CampaignScheme](success=True, data=result)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 

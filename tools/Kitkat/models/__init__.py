@@ -82,6 +82,9 @@ class Campaign:
         Campaign.add_jury(conn, lastCampaignId, jury)
         return lastCampaignId
     @staticmethod
+    def get_all(conn : sqlite3.Cursor):
+        return conn.execute(SQL1_GET_ALL_CAMPAIGN).fetchall()
+    @staticmethod
     def add_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str]):
         users = User.get_username_map_guaranteed(conn, jury)
         users = map(lambda v: (v['id'], v['username'], campaign_id), users.values())
