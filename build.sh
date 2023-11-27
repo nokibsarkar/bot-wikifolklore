@@ -91,6 +91,8 @@ package () {
     cp requirements.txt $TEMP_PATH
     # echo "Copying Bash scripts"
     # cp *.sh $TEMP_PATH
+    echo "Copying tools folder"
+    cp -r tools $TEMP_PATH
     echo "Copying .env"
     cp production.env $TEMP_PATH/.env
     echo "Copying VERSION"
