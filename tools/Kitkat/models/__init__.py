@@ -36,7 +36,7 @@ class User(BaseUser):
                 'username': user['name'],
                 'rights': Permission.TASK.value
             })
-        conn.executemany(SQL1_CREATE_USER, users)
+        conn.executemany(SQL1_CREATE_USER_IF_NOT_EXISTS, users)
         user_map = User._get_username_map(conn, list(usernames))
         return user_map
     @staticmethod
