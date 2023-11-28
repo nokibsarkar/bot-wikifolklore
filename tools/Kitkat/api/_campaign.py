@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from ..models import *
 campaign_router = APIRouter(
     prefix="/campaign",
@@ -6,13 +6,13 @@ campaign_router = APIRouter(
     responses={404: {"details": "Not found"}},
 )
 @campaign_router.get("/", response_model=ResponseMultiple[CampaignScheme])
-async def list_campaigns():
+async def list_campaigns(language : Language = None, status : Annotated[list[CampaignStatus] , Query()] = [CampaignStatus.running], limit : int=50, offset : int= 0):
     """
     This endpoint is used to get all campaigns.
     """
     try:
         with Server.get_parmanent_db() as conn:
-            campaigns = Campaign.get_all(conn.cursor())
+            campaigns = Campaign.get_all(conn.cursor(), language=language, status=status, limit=limit, offset=offset)
         result = [CampaignScheme.from_dict(campaign) for campaign in campaigns]
         return ResponseMultiple[CampaignScheme](success=True, data=result)
     except Exception as e:

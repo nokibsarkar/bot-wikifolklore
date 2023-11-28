@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Generic, TypeVar, List, Type, Union, Optional
+from typing import Generic, TypeVar, List, Type, Union, Optional, Annotated
 from enum import Enum
 from datetime import datetime, date
 from ..._shared._countries import Country
