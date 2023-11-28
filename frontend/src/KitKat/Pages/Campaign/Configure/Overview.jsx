@@ -1,9 +1,10 @@
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material"
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import RightArrow from '@mui/icons-material/ArrowForward'
+import KitKatServer from "../../../Server";
 const ApproveButton = ({ onApprove, disabled }) => (
     <Button variant="contained" color="success" size="small" sx={{
         m: 1
@@ -105,25 +106,45 @@ const CancelPrompt = ({ onCancel }) => {
 
 }
 const Buttons = ({ campaign, campaignDispatch }) => {
-    return (
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <ApprovalPrompt />
-            <CancelPrompt />
-        </div>
+    const updateStatus = useCallback(async (status) => {
+        const nCampaign = { id: campaign.id, status };
+        try {
+            const updatedCampaign = await KitKatServer.Campaign.updateCampaign(nCampaign);
+            campaignDispatch({ type: 'status', payload: updatedCampaign.status });
+        } catch (e) {
+            console.log(e);
+        }
+    }, [campaignDispatch]);
+
+    const actionButtons = [];
+    if (campaign.status === 'pending') {
+        const onApprove = () => updateStatus('scheduled');
+        const onReject = () => updateStatus('rejected');
+        actionButtons.push(<ApprovalPrompt key='approval' onApprove={onApprove} onReject={onReject} />);
+    } 
+    if (campaign.status !== 'cancelled') {
+        const onCancel = () => updateStatus('cancelled');
+
+        actionButtons.push(<CancelPrompt key='cancel' onCancel={onCancel} />);
+    }
+    return actionButtons.length > 0 && (
+        <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row', }} component='fieldset'>
+            <legend>Actions</legend>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
+                {actionButtons}
+            </div>
+        </Typography>
     )
 }
 const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) => {
     return (
-        <Box component='div' sx={{ backgroundColor : 'rules.light', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box component='div' sx={{ backgroundColor: 'rules.light', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant='h4' sx={{ m: 1 }}>
                 Overview
             </Typography>
             <CampaignHeader campaign={campaign} />
             {showActions && (
-                <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row', }} component='fieldset'>
-                    <legend>Actions</legend>
-                    <Buttons campaign={campaign} campaignDispatch={campaignDispatch} />
-                </Typography>
+                <Buttons campaign={campaign} campaignDispatch={campaignDispatch} />
             )}
             <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row', width: 'max-content' }} component='fieldset'>
                 <legend>Duration</legend>

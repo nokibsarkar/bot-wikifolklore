@@ -82,6 +82,40 @@ class Campaign:
         Campaign.add_jury(conn, lastCampaignId, jury, lang=campaign.language.value)
         return lastCampaignId
     @staticmethod
+    def update(conn: sqlite3.Cursor, campaign: CampaignUpdate) -> int:
+        blacklist = ','.join(campaign.blacklist or [])
+        rules = '\n'.join(campaign.rules or [])
+        jury = campaign.jury or []
+        # jury = map(str, jury)
+        params = {
+            # 'name': campaign.name,
+            # 'start_at': campaign.start_at,
+            # 'end_at': campaign.end_at,
+            'status': campaign.status.value,
+            # 'description': campaign.description,
+            # 'rules': rules,
+            # 'blacklist': blacklist,
+            # 'image': campaign.image,
+            # 'maximumSubmissionOfSameArticle': campaign.maximumSubmissionOfSameArticle,
+            # 'allowExpansions': campaign.allowExpansions,
+            # 'minimumTotalBytes': campaign.minimumTotalBytes,
+            # 'minimumTotalWords': campaign.minimumTotalWords,
+            # 'minimumAddedBytes': campaign.minimumAddedBytes,
+            # 'minimumAddedWords': campaign.minimumAddedWords,
+            # 'secretBallot': campaign.secretBallot,
+            # 'allowJuryToParticipate': campaign.allowJuryToParticipate,
+            # 'allowMultipleJudgement': campaign.allowMultipleJudgement,
+        }
+        if False:
+            Campaign.remove_jury(conn, campaign.id, jury)
+            Campaign.add_jury(conn, campaign.id, jury, lang=campaign.language.value)
+        sql = SQL1_UPDATE_CAMPAIGN_FORMAT.format(updates=", ".join([f"{k} = :{k}" for k in params.keys()]), id=campaign.id)
+        print(sql)
+        up = conn.execute(sql, params)
+        
+        updated_campaign = up.fetchone()
+        return updated_campaign
+    @staticmethod
     def get_all(conn : sqlite3.Cursor):
         return conn.execute(SQL1_GET_ALL_CAMPAIGN).fetchall()
     @staticmethod

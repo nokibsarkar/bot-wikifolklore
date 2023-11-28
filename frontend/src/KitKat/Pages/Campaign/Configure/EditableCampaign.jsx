@@ -10,26 +10,24 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ErrorPage from "../../../Components/ErrorPage";
 
 const defaultCampaign = {
-    name: 'Campaign Name',
+    name: '',
     description : null,
     language: 'bn',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/%E0%A6%89%E0%A6%87%E0%A6%95%E0%A6%BF%E0%A6%AA%E0%A6%BF%E0%A6%A1%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE_%E0%A6%8F%E0%A6%B6%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%AE%E0%A6%BE%E0%A6%B8_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%A9_%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%A8%E0%A6%BE%E0%A6%B0.svg/425px-%E0%A6%89%E0%A6%87%E0%A6%95%E0%A6%BF%E0%A6%AA%E0%A6%BF%E0%A6%A1%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE_%E0%A6%8F%E0%A6%B6%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%AE%E0%A6%BE%E0%A6%B8_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%A9_%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%A8%E0%A6%BE%E0%A6%B0.svg.png',
     rules: [
-        'Rule 1',
-        'Rule 2',
-        'Rule 3'
+        'All Participants must be registered in Wikipedia',
     ],
     jury: [],
     start_at: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     end_at: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    status: 'active',
+    status: 'pending',
     blacklist: [],
     maximumSubmissionOfSameArticle: 1, // Maximum number of times an article can be submitted
     allowExpansions: true, // Allow users to submit articles that were not created rather expanded
     minimumTotalBytes: 1000, // Minimum total bytes of all articles
-    minimumTotalWords: 100, // Minimum total words of all articles
-    minimumAddedBytes: 100, // Minimum bytes added to the article
-    minimumAddedWords: 10, // Minimum words added to the article
+    minimumTotalWords: 300, // Minimum total words of all articles
+    minimumAddedBytes: 1000, // Minimum bytes added to the article
+    minimumAddedWords: 300, // Minimum words added to the article
     secretBallot: true, // If true, jury members will not be able to see each other's votes
     allowJuryToParticipate: true, // If true, jury members will be able to participate in the campaign
     allowMultipleJudgement: true, // If true, different jury members will be able to judge the same article 
@@ -68,7 +66,8 @@ const campaignReducer = (state, action) => {
             return { ...state, allowJuryToParticipate: action.payload };
         case 'allowMultipleJudgement':
             return { ...state, allowMultipleJudgement: action.payload };
-
+        case 'status':
+            return { ...state, status: action.payload };
         default:
             return state;
     }
