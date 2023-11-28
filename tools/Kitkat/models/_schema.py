@@ -111,10 +111,28 @@ class CampaignCreate(_Campaign):
     jury : list[str] | None = None
     
 @dataclass
-class CampaignUpdate(CampaignCreate):
-    approved_by : int | None = None
-    approved_at : datetime | date | None = None
-    status : CampaignStatus | None = None
+class CampaignUpdate:
+    id : int
+    name : Optional[str] = None
+    start_at : Optional[datetime | date] = None
+    end_at : Optional[datetime | date] = None
+    description : Optional[str | None] = None
+    rules : Optional[str | list[str]] = None
+    blacklist : Optional[list[str] | str] = None
+    image : Optional[str] = None
+    maximumSubmissionOfSameArticle : Optional[int] = None
+    allowExpansions : Optional[bool] = None
+    minimumTotalBytes : Optional[int] = None
+    minimumTotalWords : Optional[int] = None
+    minimumAddedBytes : Optional[int] = None
+    minimumAddedWords : Optional[int] = None
+    secretBallot : Optional[bool] = None
+    allowJuryToParticipate : Optional[bool] = None
+    allowMultipleJudgement : Optional[bool] = None
+    approved_by : Optional[int] = None
+    approved_at : Optional[datetime | date] = None
+    status : Optional[CampaignStatus] = None
+    jury : list[str] | None = None
     
 @dataclass
 class CampaignScheme(_Campaign):

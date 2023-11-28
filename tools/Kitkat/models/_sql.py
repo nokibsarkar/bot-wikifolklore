@@ -60,3 +60,4 @@ VALUES
 )
 """
 SQL1_GET_ALL_CAMPAIGN = "SELECT * FROM `campaign`"
+SQL1_UPDATE_CAMPAIGN_FORMAT = "UPDATE `campaign` SET {updates} WHERE `id` = {id} RETURNING *"

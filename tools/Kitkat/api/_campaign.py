@@ -82,9 +82,16 @@ async def create_campaign(campaign: CampaignCreate):
 #------------------------------------------------------------------------------
 
 #---------------------------------- UPDATE A CAMPAIGN ----------------------------------#
-@campaign_router.post("/{campaign_id}", response_model=ResponseSingle[CampaignUpdate])
+@campaign_router.post("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def update_campaign(campaign_id: int, campaign: CampaignUpdate):
-    return {"message": "Hello World"}
+    try:
+        with Server.get_parmanent_db() as conn:
+            existing_campaign = Campaign.get_by_id(conn, campaign_id)
+            updated_campaign = Campaign.update(conn, campaign)
+            cmp = CampaignScheme.from_dict(updated_campaign)
+            return ResponseSingle[CampaignScheme](success=True, data=cmp)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 #------------------------------------------------------------------------------
 
 

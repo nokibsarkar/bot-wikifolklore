@@ -209,7 +209,14 @@ class CampaignServer {
         return newCampaign.data;
     }
     static async updateCampaign(campaign: Campaign): Promise<Campaign> {
-        return campaign;
+        const updatedCampaign = await fetchWithErrorHandling('/api/kitkat/campaign/' + campaign.id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(campaign)
+        }).then(res => res.data);
+        return updatedCampaign;
     }
 }
 class PageServer {
