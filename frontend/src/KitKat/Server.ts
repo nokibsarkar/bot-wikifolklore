@@ -181,8 +181,8 @@ class CampaignServer {
                 query.append('status', s);
         if(language)
             query.append('language', language);
-        console.log(query.toString());
-        const url = '/api/kitkat/campaign/';
+        
+        const url = '/api/kitkat/campaign/' + '?' + query.toString();
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
