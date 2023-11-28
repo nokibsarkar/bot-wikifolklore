@@ -60,4 +60,8 @@ VALUES
 )
 """
 SQL1_GET_ALL_CAMPAIGN = "SELECT * FROM `campaign` ORDER BY `id` DESC"
+SQL1_GET_ALL_CAMPAIGN_BY_LANGUAGE = "SELECT * FROM `campaign` WHERE `language` = :language ORDER BY `id` DESC"
+SQL1_GET_ALL_CAMPAIGN_BY_STATUS = "SELECT * FROM `campaign` WHERE `status` = :status ORDER BY `id` DESC"
+SQL1_GET_ALL_CAMPAIGN_BY_STATUS_AND_LANGUAGE = "SELECT * FROM `campaign` WHERE `status` = :status AND `language` = :language ORDER BY `id` DESC"
+
 SQL1_UPDATE_CAMPAIGN_FORMAT = "UPDATE `campaign` SET {updates} WHERE `id` = {id} RETURNING *"
