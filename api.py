@@ -12,7 +12,7 @@ user_router = APIRouter(prefix="/user", tags=['user'])
 topic_router = APIRouter(prefix="/topic", tags=['topic'])
 FORBIDDEN_EXCEPTION = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
-    detail="ISorry, you do not have permission to perform this action",
+    detail="Sorry, you do not have permission to perform this action",
     headers={"WWW-Authenticate": "Bearer"},
 )
 BAD_REQUEST_EXCEPTION = lambda a : HTTPException(
@@ -51,6 +51,7 @@ def update_me(req : Request, user : UserUpdate = Body(...)):
     with Server.get_parmanent_db() as conn:
         cur = conn.cursor()
         if user.username:
+            raise BAD_REQUEST_EXCEPTION("Username cannot be changed")
             user.username = "USERNAME HIDDEN"
             User.update_username(cur, user_id, user.username)
         conn.commit()
