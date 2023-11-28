@@ -13,9 +13,7 @@ async def list_campaigns():
     try:
         with Server.get_parmanent_db() as conn:
             campaigns = Campaign.get_all(conn.cursor())
-        result = []
-        for campaign in campaigns:
-            result.append(CampaignScheme.from_dict(campaign))
+        result = [CampaignScheme.from_dict(campaign) for campaign in campaigns]
         return ResponseMultiple[CampaignScheme](success=True, data=result)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
