@@ -45,8 +45,8 @@ SQL1_REMOVE_JURY_FROM_CAMPAIGN = "UPDATE `jury` SET `allowed` = FALSE WHERE `use
 SQL1_GET_JURY_BY_ALLOWED = "SELECT * FROM `jury` WHERE `campaign_id` = :campaign_id AND `allowed` = :allowed"
 SQL1_GET_JURY_BY_CAMPAIGN_ID = "SELECT * FROM `jury` WHERE `campaign_id` = :campaign_id"
 
-SQL1_CREATE_USER = """
-INSERT INTO
+SQL1_CREATE_USER_IF_NOT_EXISTS = """
+INSERT OR IGNORE INTO
     `user` (
     `id`,
     `username`,
