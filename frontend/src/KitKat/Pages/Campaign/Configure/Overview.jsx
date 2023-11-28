@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useCallback, useEffect, useState } from "react";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import RightArrow from '@mui/icons-material/ArrowForward'
+import KitKatServer from "../../../Server";
 const ApproveButton = ({ onApprove, disabled }) => (
     <Button variant="contained" color="success" size="small" sx={{
         m: 1
@@ -105,15 +106,18 @@ const CancelPrompt = ({ onCancel }) => {
 
 }
 const Buttons = ({ campaign, campaignDispatch }) => {
-    const onCancel = useCallback(() => {
-        campaignDispatch({ type: 'cancel' });
+    const updateStatus = useCallback(async (status) => {
+        const nCampaign = { ...campaign, status };
+        try {
+            const updatedCampaign = await KitKatServer.Campaign.updateCampaign(nCampaign);
+            campaignDispatch({ type: 'status', payload: updatedCampaign.status });
+        } catch (e) {
+            console.log(e);
+        }
     }, [campaignDispatch]);
-    const onApprove = useCallback(() => {
-        campaignDispatch({ type: 'approve' });
-    }, [campaignDispatch]);
-    const onReject = useCallback(() => {
-        campaignDispatch({ type: 'reject' });
-    }, [campaignDispatch]);
+    const onCancel = () => updateStatus('cancelled');
+    const onApprove = () => updateStatus('scheduled');
+    const onReject = () => updateStatus('rejected');
     return (
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
             {campaign.status === 'pending' && (
