@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `task` (
     `target_wiki`    TEXT NOT NULL,
     `article_count`    INTEGER NOT NULL DEFAULT 0,
     `country`    TEXT NOT NULL,
+    `pagepile_id`    INTEGER NULL DEFAULT NULL,
     FOREIGN KEY(`topic_id`) REFERENCES `topic`(`id`),
     FOREIGN KEY(`submitted_by`) REFERENCES `user`(`id`)
 
