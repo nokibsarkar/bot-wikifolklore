@@ -116,8 +116,23 @@ class Campaign:
         updated_campaign = up.fetchone()
         return updated_campaign
     @staticmethod
-    def get_all(conn : sqlite3.Cursor):
-        return conn.execute(SQL1_GET_ALL_CAMPAIGN).fetchall()
+    def get_all(conn : sqlite3.Cursor, language : Language=None, status : list[CampaignStatus]=None, limit : int=50, offset : int= 0):
+        params = {
+            'limit': limit,
+            'offset': offset,
+            'language': language and language.value,
+        }
+        sql = SQL1_GET_ALL_CAMPAIGN
+        if status:
+            status_placeholder = ','.join(map(lambda x: f"'{x.value}'", status))
+            if language is not None:
+                sql = SQL1_GET_ALL_CAMPAIGN_BY_STATUS_AND_LANGUAGE_FORMAT
+            else:
+                sql = SQL1_GET_ALL_CAMPAIGN_BY_STATUS_FORMAT
+            sql = sql.format(status_placeholder=status_placeholder)
+        elif language is not None:
+            sql = SQL1_GET_ALL_CAMPAIGN_BY_LANGUAGE
+        return conn.execute(sql, params).fetchall()
     @staticmethod
     def add_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str], lang : str='en'):
         users = User.get_username_map_guaranteed(conn, jury, lang=lang)
