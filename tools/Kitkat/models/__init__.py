@@ -18,7 +18,7 @@ class User(BaseUser):
         users = conn.execute(sql, usernames)
         return dict(map(lambda x: (x['username'], x), users))
     @staticmethod
-    def auto_create_users(conn : sqlite3.Cursor, usernames : set[str]) -> dict[str, UserScheme]:
+    def auto_create_users(conn : sqlite3.Cursor, usernames : set[str], lang : str = 'en') -> dict[str, UserScheme]:
         params = {
             'action': 'query',
             'list': 'users',
@@ -27,7 +27,7 @@ class User(BaseUser):
             'usprop': 'centralids',
             'uslimit' : 'max'
         }
-        res = Server.get(params=params)
+        res = Server.get(lang=lang, params=params)
         users_dict = res['query']['users']
         users = []
         for user in users_dict:
@@ -40,12 +40,12 @@ class User(BaseUser):
         user_map = User._get_username_map(conn, list(usernames))
         return user_map
     @staticmethod
-    def get_username_map_guaranteed(conn : sqlite3.Cursor, usernames : list[str]) -> dict[str, UserScheme]:
+    def get_username_map_guaranteed(conn : sqlite3.Cursor, usernames : list[str], lang : str = 'en') -> dict[str, UserScheme]:
         user_map = User._get_username_map(conn, usernames)
         if len(user_map) != len(usernames):
             included = set(user_map.keys())
             excluded = set(usernames) - included
-            new_map = User.auto_create_users(conn, excluded)
+            new_map = User.auto_create_users(conn, excluded, lang=lang)
             user_map = {**user_map, **new_map}
         return user_map
     
@@ -79,14 +79,14 @@ class Campaign:
         }
         cur = conn.execute(SQL1_CREATE_CAMPAIGN, params)
         lastCampaignId = cur.lastrowid
-        Campaign.add_jury(conn, lastCampaignId, jury)
+        Campaign.add_jury(conn, lastCampaignId, jury, lang=campaign.language.value)
         return lastCampaignId
     @staticmethod
     def get_all(conn : sqlite3.Cursor):
         return conn.execute(SQL1_GET_ALL_CAMPAIGN).fetchall()
     @staticmethod
-    def add_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str]):
-        users = User.get_username_map_guaranteed(conn, jury)
+    def add_jury(conn : sqlite3.Cursor, campaign_id : str, jury : list[str], lang : str='en'):
+        users = User.get_username_map_guaranteed(conn, jury, lang=lang)
         users = map(lambda v: (v['id'], v['username'], campaign_id), users.values())
         conn.executemany(SQL1_ADD_JURY_TO_CAMPAIGN, users)
     @staticmethod
