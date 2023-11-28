@@ -48,6 +48,7 @@ const JuryPage = ({ campaign, campaignDispatch }) => {
                 onChange={jury => campaignDispatch({ type: 'jury', payload: jury })}
                 icon={<GavelIcon />}
                 fieldName='Jury'
+                language={campaign.language}
             />
         </FormGroup>
     )
