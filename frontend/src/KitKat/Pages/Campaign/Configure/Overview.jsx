@@ -1,7 +1,7 @@
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material"
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import RightArrow from '@mui/icons-material/ArrowForward'
 const ApproveButton = ({ onApprove, disabled }) => (
@@ -105,16 +105,29 @@ const CancelPrompt = ({ onCancel }) => {
 
 }
 const Buttons = ({ campaign, campaignDispatch }) => {
+    const onCancel = useCallback(() => {
+        campaignDispatch({ type: 'cancel' });
+    }, [campaignDispatch]);
+    const onApprove = useCallback(() => {
+        campaignDispatch({ type: 'approve' });
+    }, [campaignDispatch]);
+    const onReject = useCallback(() => {
+        campaignDispatch({ type: 'reject' });
+    }, [campaignDispatch]);
     return (
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <ApprovalPrompt />
-            <CancelPrompt />
+            {campaign.status === 'pending' && (
+                <ApprovalPrompt onApprove={onApprove} onReject={onReject} />
+            )}
+            {campaign.status !== 'cancelled' && (
+                <CancelPrompt onCancel={onCancel} />
+            )}
         </div>
     )
 }
 const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) => {
     return (
-        <Box component='div' sx={{ backgroundColor : 'rules.light', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box component='div' sx={{ backgroundColor: 'rules.light', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant='h4' sx={{ m: 1 }}>
                 Overview
             </Typography>
