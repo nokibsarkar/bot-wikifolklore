@@ -174,7 +174,14 @@ class Wiki {
     }
 }
 class CampaignServer {
-    static async getCampaigns({status } : {status : CampaignStatus}): Promise<Campaign[]> {
+    static async getCampaigns({status, language } : {status? : CampaignStatus[], language? : string}): Promise<Campaign[]> {
+        const query = new URLSearchParams({});
+        if(status)
+            for(const s of status)
+                query.append('status', s);
+        if(language)
+            query.append('language', language);
+        console.log(query.toString());
         const url = '/api/kitkat/campaign/';
         const res = await fetchWithErrorHandling(url)
         return res.data;
@@ -263,10 +270,12 @@ class KitKatServer {
     static Campaign = CampaignServer;
     static Page = PageServer;
     static User = UserServer;
-    static languages: Record<string, string> = {};
-    static countries: Record<string, string> = {};
+    static languages: Object | null = {};
+    static countries: Object | null = {};
     static async init() {
         await BaseServer.init();
+        KitKatServer.languages = BaseServer.languages;
+        KitKatServer.countries = BaseServer.countries;
     }
     static getParameter(key: string): string | null {
         const url = new URL(window.location.href);
