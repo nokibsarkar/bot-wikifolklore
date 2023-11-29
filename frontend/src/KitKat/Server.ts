@@ -179,6 +179,7 @@ class CampaignServer {
         if(status)
             for(const s of status)
                 query.append('status', s);
+        
         if(language)
             query.append('language', language);
         
