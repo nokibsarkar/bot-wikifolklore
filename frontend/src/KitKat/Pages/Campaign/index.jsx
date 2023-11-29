@@ -12,15 +12,20 @@ for (const [key, value] of Object.entries(KitKatServer.languages)) {
 }
 wiki.sort((a, b) => a.label.localeCompare(b.label));
 const CampaignFilter = ({ filter, setFilter }) => {
-    const [language, setLanguage] = useState('')
-    const [status, setStatus] = useState(['running'])
+    const [language, setLanguage] = useState(filter.language)
+    const [status, setStatus] = useState(filter.status)
     return (
-        <Box sx={{
+        <Box 
+        component="div"
+        sx={{
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: {
+                xs: 'column',
+                sm: 'row'
+            },
+            width: '90%',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '2px'
         }}>
             <Autocomplete
                 disablePortal
@@ -32,6 +37,11 @@ const CampaignFilter = ({ filter, setFilter }) => {
                 onChange={(e, v) => setLanguage(v?.id || '')}
                 sx={{
                     minWidth: 200,
+                    m : 1,
+                    width : {
+                        xs: '80%',
+                        sm: 'auto'
+                    }
                 }}
                 renderInput={(params) => <TextField {...params} label="Language" />}
             />
@@ -47,12 +57,21 @@ const CampaignFilter = ({ filter, setFilter }) => {
                 onChangeCapture={e => setStatus(e.target.value)}
                 sx={{
                     minWidth: 200,
+                    m : 1,
+                    width : {
+                        xs: '80%',
+                        sm: 'auto'
+                    }
                 }}
                 renderInput={(params) => <TextField {...params} label="Status" />}
             />
             <Button variant="contained" color="primary" size="small" sx={{
                 padding: 1,
-                m: 1
+                m: 1,
+                width : {
+                    xs: '80%',
+                    sm: 'auto'
+                }
             }}
                 onClick={() => setFilter({ language, status })}
             >
@@ -65,7 +84,10 @@ const CampaignFilter = ({ filter, setFilter }) => {
 const CampaignList = () => {
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [filter, setFilter] = useState({})
+    const [filter, setFilter] = useState({
+        language: '',
+        status: ['running']
+    })
     useEffect(() => {
         (async () => {
             setLoading(true);

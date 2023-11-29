@@ -6,7 +6,7 @@ campaign_router = APIRouter(
     responses={404: {"details": "Not found"}},
 )
 @campaign_router.get("/", response_model=ResponseMultiple[CampaignScheme])
-async def list_campaigns(language : Language = None, status : Annotated[list[CampaignStatus] , Query()] = [CampaignStatus.running], limit : int=50, offset : int= 0):
+async def list_campaigns(language : Language = None, status : Annotated[list[CampaignStatus] | None, Query()] = None, limit : int=50, offset : int= 0):
     """
     This endpoint is used to get all campaigns.
     """
