@@ -36,7 +36,7 @@ const CampaignFilter = ({ filter, setFilter }) => {
                 value={language}
                 onChange={(e, v) => setLanguage(v?.id || '')}
                 sx={{
-                    minWidth: 100,
+                    minWidth: 200,
                     m : 1,
                     width : {
                         xs: '80%',
@@ -56,7 +56,7 @@ const CampaignFilter = ({ filter, setFilter }) => {
                 onChange={(e, v) => setStatus(v)}
                 onChangeCapture={e => setStatus(e.target.value)}
                 sx={{
-                    minWidth: 150,
+                    minWidth: 200,
                     m : 1,
                     width : {
                         xs: '80%',
