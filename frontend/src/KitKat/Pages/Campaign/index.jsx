@@ -87,6 +87,7 @@ const CampaignList = () => {
     const [filter, setFilter] = useState({
         language: '',
         status: ['running', 'scheduled']
+
     })
     useEffect(() => {
         (async () => {
