@@ -70,28 +70,9 @@ jobs:
           ssh-keyscan tools.wikilovesfolklore.org >> ~/.ssh/known_hosts
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
           chmod 600 id_rsa
-      - name: Cache Rclone
-        id: cache-rclone
-        uses: actions/cache@v2
-        with:
-          path: rclone
-          key: ${{ runner.os }}-build-rclone-${{ hashFiles('**/rclone') }}
-          restore-keys: |
-            ${{ runner.os }}-build-rclone-
-            ${{ runner.os }}-
-      - name: Install Rclone
-        if: ${{ steps.cache-rclone.outputs.cache-hit != 'true' }}
-        run: |
-          curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip
-          unzip rclone-current-linux-amd64.zip
-          cd rclone-*-linux-amd64
-          mv rclone ..
-          chmod +x ../rclone
-          cd ..
-          rm -rf rclone-current-linux-amd64
       - name: Send Build to Server
         run: |
-          ./rclone version
+          rsync --version
           python3 deploy.py ${{ secrets.SSH_USER }} id_rsa ${{ vars.LOCAL_TEMP_PATH }} ${{ secrets.SSH_REMOTE_PATH }}
       - name: Restart Gunicorn
         run: |
