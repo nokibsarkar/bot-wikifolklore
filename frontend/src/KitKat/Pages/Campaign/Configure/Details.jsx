@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import KitKatServer from "../../../Server";
 import EditIcon from '@mui/icons-material/Edit';
 import RightArrow from '@mui/icons-material/ArrowForward'
+import ImageSearcher from "../../../Components/ImageInput";
 
 
 const Rules = ({ rules, setRules }) => {
@@ -22,6 +23,7 @@ const Rules = ({ rules, setRules }) => {
             backgroundColor: 'rules.main',
             // width: 'max-content',
             minWidth: '300px',
+            maxWidth: '100%',
             // color : 'black'
         }}><Typography variant='h5' sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 1 }}>
                 <font>Rules</font> {!editing && <EditIcon sx={{ cursor: 'pointer', m: 1 }} color="primary" onClick={() => setEditing(true)} />}
@@ -42,19 +44,7 @@ const Rules = ({ rules, setRules }) => {
                         setEditing(false);
                     }}
                 />
-                {/* <Button variant="contained" color="success" size="small" sx={{
-                    padding: 1,
-                    m: 1,
-                    width: '33%'
-                }}
-                    onClick={() => {
-                        const values = value.split(/\n+/g).filter(value => value);
-                        setRules(values);
-                        setEditing(false);
-                    }}
-                >
-                    <SaveIcon /> Save
-                </Button> */}
+
             </div> :
                 <ol style={{ textAlign: 'left' }}>
                     {rules?.map((rule, index) => (
@@ -82,7 +72,12 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
     if (loading)
         return <CircularProgress />;
     return (
-        <div>
+        <Box component="div" sx={{
+            // display: { sm: 'flex' },
+            // flexDirection: 'column',
+            // alignItems: 'center',
+            // justifyContent: 'center',
+        }}>
             <Box sx={{
                 display: 'flex',
                 m: 1,
@@ -122,39 +117,45 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
                     label="Start Date"
                     variant="outlined"
                     sx={{
-                        m: 1,
+                        m: 0.5
 
                     }}
-                    inputProps={{ type: 'date', min : new Date().toISOString().split('T')[0] }}
+                    size="small"
+                    inputProps={{ type: 'date', min: new Date().toISOString().split('T')[0] }}
                     value={campaign.start_at}
                     onChange={(e) => {
                         campaignDispatch({ type: 'start_at', payload: e.target.value })
                     }}
                 />
                 <Typography sx={{
-                    m: 1,
                     alignSelf: 'center'
                 }} variant='h5'><RightArrow /></Typography>
                 <TextField
                     sx={{
-                        m: 1,
+                        m: 0.5
                     }}
+                    size="small"
                     label="End Date"
                     variant="outlined"
-                    inputProps={{ type: 'date', min : campaign.start_at }}
+                    inputProps={{ type: 'date', min: campaign.start_at }}
                     value={campaign.end_at}
                     onChange={(e) => {
                         campaignDispatch({ type: 'end_at', payload: e.target.value })
                     }}
                 />
             </div>
+            <ImageSearcher
+                fieldName="Campaign Banner"
+                defaultImageURL={campaign.image}
+                setImageURL={url => campaignDispatch({ type: 'image', payload: url })}
+            />
             <Rules
                 rules={campaign.rules}
                 setRules={rules => campaignDispatch({ type: 'rules', payload: rules })}
             />
-            
 
-        </div>
+
+        </Box>
     )
 };
 export default CampainEditableDetails;
