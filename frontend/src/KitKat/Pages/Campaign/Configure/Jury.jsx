@@ -33,6 +33,7 @@ const JuryPage = ({ campaign, campaignDispatch }) => {
             />
             <FormControlLabel
                 sx={{ m: 1 }}
+                disabled
                 control={
                     <Checkbox
                         checked={campaign.allowMultipleJudgement}
