@@ -11,86 +11,86 @@ AZURE_KEY=  os.environ['AZURE_KEY']
 
 GOOGLE_QUOTA_CHAR = 1000000
 GOOGLE_QUOTA_ELEMENT = 1000
-# GOOGLE_PROJECT_ID = os.environ['GOOGLE_PROJECT_ID']
-# GOOGLE_SERVICE_ACCOUNT = os.environ['GOOGLE_SERVICE_ACCOUNT_JSON']
+GOOGLE_PROJECT_ID = os.environ['GOOGLE_PROJECT_ID']
+GOOGLE_SERVICE_ACCOUNT = os.environ['GOOGLE_SERVICE_ACCOUNT_JSON']
 
-# GOOGLE_ENDPOINT = f"https://translation.googleapis.com/v3beta1/projects/{GOOGLE_PROJECT_ID}:translateText"
-# def _google_auth_token():
-#     """
-#     This function would return a valid google auth token.
-#     """
-#     import json, jwt, time, requests
-#     def load_json_credentials(filename):
-#         ''' Load the Google Service Account Credentials from Json file '''
-#         with open(filename, 'r') as f:
-#             data = f.read()
+GOOGLE_ENDPOINT = f"https://translation.googleapis.com/v3beta1/projects/{GOOGLE_PROJECT_ID}:translateText"
+def _google_auth_token():
+    """
+    This function would return a valid google auth token.
+    """
+    import json, jwt, time, requests
+    def load_json_credentials(filename):
+        ''' Load the Google Service Account Credentials from Json file '''
+        with open(filename, 'r') as f:
+            data = f.read()
     
-#         return json.loads(data)
+        return json.loads(data)
     
-#     def load_private_key(json_cred):
-#         ''' Return the private key from the json credentials '''
+    def load_private_key(json_cred):
+        ''' Return the private key from the json credentials '''
     
-#         return json_cred['private_key']
+        return json_cred['private_key']
     
-#     def create_signed_jwt(pkey, pkey_id, email, scope):
-#         '''
-#         Create a Signed JWT from a service account Json credentials file
-#         This Signed JWT will later be exchanged for an Access Token
-#         '''
-#         # Google Endpoint for creating OAuth 2.0 Access Tokens from Signed-JWT
-#         auth_url = "https://www.googleapis.com/oauth2/v4/token"
-#         issued = int(time.time())
-#         expires = issued + 3600	# expires_in is in seconds
-#         # Note: this token expires and cannot be refreshed. The token must be recreated
-#         # JWT Headers
-#         additional_headers = {
-#                 'kid': pkey_id,
-#                 "alg": "RS256", # Google uses SHA256withRSA
-#                 "typ": "JWT"
-#         }
-#         # JWT Payload
-#         payload = {
-#             "iss": email,		# Issuer claim
-#             "sub": email,		# Issuer claim
-#             "aud": auth_url,	# Audience claim
-#             "iat": issued,		# Issued At claim
-#             "exp": expires,		# Expire time
-#             "scope": scope		# Permissions
-#         }
-#         # Encode the headers and payload and sign creating a Signed JWT (JWS)
-#         sig = jwt.encode(payload, pkey, algorithm="RS256", headers=additional_headers)
-#         return sig
-#     def exchangeJwtForAccessToken(signed_jwt):
-#         '''
-#         This function takes a Signed JWT and exchanges it for a Google OAuth Access Token
-#         '''
+    def create_signed_jwt(pkey, pkey_id, email, scope):
+        '''
+        Create a Signed JWT from a service account Json credentials file
+        This Signed JWT will later be exchanged for an Access Token
+        '''
+        # Google Endpoint for creating OAuth 2.0 Access Tokens from Signed-JWT
+        auth_url = "https://www.googleapis.com/oauth2/v4/token"
+        issued = int(time.time())
+        expires = issued + 3600	# expires_in is in seconds
+        # Note: this token expires and cannot be refreshed. The token must be recreated
+        # JWT Headers
+        additional_headers = {
+                'kid': pkey_id,
+                "alg": "RS256", # Google uses SHA256withRSA
+                "typ": "JWT"
+        }
+        # JWT Payload
+        payload = {
+            "iss": email,		# Issuer claim
+            "sub": email,		# Issuer claim
+            "aud": auth_url,	# Audience claim
+            "iat": issued,		# Issued At claim
+            "exp": expires,		# Expire time
+            "scope": scope		# Permissions
+        }
+        # Encode the headers and payload and sign creating a Signed JWT (JWS)
+        sig = jwt.encode(payload, pkey, algorithm="RS256", headers=additional_headers)
+        return sig
+    def exchangeJwtForAccessToken(signed_jwt):
+        '''
+        This function takes a Signed JWT and exchanges it for a Google OAuth Access Token
+        '''
     
-#         auth_url = "https://www.googleapis.com/oauth2/v4/token"
+        auth_url = "https://www.googleapis.com/oauth2/v4/token"
     
-#         params = {
-#             "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-#             "assertion": signed_jwt
-#         }
+        params = {
+            "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "assertion": signed_jwt
+        }
     
-#         r = requests.post(auth_url, data=params)
+        r = requests.post(auth_url, data=params)
     
-#         if r.ok:
-#             return(r.json()['access_token'], '')
-#         return None, r.text
-#     scopes = 'https://www.googleapis.com/auth/cloud-translation'
-#     cred = load_json_credentials(GOOGLE_SERVICE_ACCOUNT_JSON)
-#     private_key = load_private_key(cred)
-#     s_jwt = create_signed_jwt(
-#             private_key,
-#             cred['private_key_id'],
-#             cred['client_email'],
-#             scopes)
+        if r.ok:
+            return(r.json()['access_token'], '')
+        return None, r.text
+    scopes = 'https://www.googleapis.com/auth/cloud-translation'
+    cred = load_json_credentials(GOOGLE_SERVICE_ACCOUNT)
+    private_key = load_private_key(cred)
+    s_jwt = create_signed_jwt(
+            private_key,
+            cred['private_key_id'],
+            cred['client_email'],
+            scopes)
  
-#     token, err = exchangeJwtForAccessToken(s_jwt)
-#     if err:
-#         raise Exception(err)
-#     return token
-# GOOGLE_KEY = _google_auth_token()
+    token, err = exchangeJwtForAccessToken(s_jwt)
+    if err:
+        raise Exception(err)
+    return token
+GOOGLE_KEY = _google_auth_token()
 def _translate_azure(texts, target):
     """
     This function would take a list of texts and translate them to target language.
@@ -140,7 +140,6 @@ def _translate_google(texts, target):
     This function would take a list of texts and translate them to target language.
     It would return a list of translated texts and the remaining texts that could not be translated.
     """
-    pass
     with Session() as sess:
         sess.headers = {
             'Content-Type': 'application/json',
@@ -158,7 +157,8 @@ def _translate_google(texts, target):
             }
             res = sess.post(GOOGLE_ENDPOINT, json=data)
             if res.status_code != 200:
-                print(res.status_code, res.text)
+                resp_json = res.json()
+                print(res.status_code, resp_json)
                 return {}, texts
             res = res.json()
             results.extend([x['translatedText'] for x in res['translations']])
@@ -183,9 +183,10 @@ def translate(texts, target):
     It would return a list of translated texts and the remaining texts that could not be translated.
     """
     # return _translate_google(texts, target)
-    return _translate_azure(texts, target)
+    return _translate_google(texts, target)
 
 if __name__ == "__main__":
+    pass
     # token = _google_auth_token()
     # print(token)
-    print(translate(["I would really like to drive your car around the block a few times!", "weight"], "bn"))
+    print(translate(["I would really like to drive your car around the block a few times!", "weight"], "mr"))
