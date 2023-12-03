@@ -24,10 +24,10 @@ const defaultCampaign = {
     blacklist: [],
     maximumSubmissionOfSameArticle: 1, // Maximum number of times an article can be submitted
     allowExpansions: true, // Allow users to submit articles that were not created rather expanded
-    minimumTotalBytes: 1000, // Minimum total bytes of all articles
-    minimumTotalWords: 300, // Minimum total words of all articles
-    minimumAddedBytes: 1000, // Minimum bytes added to the article
-    minimumAddedWords: 300, // Minimum words added to the article
+    minimumTotalBytes: 4000, // Minimum total bytes of all articles
+    minimumTotalWords: 400, // Minimum total words of all articles
+    minimumAddedBytes: 4000, // Minimum bytes added to the article
+    minimumAddedWords: 400, // Minimum words added to the article
     secretBallot: true, // If true, jury members will not be able to see each other's votes
     allowJuryToParticipate: true, // If true, jury members will be able to participate in the campaign
     allowMultipleJudgement: true, // If true, different jury members will be able to judge the same article 
