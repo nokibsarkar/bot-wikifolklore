@@ -48,7 +48,7 @@ const CampaignFilter = ({ filter, setFilter }) => {
             <Autocomplete
                 disablePortal
                 id="article-name"
-                options={['running', 'pending', 'cancelled']}
+                options={[ 'pending', 'scheduled', 'running', 'cancelled', 'rejected']}
                 size="small"
                 multiple
                 loading={false}
@@ -86,7 +86,8 @@ const CampaignList = () => {
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState({
         language: '',
-        status: ['running']
+        status: ['running', 'scheduled']
+
     })
     useEffect(() => {
         (async () => {
