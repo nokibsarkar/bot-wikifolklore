@@ -72,7 +72,7 @@ jobs:
           chmod 600 id_rsa
       - name: Send Build to Server
         run: |
-          rsync -Pav -e "ssh -i id_rsa" ${{ vars.LOCAL_TEMP_PATH }}/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}
+          rsync -Pav -e "ssh -i id_rsa" ${{ vars.LOCAL_TEMP_PATH }}/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}"
           # python3 deploy.py ${{ secrets.SSH_USER }} id_rsa ${{ vars.LOCAL_TEMP_PATH }} ${{ secrets.SSH_REMOTE_PATH }}
       - name: Restart Gunicorn
         run: |
