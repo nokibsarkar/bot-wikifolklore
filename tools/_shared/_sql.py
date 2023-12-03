@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `topic_category` (
     `category_id`	INTEGER NOT NULL,
     PRIMARY KEY(`topic_id`,`category_id`)
 );
-INSERT OR IGNORE INTO `user` (`id`, `username`, `rights`) VALUES (1, 'admin', 1);
+--- INSERT OR IGNORE INTO `user` (`id`, `username`, `rights`) VALUES (1, 'admin', 1);
 """
 SQL2_INIT = """
 -- This Table would be used to store the article
