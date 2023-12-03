@@ -8,6 +8,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, LinearP
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import GavelIcon from '@mui/icons-material/Gavel';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import CampaignHeader from "../../../Components/CampaignHeader";
 import { AllButton, DetailsButton, JudgeButton } from "../../../Components/CampaignButtons";
 const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
@@ -162,23 +163,94 @@ const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
         </div>
     )
 }
+const Preview = ({ title, language }) => {
+    const [previewText, setPreviewText] = useState('<p style="text-align: center;">Loading the preview, please wait...</p>');
+    const isMobile = useMediaQuery('(max-width:600px)');
+    const wikipediaURL = `https://${language}.wikipedia.org`;
+    const baseURL = `${wikipediaURL}/wiki/${title}`
+    const styleSheet = `${wikipediaURL}/w/load.php?debug=false&lang=${language}&modules=ext.cite.styles|ext.echo.badgeicons|ext.echo.styles.badge|ext.flaggedRevs.basic|ext.gadget.logo|ext.math.scripts,styles|ext.tmh.thumbnail.styles|ext.uls.nojs|ext.wikimediaBadges|mediawiki.legacy.commonPrint,shared|mediawiki.page.gallery.styles|mediawiki.sectionAnchor|mediawiki.skinning.interface|site.styles|skins.vector.styles|wikibase.client.init|ext.kartographer.style&only=styles&skin=vector`;
+    useEffect(() => {
+        (async () => {
+            const preview = await KitKatServer.Wiki.getParsedWikiText(language, title);
+            setPreviewText(preview);
+        })();
+    }, [title, language]);
+    return (
+        <Paper
+            component="iframe"
+            elevation={3}
+            sx={{
+                position: 'relative',
+                p: 0,
+                m: 0,
+                border: 0,
+                my: 2,
+                alignSelf: 'center',
+                height: '80%',
+                minHeight: '500px',
+                overflowX: 'revert',
+                width: '100%',
+                overflowX: 'hidden',
+            }}
+            sandbox="allow-popups allow-scripts"
+            srcDoc={`<!DOCTYPE html>
+            <html style='padding: 10px' >
+            <head>
+               <base href='${baseURL}' target='_blank'>
+               <link rel='stylesheet' href='${styleSheet}' />
+            </head>
+            <body class='mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject skin-vector' style='background: white; height: auto'>
+            <div class="mw-indicators" style="z-index: 1; position: relative">
+               
+            </div>
+            
+               <div id='bodyContent' class='vector-body'>${previewText}</div>
+               
+               <script type='text/javascript'>
+                  (function() {
+                     var url = window.location.href;
+                     function getAnchor(element) {
+                        for (;;) {
+                           if (!element) return null;
+                           if (element.nodeName === 'A') return element;
+                           element = element.parentElement;
+                        }
+                     }
+                     document.body.addEventListener('click', function(e) {
+                        var anchor = getAnchor(e.target);
+                        if (!anchor) return;
+                        var href = anchor.getAttribute('href');
+                        if (!href || href[0] != '#') return;
+                        // window.location.hash = href;
+                        window.location.replace(url + href);
+                        e.preventDefault();
+                     }, true);
+                  })();
+               </script>
+            </body>
+            </html>
+            `}
+        />
+    )
+}
 const JudgeSubmission = () => {
+    console.log('rendering judge submission')
     const { campaignID, submissionID } = useParams();
     const [submission, setSubmission] = useState(null);
     const [campaign, setCampaign] = useState(null);
     const [title, setTitle] = useState('');
-    // const [language, setLanguage] = useState('');
-
-    const [previewText, setPreviewText] = useState('<p style="text-align: center;">Loading the preview, please wait...</p>');
+    const preview = useMemo(() => {
+        if (!submission) return <div>Loading Preview</div>
+        return <Preview title={title} language={submission.language} />
+    }, [submissionID, submission]);
     const judge = useCallback((point) => {
         KitKatServer.Page.judgeSubmission(submission.id, point).then(
             () => console.log('judged')
         )
     }, [submission]);
     useEffect(() => {
-        KitKatServer.addWikiStyle();
+        // KitKatServer.addWikiStyle();
         const newBase = document.createElement('base');
-        const currentBase = window.location.origin;
         // create a new base element and set it's href to the intended url
         (async () => {
             const [subm, camp] = await Promise.all([KitKatServer.Page.getSubmission(submissionID), KitKatServer.Campaign.getCampaign(campaignID)])
@@ -186,11 +258,7 @@ const JudgeSubmission = () => {
             setTitle(subm.title);
             // setLanguage(subm.language);
             setCampaign(camp);
-            // newBase.setAttribute('href', `https://${subm.language}.wikipedia.org`);
-            // // get the head element (we'll append the base to this)
-            // document.head.appendChild(newBase);
-            const preview = await KitKatServer.Wiki.getParsedWikiText(subm.language, subm.title);
-            setPreviewText(preview);
+
         })();
         return () => newBase.remove();
     }, []);
@@ -201,21 +269,10 @@ const JudgeSubmission = () => {
             <DetailsButton campaign={campaign} />
             <AllButton campaign={campaign} />
         </div>
-        <div style={{ textAlign: 'center', height: '10%', position: 'relative' }}>
+        <div style={{ textAlign: 'center', height: '8%', position: 'relative' }}>
             <PageInfo title={title} campaign={campaign} />
         </div>
-        <Paper
-            dangerouslySetInnerHTML={{ __html: previewText }}
-            elevation={3}
-            sx={{
-                position: 'relative',
-                padding: '15px',
-                margin: 2,
-                alignSelf: 'center',
-                height: '80%',
-                overflowX: 'revert'
-            }}
-        />
+        {preview}
         <JudgeMentBox judge={judge} campaignID={campaignID} submissionID={submissionID} />
     </div>
 }

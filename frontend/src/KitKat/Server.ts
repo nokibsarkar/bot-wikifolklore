@@ -25,6 +25,7 @@ type PageInfoRequest = {
     title: string;
     submitter: string;
     consideredAfter?: string;
+    submissionId?: number | null
 }
 type WikiTextParseResponse = {
     parse: {
@@ -114,7 +115,7 @@ const sampleSubmission: Submission = {
     submissionID: 1,
     campaignID: 1,
     submitter: "User:Example",
-    title: "Kit Kat",
+    title: "Bangladesh",
     createdAt: new Date().toISOString(),
     language: "en",
     status: "pending"
@@ -228,7 +229,7 @@ class CampaignServer {
     }
 }
 class PageServer {
-    static async getPageInfo({ language, submitter, title }: PageInfoRequest): Promise<PageInfo> {
+    static async getPageInfo({ language, submitter, title, submissionId }: PageInfoRequest): Promise<PageInfo> {
         return samplePageInfo;
     }
     static async getSubmission(submissionID: number): Promise<Submission> {
