@@ -12,9 +12,6 @@ jobs:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     steps:
       - uses: actions/checkout@v3
-      - name: Install Pysftp
-        run: |
-          pip3 install pysftp
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
