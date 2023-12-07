@@ -206,5 +206,4 @@ if __name__ == "__main__":
     pass
     # token = _google_auth_token()
     # print(token)
-    print(GOOGLE_KEY)
     print(translate(["I would really like to drive your car around the block a few times!", "weight"], "mr"))
