@@ -47,8 +47,8 @@ const ArticleSubmissionPage = () => {
         const submissionRequest = {
             language: campaign.language,
             title: article,
-            submitter: null,
-            campaignID: campaign.id
+            submitted_by_username: KitKatServer.BaseServer.loginnedUser().username,
+            campaign_id: campaign.id.toString()
         }
         KitKatServer.Campaign.submitArticle(submissionRequest).then(submission => {
             console.log(submission);

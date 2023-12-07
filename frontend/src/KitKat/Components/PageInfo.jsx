@@ -25,31 +25,37 @@ const StatementWithStatus = ({ statement, status }) => {
             </Typography>
     }
 }
-const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null}) => {
+const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null, submission = null }) => {
     const [addedBytes, setAddedBytes] = useState(0);
     const [addedWords, setAddedWords] = useState(0);
     const [totalBytes, setTotalBytes] = useState(0);
     const [totalWords, setTotalWords] = useState(0);
     const [createdAt, setCreatedAt] = useState('');
-    const [updatedAt, setUpdatedAt] = useState('');
     const [createdBy, setCreatedBy] = useState('');
     useEffect(() => {
-        const infoRequest = {
-            language: campaign.language,
-            title: title,
-            submitter: submitter,
-            campaignID: campaign.id,
-            submissionID: submissionId
+        const setInfo = (submission) => {
+            if (setPageInfo) setPageInfo(submission);
+            setAddedBytes(submission.added_bytes);
+            setAddedWords(submission.added_words);
+            setTotalBytes(submission.total_bytes);
+            setTotalWords(submission.total_words);
+            setCreatedAt(submission.created_at);
+            setCreatedBy(submission.created_by_username);
         }
-        KitKatServer.Page.getPageInfo(infoRequest).then(pageinfo => {
-            if (setPageInfo) setPageInfo(pageinfo);
-            setAddedBytes(pageinfo.addedBytes);
-            setAddedWords(pageinfo.addedWords);
-            setTotalBytes(pageinfo.totalBytes);
-            setTotalWords(pageinfo.totalWords);
-            setCreatedAt(pageinfo.createdAt);
-            setCreatedBy(pageinfo.createdBy);
-        });
+        if (!submission) {
+            const infoRequest = {
+                language: campaign.language,
+                title: title,
+                submitter: submitter,
+                campaignID: campaign.id,
+                submissionID: submissionId
+            }
+            KitKatServer.Page.getPageInfo(infoRequest).then(setInfo);
+        } else {
+            setInfo(submission);
+        }
+
+        
     }, [title]);
 
     return (

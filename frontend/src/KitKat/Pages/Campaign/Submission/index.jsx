@@ -18,6 +18,7 @@ const SubmissionList = () => {
             setLoading(true);
             const campaign = await KitKatServer.Campaign.getCampaign(campaignID);
             const submissions = await KitKatServer.Campaign.getSubmissions(campaignID);
+            
             setCampaign(campaign);
             setSubmissions(submissions);
             setLoading(false);
@@ -37,10 +38,10 @@ const SubmissionList = () => {
                 rows={submissions}
                 loading={loading}
                 density="compact"
-                getRowId={(row) => row.submissionID}
+                // getRowId={(row) => row.submissionID}
                 columns={[
                     { field: 'title', headerName: 'Title', flex: 1 },
-                    { field: 'submitter', headerName: 'Submitter', flex: 1 },
+                    { field: 'submitted_by_username', headerName: 'Submitter', flex: 1 },
                     {
                         field: 'score', headerName: 'Score', flex: 0.5, renderCell: (params) => {
                             const scores = []
@@ -76,7 +77,7 @@ const SubmissionList = () => {
                     },
                     {
                         field: 'action', headerName: 'Judge', renderCell: (params) => {
-                            const url = `/kitkat/campaign/${campaignID}/submission/${params.row.submissionID}`
+                            const url = `/kitkat/campaign/${campaignID}/submission/${params.row.id}`
                             return <Button variant="contained" color="primary" size="small"
                                 component={Link}
                                 to={url}

@@ -217,7 +217,8 @@ class Submission:
         }
         return stat
     @staticmethod
-    def fetch_stats(lang :str, title : str, submitted_by_username : str, start_at : str, end_at : str) -> dict:
+    def fetch_stats(lang :str, title : str, submitted_by_username : str, start_at : str, end_at : str) -> tuple[list[str], dict[str, str | int]]:
+        errors = []
         current_info = Submission._fetch_current_info(lang, title)
         pageid = current_info['pageid']
         first_revision_info = Submission._fetch_first_revision(lang, pageid)
@@ -228,13 +229,11 @@ class Submission:
             'oldid' : current_info['oldid'],
             'words' : current_info['words'],
             'bytes' : current_info['bytes'],
-            'added_words' : 100,
-            'added_bytes' : 100,
             'created_at' : first_revision_info['timestamp'],
             'created_by_username' : first_revision_info['username'],
             'created_by_id' : first_revision_info['user_id'],
-            'submitted_by_username' : submitted_by_username,
-            'submitted_by_id' : 100,
+            'added_words' : 100,
+            'added_bytes' : 100,
         }
         return errors, stats
     @staticmethod
@@ -260,6 +259,8 @@ class Submission:
         return SubmissionScheme(**new_submission)
     @staticmethod
     def get_all_by_campaign_id(conn : sqlite3.Cursor, campaign_id, judgable : bool=None, judged : bool=None):
-
         return conn.execute(SQL1_SELECT_SUBMISSIONS, {'campaign_id': campaign_id}).fetchall()
+    @staticmethod
+    def get_by_id(conn : sqlite3.Cursor, id : str) -> SubmissionScheme:
+        return conn.execute(SQL1_GET_SUBMISSION_BY_ID, {'id': id}).fetchone()
     
