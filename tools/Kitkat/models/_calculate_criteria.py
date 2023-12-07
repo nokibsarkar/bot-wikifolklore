@@ -1,17 +1,22 @@
-# from ..._shared._model import *
+from ..._shared._model import *
 from requests import Session
 import wikitextparser as wtp
 import re
-from difflib import Differ, unified_diff
+import dateparser as dp
+from difflib import Differ
 sess = Session()
 d = Differ()
 sess.headers.update({
     'User-Agent': 'Kitkat/1.0',
 })
+
+
+
 REFERENCE = re.compile("<ref.*?(?:>.*?</ref>|/>)")
 MULTIPLE_NEWLINE = re.compile("\n+", re.MULTILINE)
 WHITESPACE = re.compile("[\t –]+")
-def _remove_referece(content: str) -> str:
+UNIFIED_HEADER = re.compile("@@ -(\d+),(\d+) \+(\d+),(\d+) @@", re.MULTILINE)
+def _remove_reference(content: str) -> str:
     """
     This will remove the reference from the content
     """
@@ -31,9 +36,8 @@ def _preprocess(content: str) -> str:
     2. Replace the multiple whitespace with single whitespace
     3. Remove the markup and templates
     """
-    content = _remove_referece(content)
+    content = _remove_reference(content)
     content = _remove_whitespace(content)
-    print(content)
     content = wtp.remove_markup(content)
     content = _remove_whitespace(content)
 
@@ -43,259 +47,63 @@ def _split_into_lines(content: str) -> list[str]:
     This will split the content into lines
     """
     content = _preprocess(content)
-    # print(content)
-    return content.splitlines()
-def _calculate_differece(lang: str, revision_id : int) -> tuple[list[str], list[str]]:
+    return content.splitlines(True)
+
+def _calculate_added_words(lines : list[str]) -> int:
     """
-    This Calculate the difference between two revisions
+    This will calculate the added words
     """
-    content1 = """
-    {{Short description|1971 benefit concert organised by George Harrison and Ravi Shankar}}
-{{About|the concerts|the album|The Concert for Bangladesh (album)|the film|The Concert for Bangladesh (film)}}
-{{Good article}}
-{{Use dmy dates|date=August 2022}}
-{{Use British English |date=October 2012}}
-{{Infobox music festival
-| music_festival_name = The Concert for Bangladesh
-| image = MSG box-office sign for Concert for Bangladesh.jpg
-| caption = Poster outside the Madison Square Garden box office, July 1971
-| founders = [[George Harrison]], [[Ravi Shankar]]
-| location = [[Madison Square Garden]], New York City, US
-| dates = 1 August 1971
-| genre = [[Rock music|Rock]]
-}}
-
-'''The Concert for Bangladesh''' (or Bangla Desh, as the country's name was originally spelt)<ref name="Harry p 135">Harry, p. 135.</ref> was a pair of [[benefit concert]]s organised by former [[The Beatles|Beatles]] guitarist [[George Harrison]] and Indian [[sitar]] player [[Ravi Shankar]]. The shows were held at 2:30 and 8:00{{nbsp}}pm on Sunday, 1 August 1971, at [[Madison Square Garden]] in New York City, to raise international awareness of, and fund relief for refugees from [[East Pakistan]], following the [[Bangladesh Liberation War]]-related [[1971 Bangladesh genocide|genocide]]. The concerts were followed by a bestselling [[The Concert for Bangladesh (album)|live album]], a boxed three-record set, and [[Apple Films]]' [[The Concert for Bangladesh (film)|concert documentary]], which opened in cinemas in the spring of 1972.
-
-The event was the first-ever benefit of such a magnitude,<ref name="Eds of RS p 43">The Editors of ''Rolling Stone'', p. 43.</ref> and featured a [[Supergroup (music)|supergroup]] of performers that included Harrison, fellow ex-Beatle [[Ringo Starr]], [[Bob Dylan]], [[Eric Clapton]], [[Billy Preston]], [[Leon Russell]] and the band [[Badfinger]]. In addition, Shankar and [[Ali Akbar Khan]] – both of whom had ancestral roots in Bangladesh – performed an opening set of [[Indian classical music]]. The concerts were attended by a total of 40,000 people, and the initial gate receipts raised close to $250,000 for Bangladesh relief, which was administered by [[UNICEF]].
-
-After collecting the musicians easily, Harrison found it extremely difficult to get the recording industry to release the rights for performers to share the stage, and millions of dollars raised from the album and film were tied up in IRS tax escrow accounts for years, but the concert has been recognised as a highly successful and influential humanitarian aid project, generating both awareness and considerable funds as well as providing valuable lessons and inspiration for projects that followed, such as [[Live Aid]].<ref name="RS Encyclopedia" /><ref name="CFBD Revisited Lyons & Annan">Interviews with Charles J. Lyons and Kofi Annan, in ''The Concert for Bangladesh Revisited''.</ref><ref name="Rodriguez p 51">Rodriguez, p. 51.</ref>
-
-By 1985, through revenue raised from the ''Concert for Bangladesh'' live album and film, an estimated $12 million had been sent to Bangladesh,<ref name="Johnston/LA Times" /> and sales of the live album and DVD release of the film continue to benefit the George Harrison Fund for UNICEF. Decades later, Shankar would say of the overwhelming success of the event: "In one day, the whole world knew the name of Bangladesh. It was a fantastic occasion."<ref name="Olivia p 286" />
-
-==Background==
-[[File:1970 Bhola cyclone track.png|thumb|left|Bhola cyclone track during the second week of November 1970]]
-As [[East Pakistan]] struggled to become the separate state of [[Bangladesh]] during the 1971 [[Bangladesh Liberation War]], the political and military turmoil and [[1971 Bangladesh atrocities|associated atrocities]] led to a massive [[refugee]] problem,<ref>Lavezzoli, pp. 186–87.</ref> with at least 7 million displaced people pouring into neighbouring [[India]].<ref name="Schaffner p 146">Schaffner, p. 146.</ref> East Pakistan had recently endured devastation as a result of the [[1970 Bhola cyclone|Bhola cyclone]], and the [[Bengali people|Bengalis]]' desperate plight increased in March that year when torrential rains and floods arrived in the region,<ref name="Lavezzoli p 187">Lavezzoli, p. 187.</ref> threatening a humanitarian disaster.<ref name="Eds of RS p 42">The Editors of ''Rolling Stone'', p. 42.</ref><ref name="Clayson p 308">Clayson, p. 308.</ref> Quoting figures available at the time, a ''[[Rolling Stone]]'' feature claimed that up to half a million Bengalis had been killed by the cyclone in November 1970 and that the Pakistani army's subsequent campaign of slaughter under [[Operation Searchlight]] accounted for at least 250,000 civilians, "by the most conservative estimates".<ref name="Eds of RS p 123">The Editors of ''Rolling Stone'', p. 123.</ref> Following the mass exodus to [[Calcutta]], a new threat arrived as the refugees faced starvation and the outbreak of diseases such as [[cholera]].<ref name="Greene p 186">Greene, p. 186.</ref><ref>Liner notes, booklet accompanying ''[[The Concert for Bangladesh (album)|The Concert for Bangladesh]]'' reissue (Sony BMG, 2005; produced by George Harrison & Phil Spector), p. 7.</ref>
-
-{{quote box |quote=I was in a very sad mood, having read all this news, and I said, "George, this is the situation, I know it doesn't concern you, I know you can't possibly identify." But while I talked to George he was very deeply moved&nbsp;... and he said, "Yes, I think I'll be able to do something."<ref name="Schaffner p 146" /> |source=– Ravi Shankar, 1971 |width=25% |align=right |style=padding:8px;}}
-Appalled at the situation affecting his homeland and relatives,<ref name="Lavezzoli p 187" /><ref name="Eds of RS p 42" /> Bengali musician [[Ravi Shankar]] first brought the issue to the attention of his friend [[George Harrison]] in the early months of 1971, over dinner at [[Friar Park]], according to [[Klaus Voormann]]'s recollection.<ref name="Leng p 111">Leng, p. 111.</ref><ref name="Sullivan">James Sullivan, [https://web.archive.org/web/20130620075346/http://www.spinner.com/2011/08/01/george-harrison-concert-for-bangladesh/ "George Harrison's Concert for Bangladesh Featured Drug Trouble for Eric Clapton, Stage Fright for Bob Dylan"], spinner.com, 1 August 2011 (archived version retrieved: 12 October 2013).</ref> By April, Shankar and Harrison were in Los Angeles working on the soundtrack to the film ''[[Raga (film)|Raga]]'',<ref name="Lavezzoli p 187" /> during which Harrison wrote the song "[[Miss O'Dell]]", commenting on corruption among the Indian authorities as aid shipments of rice from the West kept "''going astray on [their] way to Bombay''".<ref>George Harrison, pp. 220, 248.</ref><ref name="Clayson p 317" /> After returning to England to produce [[Badfinger]]'s ''[[Straight Up (Badfinger album)|Straight Up]]'' album and take part in sessions for [[John Lennon]]'s ''[[Imagine (John Lennon album)|Imagine]]''<ref>Badman, pp. 37–38.</ref><ref>Leng, pp. 108, 110.</ref> – all the while, being kept abreast of developments by Shankar,<ref name="Lavezzoli p 188"/> via newspaper and magazine cuttings<ref name="IMM p 59">George Harrison, p. 59.</ref> – Harrison was back in Los Angeles to finish the ''Raga'' album in late June.<ref name="Clayson p 308" /><ref name="Spizer p 240">Spizer, p. 240.</ref> By then, the ''[[The Sunday Times|Sunday Times]]'' in London had just published an influential article by Pakistani journalist [[Anthony Mascarenhas]], which exposed the full horror of the Bangladesh atrocities,<ref name="Dummett">Mark Dummett, [https://www.bbc.co.uk/news/world-asia-16207201 "Bangladesh war: The article that changed history"], [[BBC News Online]], 16 December 2011 (retrieved 4 September 2012).</ref><ref name="Haider">Zahrah Haider, [http://www.thedailystar.net/lifestyle/spotlight/media-coverage-and-the-war-1971-187237 "Media coverage and the War of 1971"], ''[[The Daily Star (Bangladesh)|The Daily Star]]'', 15 December 2015 (retrieved 13 January 2016).</ref> and a distraught Shankar approached Harrison for help in trying to alleviate the suffering.<ref name="Schaffner p 146" /><ref>Greene, p. 185.</ref> Harrison later talked of spending "three months" on the phone organising the Concert for Bangladesh, implying that efforts were under way from late April onwards;<ref name="IMM p 60">George Harrison, p. 60.</ref><ref name="Clayson p 309">Clayson, p. 309.</ref> it is widely acknowledged that the project began in earnest during the last week of June 1971, however, five or six weeks before the event took place on 1 August.<ref name="Eds of RS p 123" /><ref name="Leng p 111" /><ref name="Harris Mojo">John Harris, "A Quiet Storm", ''[[Mojo (magazine)|Mojo]]'', July 2001, p. 74.</ref>
-
-==Preparation==
-{{See also|Bangla Desh (song)}}
-Shankar's original hope was to raise $25,000<ref name="Greene p 186" /> through a benefit concert of his own, [[Compere (host)|compere]]d perhaps by actor [[Peter Sellers]].<ref name="IMM p 59" /><ref name="Clayson p 309" /> With Harrison's commitment, and the record and film outlets available to him through [[the Beatles]]' [[Apple Corps]] organisation, the idea soon grew to become a star-studded musical event,<ref name="Lavezzoli p 188" /><ref name="Madinger & Easter p 435">Madinger & Easter, p. 435.</ref> mixing Western rock with [[Indian classical music]], and it was to be held at the most prestigious venue in America: [[Madison Square Garden]], in New York City.<ref name="Clayson p 308" /><ref>Leng, pp. 111, 115.</ref> According to Chris O'Dell, a music-business administrator and former Apple employee, Harrison got off the phone with Shankar once the concept had been finalised, and started enthusing with his wife, [[Pattie Boyd]], about possible performers.<ref name="O'Dell pp 195–96">O'Dell, pp. 195–96.</ref> [[Ringo Starr]], Lennon, [[Eric Clapton]], [[Leon Russell]], [[Jim Keltner]], Voormann, [[Billy Preston]] and Badfinger were all mentioned during this initial brainstorming.<ref name="O'Dell pp 195–96" />
-
-{{quote box |quote=The Concert For Bangladesh happened because of my relationship with Ravi&nbsp;... I said, "If you want me to be involved, I think I'd better be really involved," so I started recruiting all these people.<ref name="Super70s words">[http://www.superseventies.com/ssgeorgeharrison.html George Harrison – In His Own Words], superseventies.com (retrieved 15 March 2013).</ref> |source=– George Harrison, 1992 |width=25% |align=left |style=padding:8px;}}
-O'Dell set about contacting local musicians from the Harrisons' rented house in [[Nichols Canyon, Los Angeles|Nichols Canyon]],<ref name="O'Dell pp 196–97">O'Dell, pp. 196–97.</ref> as Harrison took the long-distance calls, hoping more than anything to secure [[Bob Dylan]]'s participation.<ref name="Rodriguez p 50">Rodriguez, p. 50.</ref><ref>The Editors of ''Rolling Stone'', pp. 42, 123.</ref> Almost all of Harrison's first-choice names signed on immediately,<ref name="Clayson p 309" /> while a day spent boating with [[Memphis, Tennessee|Memphis]] musician [[Don Nix]] resulted in the latter agreeing to organise a group of backing singers.<ref name="O'Dell p 197">O'Dell, p 197.</ref><ref>George Harrison, plate XXXI, p. 399.</ref> A local Indian [[astrologer]] had advised early August as a good time in which to stage the concert,<ref name="Lavezzoli p 188">Lavezzoli, p. 188.</ref> and as things transpired, the first day of that month, a Sunday, was the only day that Madison Square Garden was available at such short notice.<ref name="IMM p 60" />
-
-[[File:George Harrison - Bangla Desh.png|thumb|right|150px|Trade ad for Harrison's "Bangla Desh" single, August 1971]]
-By the first week of July,<ref name="Badman p 38">Badman, p. 38.</ref> Harrison was in a Los Angeles studio recording his purpose-written song, "[[Bangla Desh (song)|Bangla Desh]]", with co-producer [[Phil Spector]].<ref name="Leng p 112">Leng, p. 112.</ref> The song's opening verse documents Shankar's plea to Harrison for assistance,<ref>George Harrison, p. 220.</ref> and the lyrics "''My friend came to me with sadness in his eyes / Told me that he wanted help before his country dies''" provided an enduring image for what [[Secretary-General of the United Nations|United Nations Secretary-General]] [[Kofi Annan]] later recognised as the basic human aspect behind the cause.<ref>Interview with Kofi Annan, in ''The Concert for Bangladesh Revisited''.</ref>
-
-Harrison then met with Badfinger in London to explain that he would have to abandon work on ''Straight Up'',<ref name="Madinger & Easter p 435" /><ref name="Leng p 114">Leng, p. 114.</ref> before flying to New York on 13 July to see Lennon.<ref>Badman, pp. 39–40.</ref> During the middle of July also,<ref name="Castleman & Podrazik p 103">Castleman & Podrazik, p. 103.</ref> once back in Los Angeles, Harrison produced Shankar's Bangladesh benefit record, an [[Extended play|EP]] titled ''[[Joi Bangla]]''.<ref name="Lavezzoli p 190">Lavezzoli, p. 190.</ref> The latter featured contributions from East Bengal-born [[Ali Akbar Khan]], on [[sarod]],<ref>Lavezzoli, pp. 51, 190.</ref> and [[tabla]] player [[Alla Rakha]].<ref name="Leng p 112" /> As with Harrison's "Bangla Desh", all profits from this recording would go to the newly established George Harrison–Ravi Shankar Special Emergency Relief Fund, to be distributed by [[UNICEF]].<ref name="Schaffner p 146" />{{refn |group=nb|Around this time, a phone call went out to [[Mick Jagger]], who was forced to turn down Harrison's invitation to perform, due to [[the Rolling Stones]]' precarious situation as [[tax exile]]s in France.<ref name="Eds of RS p 123" /><ref name="Clayson p 309" />}} Also around the middle of July, the upcoming concert by "George Harrison and Friends" was announced "via a minuscule ad buried in the back pages of the ''[[The New York Times|New York Times]]''", author [[Nicholas Schaffner]] wrote in 1977.<ref name="Schaffner p 146" /> Tickets sold out in no time, leading to the announcement of a second show.<ref name="Tillery p 98">Tillery, p. 98.</ref><ref name="Clayson p 310" />
-
-Towards the end of the month, when all parties were due to meet in New York for rehearsals,<ref name="Leng p 114" /> Harrison had the commitment of a backing band comprising Preston on keyboards, the four members of Badfinger on acoustic rhythm guitars and tambourine, Voormann and Keltner, on bass and drums, respectively, and saxophonist [[Jim Horn]]'s so-called "Hollywood Horns", which included [[Chuck Findley]], [[Jackie Kelso]] and Lou McCreary.<ref>Clayson, pp. 309, 310.</ref><ref name="Leng p 116">Leng, p. 116.</ref> Of the established stars, Leon Russell had committed also, but on the proviso that he be supported by members of his tour band.<ref name="O'Dell p 197" /> Eric Clapton insisted that he too would be there, even though O'Dell and other insiders, knowing of the guitarist's incapacity due to severe heroin addiction,<ref name="Spizer p 240" /> were surprised that Harrison had considered him for the occasion.<ref name="Clayson p 309" /><ref name="O'Dell pp 195–96" />
-
-Among Harrison's former bandmates, Lennon initially agreed to take part in the concert without his wife and musical partner [[Yoko Ono]], as Harrison had apparently stipulated.<ref name="Eds of RS p 42" /><ref>Clayson, pp. 308–09.</ref> Lennon then allegedly had an argument with Ono as a result of this agreement<ref name="Alpert" /> and left New York in a rage two days before the concerts.<ref name="Clayson p 311">Clayson, p. 311.</ref><ref>Yoko Ono, [https://www.flickr.com/photos/yokoonoofficial/3385752173/ "New York City"], booklet accompanying ''[[John Lennon Anthology]]'' box set (EMI Records, 1998; produced by Yoko Ono & Rob Stevens).</ref>{{refn |group=nb|Lennon soon offered a different version of events, blaming manager [[Allen Klein]] for spreading false rumours, yet coming up with a story of his own that seemed to make a more damning case against himself: "I just didn't feel like it. We were in the [[Virgin Islands]] and I certainly wasn't going to be rehearsing in New York, then going back to the Virgin Islands, then coming back up to New York and singing."<ref name="Badman p 45">Badman, p. 45.</ref>}} Starr's commitment had never been in question,<ref name="Greene p 186" /> and he interrupted the filming of his movie ''[[Blindman]]'' in [[Almeria]], Spain, in order to attend.<ref name="Clayson p 308" /><ref>Tillery, p. 97.</ref> [[Paul McCartney]] declined to take part, however, citing the bad feelings caused by the Beatles' legal problems on their break-up.<ref name="Clayson p 308" /><ref name="Woffinden p 49">Woffinden, p. 49.</ref>{{refn |group=nb|In a November 1971 interview with [[Chris Charlesworth]] of ''[[Melody Maker]]'', McCartney said that his decision had been based partly on Klein's involvement. According to McCartney, a Beatles reunion would have been "an historical event", for which "Klein would have taken the credit".<ref name="Badman p 54">Badman, p. 54.</ref>}}
-
-==Rehearsals==
-The Harrisons decamped to the Park Lane Hotel in New York City,<ref name="Greene p 187">Greene, p. 187.</ref> and the first rehearsal took place on Monday, 26 July, at Nola Studios on [[57th Street (Manhattan)|West 57th Street]].<ref name="Clayson p 310">Clayson, p. 310.</ref><ref name="Badman p 43">Badman, p. 43.</ref> Harrison had written a possible [[Set list|setlist]] for the concert while sketching design ideas for Shankar's ''Joi Bangla'' picture sleeve.<ref name="Olivia p 288">Olivia Harrison, p. 288.</ref> As well as the songs he would go on to perform on 1 August, Harrison's list included his own compositions "[[All Things Must Pass (song)|All Things Must Pass]]" – "with Leon [Russell]", apparently – "[[Art of Dying (song)|Art of Dying]]" and the just-recorded [[B-side]] "[[Deep Blue (song)|Deep Blue]]"; Clapton's song "[[Let It Rain (Eric Clapton song)|Let It Rain]]" appeared also, while the suggestions for Dylan's set were "[[If Not for You]]", "[[Watching the River Flow]]" (his recent, Leon Russell-produced single)<ref>Heylin, p. 327.</ref> and "[[Blowin' in the Wind]]".<ref name="Olivia p 288" /> Only Harrison, Voormann, the six-piece horn section, and Badfinger's [[Pete Ham]], [[Joey Molland]], [[Tom Evans (musician)|Tom Evans]] and [[Mike Gibbins]] were at Nola Studios on that first day,<ref name="Eds of RS p 123" /><ref name="Madinger & Easter p 435" /> and subsequent rehearsals were similarly carried out in "dribs and drabs", as Harrison put it.<ref name="IMM p 61">George Harrison, p. 61.</ref> Only the final run-through, on the night before the concert, resembled a complete band rehearsal.<ref name="Spizer p 241">Spizer, p. 241.</ref>{{refn |group=nb|One such informal rehearsal took place in Harrison's hotel room, where he and guitarist [[Peter Frampton]] ran through the entire set – a measure, Frampton later realised, taken by Harrison to cover for the increasing likelihood of Clapton's non-attendance at the event.<ref>{{cite web |url=http://www.mcapozzolijr.com/peterframpton.html |title=Peter Frampton |website=Interviews of Recording Artists |archive-url=https://web.archive.org/web/20120906031204/http://www.mcapozzolijr.com/peterframpton.html |archive-date=6 September 2012 |access-date=16 May 2012}}</ref>}}
-
-[[File:Madison Square Garden 2011.jpg|thumb|left|The Madison Square Garden marquee, pictured in 2011]]
-On Tuesday, 27 July, Harrison and Shankar, accompanied by a pipe-smoking [[Allen Klein]], held a press conference to promote the two shows;<ref name="Badman p 43" /> notoriously performance-shy, Harrison said "Just thinking about it makes me shake."<ref name="Eds of RS p 122">The Editors of ''Rolling Stone'', p. 122.</ref> The "Bangla Desh" charity single was issued in America on 28 July, with a UK release following two days later.<ref name="Castleman & Podrazik p 103" /><ref name="Badman p 43" /> Ringo Starr arrived on the Thursday,<ref name="Eds of RS p 123" /> and by Friday, 30 July, Russell was in town, interrupting his US tour.<ref name="Madinger & Easter p 435" /><ref name="Badman p 43" /> Russell's band members [[Claudia Lennear|Claudia Linnear]] and [[Don Preston (guitarist)|Don Preston]] were added to Don Nix's choir of backing singers;<ref name="Leng pp 111–12">Leng, pp. 111–12.</ref> Preston would switch to lead guitar for Russell's solo spot during the shows, just as bassist [[Carl Radle]] would replace Voormann temporarily.<ref name="Clayson p 311" /> By this point, Clapton's participation was gravely in doubt,<ref name="Clayson p 309" /><ref>Harry, p. 133.</ref> and Harrison had drafted in [[Jesse Ed Davis]] as a probable replacement.<ref name="Harris Mojo" /><ref>Spizer, pp. 240–41.</ref> The ex-[[Taj Mahal (musician)|Taj Mahal]] guitarist received last-minute coaching from Voormann,<ref name="Clayson p 311" /> who was more than familiar with Harrison's songs, as well as those by Billy Preston and Starr.<ref name="Leng p 116" /><ref name="Klaus/Scorsese">Klaus Voormann interview, in ''[[George Harrison: Living in the Material World]]'' DVD, 2011 (directed by Martin Scorsese; produced by Olivia Harrison, Nigel Sinclair & Martin Scorsese).</ref>
-
-The final rehearsal, the first for some of the participants, was combined with the concert [[soundcheck]], at Madison Square Garden, late on 31 July.<ref name="Badman p 43" /> Both Dylan and Clapton finally appeared at the soundcheck that night.<ref name="O'Dell p 199">O'Dell, p. 199.</ref><ref name="Leng p 119">Leng, p. 119.</ref> Even then, Clapton was in the early stages of [[Heroin#Withdrawal|heroin withdrawal]] – only a cameraman supplying him with some [[methadone]] would result in the English guitarist taking the stage the following day, after his young girlfriend had been unsuccessful in purchasing uncut heroin for him on the street.<ref name="Harris Mojo" /><ref name="Tillery p 98" /> To Harrison's frustration, Dylan was having severe doubts about performing in such a big-event atmosphere<ref>Clayson, pp. 310, 311.</ref><ref>Leng, pp. 118, 120.</ref> and still would not commit to playing.<ref>Greene, pp. 188, 191.</ref> "Look, it's not my scene, either," Harrison countered. "At least you've played on your own in front of a crowd before. I've never done that."<ref name="Eds of RS p 146">The Editors of ''Rolling Stone'', p. 146.</ref>
-
-Through Harrison's friendship with [[the Band]], [[Jonathan Taplin]] served as production manager, while [[Chip Monck]] was in charge of lighting.<ref name="IMM p 60" /> [[Gary Kellgren]] from the nearby [[Record Plant]] was brought in to record the concerts, overseen by Spector,<ref name="Eds of RS p 42" /> and "Klein's people", led by director [[Saul Swimmer]], would handle the filming of the event.<ref name="IMM p 60" /> The official concert photographers were [[Tom Wilkes]] and [[Barry Feinstein]],<ref>Matt Hurwitz, "Interview with Tom Wilkes", ''[[Goldmine Magazine|Goldmine]]'', 12 November 2004.</ref> the pair responsible for the artwork on Harrison's acclaimed 1970 triple album, ''[[All Things Must Pass]]''.<ref>Spizer, pp. 226, 245.</ref>{{refn |group=nb|Wilkes also designed the picture sleeve for the "Bangla Desh" single, the front of which consisted of a collage of newspaper headlines relating to Bangladesh's thwarted efforts to gain international recognition.<ref>Spizer, pp. 235–36.</ref>}}
-
-[[Stephen Stills]], having proceeded to sell out [[Madison Square Garden]] two days before the concert on 30 July,<ref>{{Cite news|url=https://www.nytimes.com/1971/08/01/archives/stephen-stills-plays-at-garden-in-his-first-solo-concert-here.html|title=Stephen Stills Plays at Garden In His First Solo Concert Here|last=Jahn|first=Mike|date=1 August 1971|work=The New York Times|access-date=13 August 2019|language=en-US|issn=0362-4331}}</ref> in support of his album, ''[[Stephen Stills 2]]'', allowed Harrison to use his stage, sound, lighting system and production manager but was upset when Harrison "neglected to invite him to perform, mention his name, or say thank you". Stills then spent the show drunk in Ringo Starr's dressing room, "barking at everyone".<ref>{{Cite book|url=https://books.google.com/books?id=kZBKDgAAQBAJ&q=stephen+stills+horn+dave+zimmer&pg=PT244|title=Crosby, Stills & Nash: The Biography|last=Zimmer|first=Dave|year=1984|isbn=9780786726110|pages=52–53}}</ref>
-
-==Concert programme==
-<!--[[File:Ravi shankar.jpg|thumb|right|Ravi Shankar opened The Concert for Bangladesh with a recital of Indian music]]-->
-
-===Afternoon show===
-Except for brief support roles in December 1969 for both the [[Delaney & Bonnie|Delaney & Bonnie and Friends]] band and Lennon's [[Plastic Ono Band]], the Concert for Bangladesh was Harrison's first live appearance before a paying audience since [[the Beatles]] had quit touring in August 1966.<ref name="Leng p 115">Leng, p. 115.</ref><ref>Doggett, p. 173.</ref>{{refn |group=nb|In his interview for [[Martin Scorsese]]'s 2011 documentary ''[[George Harrison: Living in the Material World|Living in the Material World]]'', [[Klaus Voormann]] talks about the magnitude of Harrison's ordeal that day, facing the first full house of 20,000 concert-goers: "He actually went up there and talked to an audience – I think that must've been about the first time he's ever done this&nbsp;... he knew it's going to be filmed, it's going to be used. To talk to an audience, it's very, very difficult&nbsp;..."<ref name="Klaus/Scorsese" />}} Dylan had stopped touring that same year, although he had made a moderately successful comeback in August 1969 at the [[Isle of Wight Festival 1969|Isle of Wight Festival]],<ref>Heylin, pp. 308–09.</ref> his most recent live performance at this point.<ref>Sounes, pp. 266–67.</ref> Speaking in 2005, ''Rolling Stone'' founder [[Jann Wenner]] described the "buzz" preceding the first Concert for Bangladesh show as being at a level unexperienced in New York since the Beatles' 1966 visit.<ref name="Wenner/CFBD Revisited interviews">Interview with Jann Wenner, in ''The Concert for Bangladesh Revisited''.</ref>
-
-[[File:Ravi Shankar.jpg|thumb|135px|left|Ravi Shankar (pictured in 1969)]]
-In his role as master of ceremonies, Harrison began the afternoon show by asking the audience to "try to get into" the opening, [[Music of India|Indian music]] portion of the programme.<ref name="Tillery p 98" /> He then introduced [[Ravi Shankar]] and the latter's fellow musicians – [[sarod]]ya [[Ali Akbar Khan]], [[tabla]] player [[Alla Rakha]], and [[Kamala Chakravarty]] on [[Tanpura (instrument)|tamboura]].<ref>Lavezzoli, pp. 190–91.</ref> Shankar first explained the reason for the concerts, after which the four musicians performed a traditional [[dhun]], in the format of a [[khyal]] rather than a standard [[raga]], titled "Bangla Dhun".<ref>Lavezzoli, p. 191.</ref> Their set included a second piece, authors Chip Madinger and Mark Easter suggest, citing Harrison's own description that each show's Indian music segment lasted for three-quarters of an hour, whereas only seventeen minutes of music appears on the ''[[The Concert for Bangladesh (album)|Concert for Bangladesh]]'' live album.<ref name="Madinger & Easter p 436" />{{refn |group=nb|Similarly, in his concert review for ''[[The New York Times]]'', [[Michael Jahn|Mike Jahn]] wrote of "two selections of Indian music" performed by Shankar and Khan: "an afternoon raga and a composition".<ref>Mike Jahn, "George Harrison et al.: Concert for Bangla Desh, Madison Square Garden, New York NY", ''[[The New York Times]]'', 2 August 1971; available at [http://www.rocksbackpages.com/Library/Article/george-harrison-et-al-concert-for-bangla-desh-madison-square-garden-new-york-ny Rock's Backpages] (''subscription required''; retrieved 20 March 2013).</ref>}} The recital was afforded a "fidgety respect" from fans eager to discover the identity of Harrison's advertised "Friends",<ref name="Clayson p 312">Clayson, p. 312.</ref> although the audience's goodwill was more than evident.<ref name="Schaffner p 146" /><ref name="Clayson p 311" /> A short intermission ensued while the stage was cleared and a Dutch TV film was shown,<ref name="Madinger & Easter p 436">Madinger & Easter, p. 436.</ref> displaying footage of the atrocities and natural tragedies taking place in former East Pakistan.<ref name="Eds of RS p 122" />
-
-{{quote box |quote=It was magical. That's the only way to describe it, because nobody had ever seen anything like that before, that amount of star power&nbsp;... all in two hours onstage at one time.<ref name="Olivia p 286">Olivia Harrison, p. 286.</ref> |source=– Phil Spector, 2011 |width=25% |align=left |style=padding:8px;}}
-To thunderous applause from the New York crowd,<ref name="Clayson p 312" /><ref name="Lavezzoli p 192">Lavezzoli, p. 192.</ref> Harrison appeared on stage along with his temporary band, comprising [[Ringo Starr]], a very sick<ref name="Sullivan" /> [[Eric Clapton]], [[Leon Russell]], [[Billy Preston]], Klaus Voormann, [[Jim Keltner]] and eighteen others.<ref>Castleman & Podrazik, pp. 195–96.</ref> Backed by this "full [[Phil Spector]]/''All Things Must Pass'' rock orchestra",<ref name="Schaffner p 147" /> Harrison began the Western portion of the concert with "[[Wah-Wah (song)|Wah-Wah]]", followed by his Beatles hit song' "[[Something (Beatles song)|Something]]" and the [[Gospel music|gospel]]-rocker "[[Awaiting on You All]]".<ref name="Madinger & Easter p 436" /> Harrison then handed the spotlight over to Preston, who performed his only sizeable hit (thus far), "[[That's the Way God Planned It (song)|That's the Way God Planned It]]",<ref name="Clayson p 313" /> followed by Starr, whose song "[[It Don't Come Easy]]" had recently established the drummer as a solo artist.<ref>Woffinden, pp. 45, 47.</ref><ref name="Rodriguez pp 29, 42">Rodriguez, pp. 29, 42.</ref>{{refn |group=nb|Beatles authors note that "It Don't Come Easy" outperformed singles by Starr's former bandmates during this period<ref name="Rodriguez pp 29, 42" /> – namely, Lennon's "[[Power to the People (song)|Power to the People]]", Harrison's "Bangla Desh" and McCartney's "[[Another Day (Paul McCartney song)|Another Day]]" and "[[The Back Seat of My Car]]".<ref>Schaffner, p. 140.</ref><ref>Woffinden, p. 45.</ref> Like "That's the Way God Planned It", Starr's hit song was originally produced by Harrison in London.<ref name="Spizer p 243">Spizer, p. 243.</ref>}} Nicholas Schaffner was in the audience for this first show and later described Starr's turn as having received the "biggest ovation" of the afternoon.<ref name="Schaffner p 146" />
-
-[[File:BANGLADESHconcert1971LipackOWNER (cropped 2).jpg|right|thumb|230px|Scene from the concert]]
-Next up was Harrison's "[[Beware of Darkness (song)|Beware of Darkness]]", with guest vocals on the third verse by Russell, who covered the song on his concurrent album, ''[[Leon Russell and the Shelter People]]'' (1971).<ref name="Spizer p 243" /> After pausing to introduce the band, Harrison followed this with one of the best-received moments in both the shows – a charging version of the [[The Beatles (album)|White Album]] track "[[While My Guitar Gently Weeps]]", featuring him and Clapton "duelling" on lead guitar during the long instrumental playout.<ref name="Clayson p 313">Clayson, p. 313.</ref><ref>Leng, pp. 117–18.</ref> Both the band introduction and "While My Guitar Gently Weeps" are among the few selections from the afternoon show that were included on the album and in the film.<ref name="Spizer p 243" /><ref name="Madinger & Easter p 438">Madinger & Easter, p. 438.</ref> Another one was Leon Russell's medley of [[the Rolling Stones]]' "[[Jumpin' Jack Flash]]" and [[the Coasters]]' "[[Young Blood (The Coasters song)|Young Blood]]",<ref name="Madinger & Easter p 438" /> which was also a highlight of Russell's live shows at the time.<ref>Bruce Eder, [{{Allmusic |class=album |id=r17175/review |pure_url=yes}} "Leon Russell ''Leon Live''"], [[AllMusic]] (retrieved 20 May 2012).</ref> With [[Don Preston (guitarist)|Don Preston]] crossing the stage to play lead guitar with Harrison, there were now temporarily four electric guitarists in the line-up.<ref name="Clayson p 313" /> Don Preston, Harrison and [[Claudia Lennear|Claudia Linnear]] supplied supporting vocals behind Russell.
-
-In an effective change of pace,<ref name="Lavezzoli p 192" /> Harrison picked up his acoustic guitar, now alone on the stage save for [[Pete Ham]] on a second acoustic,<ref name="Matovina p 143">Matovina, p. 143.</ref> and [[Don Nix]]'s gospel choir, off to stage-left.<ref name="Leng p 119" /><ref name="Clayson p 314">Clayson, p. 314.</ref> The ensuing "[[Here Comes the Sun]]" – the first live performance of the song – was also warmly received.<ref name="Eds of RS p 43" />{{refn |group=nb|In a subsequent interview, Ham stated that Harrison only approached him about performing "Here Comes the Sun" the day before the concerts, and that the two guitarists never rehearsed the song together.<ref name="Matovina p 143" />}} At this point, Harrison switched back to his white [[Fender Stratocaster]] electric guitar and, as recounted to [[Anthony DeCurtis]] in 1987, he looked down at the setlist taped to the body of the guitar and saw the word "Bob" followed by a question mark.<ref name="Eds of RS p 146" /><ref name="Clayson p 314" /> "And I looked around," Harrison recalled of [[Bob Dylan]]'s entrance, "and ''he'' was so nervous – he had his guitar on and his shades – he was sort of coming on, coming ''[pumps his arms and shoulders]'' ... It was only at that moment that I knew for sure he was going to do it."<ref name="Eds of RS p 146" /> Among the audience, Schaffner wrote, there was "total astonishment" at this new arrival.<ref name="Schaffner p 146" />
-
-As Harrison had envisaged,<ref name="Leng p 121">Leng, p. 121.</ref> Dylan's mini-set was the crowning glory of the Concert for Bangladesh for many observers.<ref name="Clayson p 314" /><ref>Heylin, p. 329.</ref> Backed by just Harrison, Russell (now playing Voormann's [[Fender Precision]] bass) and Starr on tambourine, Dylan played five of his decade-defining songs from the 1960s:<ref>The Editors of ''Rolling Stone'', pp. 122–23.</ref> "[[A Hard Rain's A-Gonna Fall]]", "[[Blowin' in the Wind]]", "[[It Takes a Lot to Laugh, It Takes a Train to Cry]]", "[[Love Minus Zero/No Limit]]" and "[[Just Like a Woman]]".<ref name="Schaffner p 147">Schaffner, p. 147.</ref>
-
-Harrison and the band then returned to perform a final segment, consisting of "[[Hear Me Lord]]" and his recent international number one hit, "[[My Sweet Lord]]", followed by the song of the moment – "[[Bangla Desh (song)|Bangla Desh]]".<ref name="Clayson p 312" />
-{{-}}
-
-===Evening show===
-Harrison was reportedly delighted with the outcome of the first show, as was Dylan, who accompanied him back to the Park Lane Hotel afterwards.<ref name="O'Dell p 200">O'Dell, p. 200.</ref> They discussed possible changes to the [[Set list|setlist]] for the evening performance,<ref name="O'Dell p 200" /> beginning at 8&nbsp;pm.<ref name="Spizer p 241" />
-
-The songs played and their sequence differed slightly between the first and second shows, most noticeably with Harrison's opening and closing mini-sets.<ref name="Madinger & Easter pp 436-37">Madinger & Easter, pp. 436–37.</ref> After "Wah-Wah", he brought "My Sweet Lord" forward in the order, followed by "Awaiting on You All", before handing it over to Billy Preston.<ref name="Schaffner p 147" /> The afternoon's "creaky" "Hear Me Lord" was dropped,<ref>Clayson, pp. 312–13.</ref> so that the post-Dylan band segment consisted of only two numbers: "Something", to close the show, and a particularly passionate reading of "Bangla Desh", as an [[Encore (concert)|encore]].<ref name="Leng p 118">Leng, p. 118.</ref> Dylan likewise made some changes, swapping "Blowin' in the Wind" and "It Takes a Lot to Laugh" in the order, and then playing a well-received "[[Mr. Tambourine Man]]" in place of "Love Minus Zero".<ref name="Madinger & Easter pp 436-37" />
-
-The second show was widely acknowledged as superior to the afternoon performance,<ref name="IMM p 60" /><ref>The Editors of ''Rolling Stone'', pp. 121–22.</ref> although ''[[The Village Voice|Village Voice]]'' reviewer Don Heckman noted that many in the audience reacted to the Shankar–Khan opening set with a lack of respect.<ref name="Heckman">Don Heckman, [http://blogs.villagevoice.com/runninscared/2010/12/george_harrison_1.php "The Event Wound Up as a Love Feast"] {{webarchive|url=https://web.archive.org/web/20150119044153/http://blogs.villagevoice.com/runninscared/2010/12/george_harrison_1.php |date=19 January 2015 }}, ''[[Village Voice]]'', 5 August 1971 (retrieved 14 May 2012).</ref> Not aiding the Indian musicians was the failure of a microphone on Rakha's hand drums, Heckman observed, so denying the crowd a vital element of the musical interplay between [[sitar]] and sarod.<ref name="Heckman" />
-
-[[File:Billy Preston perforning in 1971.jpg|thumb|upright=1.1|left|Billy Preston, pictured in 1971]]
-During the Western portion of the show, Harrison's voice was more confident this time around, the music "perhaps slightly more lustrous", according to ''[[Rolling Stone]]''.<ref>The Editors of ''Rolling Stone'', pp. 121, 122.</ref> Towards the end of "That's the Way God Planned It", Preston felt compelled to get up from behind his [[Hammond organ]] and take a show-stealing boogie across the front of the stage.<ref name="Clayson p 313" /><ref name="Heckman" />
-
-Dylan's walk-on was again the show's "real cortex-snapping moment", Heckman opined.<ref name="Heckman" /> Dylan finished his final song, "Just Like a Woman", with a victorious salute – "holding up both fists like a [[Strongman (strength athlete)|strongman]]", ''Rolling Stone''{{'}}s reviewer remarked shortly afterwards.<ref name="Eds of RS p 123" /> Following Dylan's set, Harrison introduced the band,<ref name="Madinger & Easter pp 436-37" /> before taking the show "to yet another peak" with "Something".<ref name="Eds of RS p 123" /> Watching from the wings, [[Pattie Boyd|Pattie Harrison]] described her husband's performance throughout that evening as "magnificent".<ref name="O'Dell p 202">O'Dell, p. 202.</ref>
-
-{{quote box |quote=What happened is now history: it was one of the most moving and intense musical experiences of the century.<ref>Ravi Shankar's introduction, booklet accompanying ''[[The Concert for Bangladesh (album)|The Concert for Bangladesh]]'' reissue (Sony BMG, 2005; produced by George Harrison & Phil Spector), p. 4.</ref> |source=– Ravi Shankar, 2005 |width=25% |align=right |style=padding:8px;}}
-Following the two sellout concerts, all the participants attended a celebratory party in a basement club known as Ungano's.<ref name="O'Dell p 202" /><ref name="Badman p 44">Badman, p. 44.</ref> Dylan was so elated, Harrison recalled 16 years later, "He picked me up and hugged me and he said, 'God! If only we'd done ''three'' shows!'"<ref name="Eds of RS p 146" /> Like Harrison, the experience of playing at Madison Square that day did not lead to Dylan immediately re-embracing the concert stage;<ref>Lavezzoli, pp. 192–93.</ref> only a brief guest appearance with [[the Band]] on [[New Year's Eve]] 1971–72 and sitting in during a [[John Prine]] club gig eventuated before he returned to touring in January 1974.<ref>Heylin, pp. 330, 335.</ref>{{refn |group=nb|Dylan made a brief return to writing [[protest song]]s, however, for the first time since 1963–64, with the non-album single "[[George Jackson (song)|George Jackson]]".<ref>''The New Rolling Stone Encyclopedia of Rock & Roll'', p. 291.</ref><ref name="CSM/Mojo">Charles Shaar Murray, "George Harrison et al: ''Concert for Bangla Desh''", ''[[Mojo (magazine)|Mojo]]'', March 2002; available at [http://www.rocksbackpages.com/Library/Article/george-harrison-et-al-iconcert-for-bangla-deshi Rock's Backpages] (''subscription required''; retrieved 10 June 2013).</ref> He recorded this song in New York in November 1971, again with Russell.<ref>Heylin, pp. 330–31.</ref>}}
-
-The post-concert party featured live performances from Harrison and Preston, after which a "roaring drunk"<ref name="Clayson p 314" /> Phil Spector played a "unique" version of "[[Da Doo Ron Ron]]".<ref name="Badman p 44" /> The celebrations broke up in the early hours once [[Keith Moon]] of [[the Who]] began smashing up the drum kit, which actually belonged to Badfinger's [[Mike Gibbins]].<ref name="Badman p 44" /><ref name="Eds of RS p 154">The Editors of ''Rolling Stone'', p. 154.</ref>
-{{-}}
-
-==Reviews==
-Harrison's manager, [[Allen Klein]], immediately boasted of the entirely peaceful nature of the event: "There was no rioting. Not one policeman was allowed in there&nbsp;... Zero!"<ref name="Badman p 44" /> In fact, as reported in ''The Village Voice'' on 12 August, midway through the evening show, a crowd of 200 non-ticket-holders charged and broke through the doors of Madison Square Garden.<ref name="Rosenbaum">Ron Rosenbaum, [http://blogs.villagevoice.com/runninscared/2010/12/wavy_gravy_gets.php "Who Clubbed the Clown?"] {{webarchive|url=https://web.archive.org/web/20101226164642/http://blogs.villagevoice.com/runninscared/2010/12/wavy_gravy_gets.php |date=26 December 2010 }}, ''[[The Village Voice]]'', 12 August 1971 (retrieved 14 May 2012).</ref>{{refn|group=nb|A force of 100 security guards and [[New York City Police Department|New York City police]] then [[Baton (law enforcement)|clubbed]] the crowd, during which [[counterculture]] figure [[Wavy Gravy]], who was seriously ill, was allegedly hit from behind after showing the officers that he did indeed have a valid ticket.<ref name="Rosenbaum" />}} Aside from this episode, press reports concerning the Concert for Bangladesh shows were overwhelmingly positive.
-
-The appearance of Bob Dylan on the same stage as two former Beatles caused a sensation,<ref>Sounes, p. 267.</ref><ref name="Schaffner p 148">Schaffner, p. 148.</ref> and lavish praise was bestowed on George Harrison.<ref name="Rodriguez p 51" /><ref>Woffinden, pp. 51, 52.</ref> "[[Beatlemania]] Sweeps a City!" was a typical headline,<ref name="Clayson p 327">Clayson, p. 327.</ref> and in Britain the ''[[NME]]'' declared the concerts "The Greatest Rock Spectacle of the Decade!"<ref name="Badman p 45" /> ''[[Billboard (magazine)|Billboard]]'' described the artists' performances as "their best music ever" and commented on the likelihood of a live album from the concerts: "there is no politics involved. What is involved is starving children and for once, relief through 35 musicians who should represent the feeling of anyone who loves their music."<ref>Bob Glassenberg, [https://books.google.com/books?id=bEUEAAAAMBAJ&q=bangla "Harrison & Friends Dish Out Super Concert for Pakistan Aid"], ''[[Billboard (magazine)|Billboard]]'', 14 August 1971, p. 18 (retrieved 31 October 2013).</ref>
-
-Dylan's choice of songs, particularly the "apocalyptic" "A Hard Rain's A-Gonna Fall",<ref name="Leng p 118" /> were found to have a new relevance in the context of the early 1970s<ref name="Spizer p 244">Spizer, p. 244.</ref> – the words made "the more chilling for the passage of years", opined ''Rolling Stone''.<ref name="Eds of RS p 121">The Editors of ''Rolling Stone'', p. 121.</ref> The same publication stated of Starr's contribution: "Seeing Ringo Starr drumming and singing on stage has a joy in it that is one of the happiest feelings on earth still."<ref name="Schaffner p 148" /> Ravi Shankar's role as concert instigator and the true conscience of the UNICEF shows was also noted.<ref name="Eds of RS p 123" /><ref name="Badman p 44" /> Musically, ''The Village Voice'' observed, the pairing of Shankar and Ali Akbar Khan was "almost as unique as the mix of Dylan and Harrison".<ref name="Heckman" />
-
-In the wider [[counterculture of the 1960s|countercultural]] context of the time, with disillusion increasingly rife with each post-[[Woodstock]] rock event,<ref name="Heckman" /><ref name="Schaffner p 148" /> commentators viewed the concerts as, in the words of ''Rolling Stone'', "a brief incandescent revival of all that was best about the Sixties".<ref>The Editors of ''Rolling Stone'', pp. 121, 154.</ref> Writing in 1981, ''NME'' critic [[Bob Woffinden]] likened it to a "rediscovery of faith", adding: "Harrison had put rock music back on course."<ref name="Woffinden p 51" />
-
-Among Harrison's biographers, [[Alan Clayson]] describes the 1971–72 period covering the concerts and their associated releases as "the George Harrison Moment",<ref>Clayson, p. 318.</ref> while [[Gary Tillery]] states: "The Concert for Bangladesh sealed Harrison's stature as something more than just a major celebrity&nbsp;... He changed the perception of recording artists, making it clear they could be good world citizens too – willing to set aside their egos and paychecks in order to help people who were suffering."<ref>Tillery, p. 100.</ref> According to [[Niaz Alam]], writing in the ''[[Dhaka Tribune]]'', "On artistic merit alone, as encapsulated in the film and LP, the Concert for Bangladesh perhaps holds up better than Woodstock in showcasing the best of its era in terms of music, optimism, and goodwill."<ref name="Alam/DhakaTribune" />
-
-==Aftermath==
-
-{{See also|The Concert for Bangladesh (album)|The Concert for Bangladesh (film)|The Day the World Gets 'Round}}
-{{quote box |quote=The money we raised was secondary. The main thing was, we spread the word and helped get the war ended&nbsp;... What we did show was that musicians and people are more humane than politicians.<ref>Greene, pp. 193–94.</ref> |source=– George Harrison, 1992 |width=25% |align=left |style=padding:8px;}}
-Politically, as Bangladeshi historian [[Farida Majid]] would note, the "warmth, care and goodwill" of the August 1971 concerts "echoed all over the world",<ref name="Leng p 119" /> inspiring volunteers to approach UNICEF and offer their assistance, as well as eliciting private donations to the Bangladesh disaster fund.<ref name="Clayson p 317">Clayson, p. 317.</ref><ref>Lavezzoli, p. 194.</ref> Although the altruistic spirit would soon wane once more, the Concert for Bangladesh is invariably seen as the inspiration and model for subsequent rock charity benefits, from 1985's [[Live Aid]] and [[Farm Aid]] to [[the Concert for New York City]] and [[Live 8]] in the twenty-first century.<ref name="Eds of RS p 43" /><ref name="Rodriguez p 51" /><ref name="Alpert">Neal Alpert, [https://web.archive.org/web/20120303010643/http://www.gadflyonline.com/12-3-01/music-georgeharrison.html "George Harrison's Concert for Bangladesh"], [[Gadfly Online]], 3 December 2001 (archived from [http://www.gadflyonline.com/12-3-01/music-georgeharrison.html the original] on 3 March 2012, retrieved 14 May 2012).</ref> Unlike those later concerts, which benefitted from continuous media coverage of the causes they supported, the Harrison–Shankar project was responsible for identifying the problem and establishing Bangladesh's plight in the minds of mainstream Western society.<ref name="Leng p 111" /> According to Gary Tillery: "Because of its positioning as a humanitarian effort, all descriptions of the show included a summary of the catastrophe in South Asia. Overnight, because of their fascination with rock stars, masses of people became educated about geopolitical events they had not even been aware of the week before. The tragedy in Bangladesh moved to the fore as an international issue."<ref name="Tillery p 99">Tillery, p. 99.</ref> One of these revelations was that America was supplying weaponry and financial aid to the Pakistani army, led by [[Yahya Khan|General Yahya Khan]].<ref>Lavezzoli, pp 189, 194.</ref>
-
-[[File:geldofsigning.jpg|thumb|right|upright=0.75|[[Bob Geldof]] (pictured at a promotional event for [[Live 8]]) acknowledged the Concert for Bangladesh as his inspiration for staging [[Live Aid]] in 1985.]]
-Harrison's musical biographer, Simon Leng, identifies friendship as the key factor behind the success of the two UNICEF shows, both in bringing all the participants together on the stage and in the affection with which the audience and music critics viewed the event.<ref name="Leng p 120">Leng, p. 120.</ref> Klaus Voormann, a close friend of Harrison's since 1960, has often cited this quality as well.<ref name="Sullivan" /><ref name="Klaus/Scorsese" />
-
-Friendship played out through the next, significantly more lucrative stages of the Bangladesh relief project,<ref name="Woffinden p 51" /><ref name="Clayson p 315">Clayson, p. 315.</ref> as the associated [[The Concert for Bangladesh (album)|live album]] and [[The Concert for Bangladesh (film)|concert film]] were prepared for release.<ref name="Spizer p 241" /> Harrison had assured all the main performers that their appearance would be removed from these releases if the event turned out "lousy",<ref name="Badman p 79">Badman, p. 79.</ref> to save anyone having to risk possible embarrassment.<ref name="IMM p 61" /> Having sent out personalised letters of thanks to all the participants on 1 September,<ref>Olivia Harrison, p. 294.</ref> he expressed his gratitude further by guesting on Billy Preston's [[I Wrote a Simple Song|first album]] on [[A&M Records]] that autumn and donating a [[Sue Me, Sue You Blues|new song]] to Jesse Ed Davis.<ref>Castleman & Podrazik, pp. 106, 112.</ref><ref>Rodriguez, p. 82.</ref>
-
-Around the same time, there were rumours of a possible repeat of the New York concerts, to be held at London's [[Wembley Stadium]] in early October.<ref name="Badman p 45" /><ref name="Clayson p 316">Clayson, p. 316.</ref> Harrison and Klein quashed the idea, but an English version of the Concert for Bangladesh did take place, at [[The Oval]] in south London on 18 September.<ref name="Badman p 45" /> Titled "Goodbye to Summer – a rock concert in aid of famine relief of Bangla Desh",<ref name="Alam/DhakaTribune" /> it included performances by [[the Who]], [[Faces (band)|the Faces]], [[Mott the Hoople]], [[America (band)|America]], [[Lindisfarne (band)|Lindisfarne]] and [[Quintessence (English band)|Quintessence]].<ref name="Badman p 45" />{{refn|group=nb|The event attracted close to 40,000 fans and raised £15,000 for the cause.<ref>Martin Williamson, [https://www.espncricinfo.com/story/_/id/22902896/the-oval-drugs-rocknroll "The Oval, Drugs and Rock'n'Roll"], ''[[ESPNcricinfo]]'', 5 October 2007 (retrieved 20 December 2019).</ref>}} Bangladesh refugees were also one of several charitable causes supported at the [[Weeley Festival]], held near Clacton-on-Sea in Essex in late August.<ref name="Alam/DhakaTribune">Niaz Alam, [https://www.dhakatribune.com/opinion/2019/11/28/all-the-concert-s-for-bangladesh "All the Concert(s) for Bangladesh"], ''[[Dhaka Tribune]]'', 28 November 2019 (retrieved 1 February 2021).</ref> On 22 September, George and Pattie Harrison arrived home in the UK, with mixing having been completed on the upcoming live album, and Harrison due to meet with [[Patrick Jenkin]] of the British [[HM Treasury|Treasury]], to deal with the unforeseen obstacle of [[purchase tax]] being levied on the album.<ref name="Clayson p 316" /><ref>Badman, pp. 49, 50.</ref> This was one of a number of problems that hindered Harrison's Bangladesh project following the Madison Square Garden shows,<ref>Woffinden, pp. 51–52.</ref><ref>Clayson, pp. 315–16.</ref> and the British politician would allegedly tell him: "Sorry! It is all very well for your high ideals, but Britain equally needs the money!"<ref name="Badman p 50">Badman, p. 50.</ref>{{refn|group=nb|An Australian version of the Concert for Bangladesh was held at the [[Myer Music Bowl]] in Melbourne on 20 April 1975. The acts included [[Daddy Cool (band)|Daddy Cool]], [[Ayers Rock (band)|Ayers Rock]], [[Phil Manning (musician)|Phil Manning]] and [[AC/DC]].<ref>[https://www.onlymelbourne.com.au/ac-dc "AC/DC"], Only Melbourne (retrieved 20 December 2019).</ref>}}
-
-[[File:George Harrison Sculpture at Shadhinotar Shangram Triangle.jpg|thumb|upright=1.1|George Harrison sculpture in [[Dhaka]], Bangladesh]]
-On 5 June 1972, in recognition of their "pioneering" fundraising efforts for the refugees of Bangladesh, George Harrison, Ravi Shankar and Allen Klein were jointly honoured by UNICEF with its "Child Is the Father of the Man" award.<ref name="Badman p 74">Badman, p. 74.</ref> In December 2008, seven years after Harrison's death, the [[BBC]] reported that moves were under way in the Bangladeshi High Court to have Harrison officially recognised and honoured as a hero for his role during the troubled birth of the nation.<ref name="BBC News">[http://news.bbc.co.uk/2/hi/7777680.stm "Bangladesh 'Beatle Hero' Move"], [[BBC News Online]], 11 December 2008 (retrieved 14 May 2012).</ref>
-
-Writing in 2003, author [[Bill Harry]] bemoaned the lack of recognition afforded Harrison in the [[Orders, decorations, and medals of the United Kingdom|UK honours system]] for his staging of the Concert for Bangladesh. Harry said that, given the influence of the event and Harrison's other charitable activities, and also how his company [[HandMade Films]] "virtually revived the British film industry", it was "difficult to equate" his [[Member of the Most Excellent Order of the British Empire|MBE]] status (which he gained in 1965 as a member of the Beatles) with the knighthoods or other higher orders lavished on the likes of [[Bob Geldof]], comedians, pop stars and other figures in the music business.<ref name="Harry p 135" />{{refn|group=nb|[[Geoffrey Cannon]], in a 2019 update accompanying the re-publication at [[Rock's Backpages]] of his 1972 ''[[The Guardian|Guardian]]'' review of the ''[[The Concert for Bangladesh (album)|Concert for Bangladesh]]'' live album, said this lack of state recognition for Harrison was "inexplicable", given that McCartney was knighted in 1997 and Shankar was awarded the Indian equivalent in 2001.<ref>Geoffrey Cannon, "George Harrison & Friends: ''The Concert for Bangladesh'' (Apple)", ''[[The Guardian]]'', 4 January 1972; available at [https://rocksbackpages.com/Library/Article/george-harrison--friends-ithe-concert-for-bangladeshi-apple Rock's Backpages] (subscription required).</ref>}}
-
-==Funds and controversy==
-<!--[[File:Concert For Bangladesh Cover.jpg|thumbnail|left|160px|Cover of the 2005 reissue of the ''Concert for Bangladesh'' DVD]]-->
-The two Madison Square Garden shows raised US$243,418.50, which was given to [[UNICEF]] to administer on 12 August 1971.<ref name="Badman p 45" /> By December, [[Capitol Records]] presented a cheque to [[Apple Corps]] for around $3,750,000 for advance sales of the ''[[The Concert for Bangladesh (album)|Concert for Bangladesh]]'' live album.<ref name="Badman p 58">Badman, p. 58.</ref><ref>Harry, p. 136.</ref>
-
-Aside from complaints regarding the high retail price for the three-record set, particularly in Britain<ref>Carr & Tyler, p. 99.</ref> – a result of the government's refusal to waive its tax surcharge – controversy soon surrounded the project's fundraising.<ref name="Eds of RS p 43" /> Most importantly, Klein had failed to register the event as a UNICEF benefit beforehand,<ref name="Lavezzoli p 193" /><ref>Soocher, pp. xii, 200.</ref> and it was subsequently denied [[tax exemption|tax-exempt]] status by the US Government.<ref name="Clayson p 316" /> As a result, most of the money was held in an [[Internal Revenue Service]] [[escrow]] account for ten years.<ref name="Lavezzoli p 193">Lavezzoli, p. 193.</ref><ref name="Woffinden p 52">Woffinden, p. 52.</ref> In an interview with [[Derek Taylor]] for his [[I, Me, Mine|autobiography]] in the late 1970s, Harrison put this figure at between $8&nbsp;million and $10&nbsp;million.<ref name="IMM p 61" /> Before then, in early 1972, ''[[New York (magazine)|New York]]'' magazine reported that some of the proceeds remained unaccounted for and had found their way into Klein's accounts.<ref name="Schaffner p 148" /><ref name="Woffinden p 51" /> Klein responded by suing the magazine for $150&nbsp;million in damages,<ref>Jay Cocks, [https://web.archive.org/web/20071001004315/http://www.time.com/time/magazine/article/0,9171,944505,00.html "Sweet Sounds"], ''[[Time (magazine)|Time]]'', 17 April 1972 (retrieved 12 December 2006).</ref> and although the suit was later withdrawn, the accusations attracted unwelcome scrutiny at a time when questions were also being asked about Klein's mismanagement of the Beatles' finances.<ref name="Clayson pp 332−33">Clayson, pp. 332–33.</ref><ref name="Badman p 72">Badman, p. 72.</ref> That year, an estimated $2&nbsp;million had gone to the refugees via UNICEF before the IRS audit of Apple got under way; finally, in 1981, $8.8&nbsp;million was added to that total following the audit.<ref name="RS Encyclopedia">''The New Rolling Stone Encyclopedia of Rock & Roll'', p. 419.</ref>{{refn|group=nb|Klein's handling of the Bangladesh project, and the suspicion of financial impropriety on his part,<ref>Rodriguez, p. 137.</ref> was one of the main reasons that Harrison, Lennon and Starr chose not to renew his management contract in March 1973.<ref>Doggett, pp. 192–93.</ref> In their lawsuit against Klein in November that year, they cited his failure to prearrange official charity status for the event, among several other complaints.<ref>Doggett, p. 212.</ref>}}
-
-By June 1985, according to an article in the ''[[Los Angeles Times]]'', nearly $12&nbsp;million had been sent to Bangladesh for relief.<ref name="Johnston/LA Times">David Johnston, "Bangladesh: The Benefit That Almost Wasn't", ''[[Los Angeles Times]]'', 2 June 1985, p. R3.</ref> Around this time, according to music journalist [[Mikal Gilmore]], Harrison gave Geldof "meticulous advice" to ensure that Live Aid's estimated £50&nbsp;million found its way, as intended, to victims of the [[1984–1985 famine in Ethiopia|Ethiopian famine]].<ref name="Eds of RS p 43" /> In an interview to promote the 1991 CD release of ''The Concert for Bangladesh'', Harrison said that $13.5&nbsp;million had been raised in the early 1970s, from the concert and the accompanying album and film. He added that, while this figured paled in comparison to ventures such as Live Aid, "you have to remember, that was at a time when nobody was really aware of this kind of benefit concert, certainly there hadn't been anything like that, and, of course, $13.5&nbsp;million back then was probably much more than it's worth now."<ref>Harry, p. 137.</ref>
-
-Speaking in the 1990s, Harrison said of the Bangladesh relief effort: "Now it's all settled and the UN own the rights to it themselves, and I think there's been about 45 million dollars made."<ref>Huntley, p. 82.</ref> Sales of the DVD and CD of the 1971 Concert for Bangladesh continue to benefit the cause,<ref>Ingham, p. 133.</ref> now known as the George Harrison Fund for UNICEF.<ref name="Friends">''The Concert for Bangladesh Revisited''.</ref><ref name="GH Fund4UNICEF">[http://www.unicefusa.org/news/news-from-the-field/the-george-harrison-fund-for-u.html "The George Harrison Fund for UNICEF asks 'Help us save some lives': Concert for Bangladesh 40th Anniversary"], [[UNICEF]], 13 October 2011 (retrieved 30 October 2013).</ref>
-
-==In popular culture==
-The Concert for Bangladesh was satirised in two episodes of ''[[The Simpsons]]'': "[[Like Father, Like Clown]]" and "[[I'm with Cupid]]". In the former, [[Krusty the Clown|Krusty]] plays the album while a visitor at the Simpsons household.<ref>Richmond & Coffman, p. 67.</ref> In "I'm with Cupid", [[Apu Nahasapeemapetilon|Apu]]'s record collection contains ''The Concert Against Bangladesh'', which features a picture of a mushroom cloud on the cover,<ref>Harry, p. 344.</ref> reflecting contemporary Indian−Pakistani nuclear rivalry in the region.<ref>Benjamin Robinson, [https://web.archive.org/web/20000816013825/http://www.snpp.com/episodes/AABF11 "I'm With Cupid/AABF11"], The Simpsons Archive, 21 September 1999 (archived version retrieved 5 December 2015).</ref>
-
-The July 1974 ("Dessert") issue of ''[[National Lampoon (magazine)|National Lampoon]]'' magazine satirised [[Tom Wilkes]]' original cover design for ''The Concert for Bangladesh'', by using a chocolate version of the starving child, the head of which has had a bite taken out of it.<ref>Mark Simonson, [http://www.marksverylarge.com/issues/7407.html "''National Lampoon'' Issue #52 – Dessert"] {{webarchive|url=https://web.archive.org/web/20080723175648/http://www.marksverylarge.com/issues/7407.html |date=23 July 2008 }}, marksverylarge.com (retrieved 15 October 2012).</ref> Two years before this, the National Lampoon team spoofed Harrison's humanitarian role on record, in their track "The Concert in Bangla Desh" on the ''[[Radio Dinner]]'' album.<ref name="Rodriguez pp 96-97">Rodriguez, pp. 96–97.</ref> In the sketch, two Bangladeshi stand-up comedians (played by [[Tony Hendra]] and [[Christopher Guest]]) perform to starving refugees in an attempt to collect a bowlful of rice so that "George Harrison" can mount a [[hunger strike]].<ref name="Rodriguez pp 96-97" /><ref>Mark Simonson, [http://www.marksverylarge.com/recordings/radiodinner.html "''National Lampoon Radio Dinner'' (1972)"] {{webarchive|url=https://web.archive.org/web/20101125175408/http://marksverylarge.com/recordings/radiodinner.html |date=25 November 2010 }}, marksverylarge.com (retrieved 21 October 2012).</ref>
-
-Crowd noises from the Concert for Bangladesh were put into [[Aerosmith]]'s cover of "[[Train Kept A-Rollin']]" by producer [[Jack Douglas (record producer)|Jack Douglas]].<ref>Greg Prato, [http://www.allmusic.com/song/the-train-kept-a-rollin-mt0005989550 "Aerosmith 'Train Kept A-Rollin'"], [[AllMusic]] (retrieved 15 October 2012).</ref> Some of stills photographer [[Barry Feinstein]]'s shots from the 1971 concerts were used on the covers of subsequent albums by the participating artists, notably the compilations ''[[Bob Dylan's Greatest Hits Vol. II]]'' and ''[[The History of Eric Clapton]]''.<ref name="Woffinden p 51">Woffinden, p. 51.</ref><ref>Interview with Barry Feinstein, in ''The Concert for Bangladesh Revisited''.</ref>
-
-Harrison himself sent up the benefit-show concept on film, in the 1985 HandMade comedy ''[[Water (1985 film)|Water]]''.<ref>Badman, p. 351.</ref> At the so-called Concert for Cascara, he, Starr, Clapton, [[Jon Lord]] and others make a surprise appearance on stage, supposedly before the [[United Nations General Assembly]], performing the song "Freedom".<ref>Leng, p. 239.</ref>
-
-==Notes==
-{{reflist|30em|group=nb}}
-
-==References==
-{{reflist|colwidth=30em}}
-
-==Sources==
-{{refbegin|25em}}
-* Keith Badman, ''The Beatles Diary Volume 2: After the Break-Up 1970–2001'', Omnibus Press (London, 2001; {{ISBN|0-7119-8307-0}}).
-* Roy Carr & Tony Tyler, ''The Beatles: An Illustrated Record'', Trewin Copplestone Publishing (London, 1978; {{ISBN|0-450-04170-0}}).
-* Harry Castleman & Walter J. Podrazik, ''All Together Now: The First Complete Beatles Discography 1961–1975'', Ballantine Books (New York, NY, 1976; {{ISBN|0-345-25680-8}}).
-* Alan Clayson, ''George Harrison'', Sanctuary (London, 2003; {{ISBN|1-86074-489-3}}).
-* ''[[The Concert for Bangladesh (film)#2005 DVD release|The Concert for Bangladesh Revisited with George Harrison and Friends]]'' DVD, Apple Corps, 2005 (directed by Claire Ferguson; produced by Olivia Harrison, Jonathan Clyde & Jo Human).
-* Peter Doggett, ''You Never Give Me Your Money: The Beatles After the Breakup'', It Books (New York, NY, 2011; {{ISBN|978-0-06-177418-8}}).
-* The Editors of ''Rolling Stone'', ''Harrison'', Rolling Stone Press/Simon & Schuster (New York, NY, 2002; {{ISBN|0-7432-3581-9}}).
-* Joshua M. Greene, ''Here Comes the Sun: The Spiritual and Musical Journey of George Harrison'', John Wiley & Sons (Hoboken, NJ, 2006; {{ISBN|978-0-470-12780-3}}).
-* George Harrison, ''I Me Mine'', Chronicle Books (San Francisco, CA, 2002; {{ISBN|0-8118-3793-9}}).
-* Olivia Harrison, ''George Harrison: Living in the Material World'', Abrams (New York, NY, 2011; {{ISBN|978-1-4197-0220-4}}).
-* Bill Harry, ''The George Harrison Encyclopedia'', Virgin Books (London, 2003; {{ISBN|978-0753508220}}).
-* Clinton Heylin, ''Bob Dylan: Behind the Shades (20th Anniversary Edition)'', Faber and Faber (London, 2011; {{ISBN|978-0-571-27240-2}}).
-* Elliot J. Huntley, ''Mystical One: George Harrison – After the Break-up of the Beatles'', Guernica Editions (Toronto, ON, 2006; {{ISBN|1-55071-197-0}}).
-* Chris Ingham, ''The Rough Guide to the Beatles'', Rough Guides/Penguin (London, 2006; 2nd edn; {{ISBN|978-1-84836-525-4}}).
-* Peter Lavezzoli, ''The Dawn of Indian Music in the West'', Continuum (New York, NY, 2006; {{ISBN|0-8264-2819-3}}).
-* Simon Leng, ''While My Guitar Gently Weeps: The Music of George Harrison'', Hal Leonard (Milwaukee, WI, 2006; {{ISBN|1-4234-0609-5}}).
-* Chip Madinger & Mark Easter, ''Eight Arms to Hold You: The Solo Beatles Compendium'', 44.1 Productions (Chesterfield, MO, 2000; {{ISBN|0-615-11724-4}}).
-* Dan Matovina, ''Without You: The Tragic Story of Badfinger'', Frances Glover Books (2000; {{ISBN|0-9657122-2-2}}).
-* Chris O'Dell with Katherine Ketcham, ''Miss O'Dell: My Hard Days and Long Nights with The Beatles, The Stones, Bob Dylan, Eric Clapton, and the Women They Loved'', Touchstone (New York, NY, 2009; {{ISBN|978-1-4165-9093-4}}).
-* Ray Richmond & Antonia Coffman (eds), ''[[The Simpsons episode guides#The Simpsons: A Complete Guide to Our Favorite Family|The Simpsons: A Complete Guide to Our Favorite Family]]'', HarperPerennial (New York, NY, 1997; {{ISBN|978-0-00-638898-2}}).
-* Robert Rodriguez, ''Fab Four FAQ 2.0: The Beatles' Solo Years, 1970–1980'', Backbeat Books (Milwaukee, WI, 2010; {{ISBN|978-1-4165-9093-4}}).
-* Nicholas Schaffner, ''The Beatles Forever'', McGraw-Hill (New York, NY, 1978; {{ISBN|0-07-055087-5}}).
-* Stan Soocher, ''Baby You're a Rich Man: Suing the Beatles for Fun and Profit'', University Press of New England (Lebanon, NH, 2015; {{ISBN|978-1-61168-380-6}}).
-* Howard Sounes, ''Down the Highway: The Life of Bob Dylan'', Doubleday (London, 2001; {{ISBN|0-385-60125-5}}).
-* [[Bruce Spizer]], ''The Beatles Solo on Apple Records'', 498 Productions (New Orleans, LA, 2005; {{ISBN|0-9662649-5-9}}).
-* Gary Tillery, ''Working Class Mystic: A Spiritual Biography of George Harrison'', Quest Books (Wheaton, IL, 2011; {{ISBN|978-0-8356-0900-5}}).
-* Bob Woffinden, ''The Beatles Apart'', Proteus (London, 1981; {{ISBN|0-906071-89-5}}).
-{{refend}}
-
-==External links==
-{{commons category}}
-* [http://www.theconcertforbangladesh.com/ Official site]
-
-{{George Harrison}}
-{{Ravi Shankar}}
-{{Bob Dylan}}
-{{Billy Preston}}
-{{Leon Russell}}
-{{Ringo Starr}}
-{{Eric Clapton}}
-{{1971 Bangladesh genocide}}
-
-{{authority control}}
-
-{{DEFAULTSORT:Concert For Bangladesh, The}}
-[[Category:Music festivals in New York City]]
-[[Category:Musical advocacy groups]]
-[[Category:Benefit concerts in the United States]]
-[[Category:George Harrison]]
-[[Category:Bob Dylan]]
-[[Category:Eric Clapton]]
-[[Category:Ringo Starr]]
-[[Category:1971 in music]]<!-- concert -->
-[[Category:Bangladesh Liberation War]]
-[[Category:August 1971 events in the United States]]
-[[Category:1971 in New York City]]
-[[Category:1970s in Manhattan]]
-[[Category:Madison Square Garden]]
-
-    """
-    content2 = """
-==External links==
-* Official site
-Category:Music festivals in New York City
-Category:Musical advocacy groups
-Category:Benefit concerts in the United States
-Category:George Harrison
-Category:Bob Dylan
-Category:Eric Clapton
-Category:Ringo Starr
-Category:1971 in music
-Category:Bangladesh Liberation War
-Category:August 1971 events in the United States
-Category:1971 in New York City
-Category:1970s in Manhattan
-Category:Madison Square Garden
-    """
-    content1 =_split_into_lines(content1)
+    word_added = 0
+    for line in lines:
+        if line.startswith('+'):
+            
+            word_count = calculate_word(line[1:])
+            word_added += word_count
+        elif line.startswith('-'):
+            word_count = calculate_word(line[1:])
+            word_added -= word_count
+    return word_added
+def _calculate_difference(content1: str, content2: str) -> int:
+    content1 = _split_into_lines(content1)
     content2 = _split_into_lines(content2)
     lines = d.compare(content1, content2)
-    print([a[2:] for a in lines if a.startswith('+ ')])
-def calculate_addition(lang: str, pageid : int , start_date : str, end_date : str, username : str) -> int:
+    return _calculate_added_words(lines)
+    
+def _calculate_initial_difference(lang : str, revision_id : int) -> tuple[int, int]:
+    params = {
+        "action": "compare",
+        "format": "json",
+        "formatversion" : "2",
+        "fromrev": revision_id,
+        "torelative": "prev",
+        "prop": "ids|title|rel|diffsize|diff|size",
+        "difftype": "unified",
+    }
+    res = BaseServer.get(lang=lang, params=params)
+    assert 'compare' in res, "Compare not found"
+    assert 'diffsize' in res['compare'], "Diffsize not found"
+    added_bytes = res['compare']['diffsize']
+    difference = res['compare']['body']
+    difference = UNIFIED_HEADER.sub("", difference)
+    lines = _split_into_lines(difference)
+    added_words = _calculate_added_words(lines)
+    print("From initial", added_words, added_bytes)
+    return added_words, added_bytes
+    
+   
+def calculate_addition(lang: str, pageid : int , start_date : str, end_date : str, username : str) -> tuple[int, int]:
     """
     Calculate the addition of the article
     """
+    start_date = dp.parse(start_date).isoformat()
+    end_date = dp.parse(end_date).isoformat()
     params = {
         "action": "query",
         "format": "json",
         "prop": "revisions",
         "pageids": pageid,
-        "formatversion": "2",
-        "rvprop": "tags|ids",
+        "formatversion" : "2",
+        "rvprop": "tags|ids|size|content",
         "rvslots": "main",
         "rvlimit": "max",
         "rvstart": start_date,
@@ -303,18 +111,27 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
         "rvdir": "newer",
         "rvuser": username,
     }
-    
-    res = sess.get("https://bn.wikipedia.org/w/api.php", params=params)
-    print(res.json())
-
-# calculate_addition(
-#     lang="bn",
-#     pageid=105301,
-#     start_date="2018-03-28T10:10:01.000Z",
-#     end_date="2018-03-28T10:15:01.000Z",
-#     username="Shebu Islam"
-# )
-_calculate_differece(
-    lang="bn",
-    revision_id=831915
-)
+    res = BaseServer.get(lang=lang, params=params)
+    assert 'query' in res, res
+    assert 'pages' in res['query'], "Pages not found"
+    assert len(res['query']['pages']) == 1, "More than one page found"
+    page = res['query']['pages'][0]
+    if not 'revisions' in page:
+        return 0, 0
+    revisions = page['revisions']
+    assert len(revisions) > 0, "No revisions found"
+    initial_revision = revisions[0]
+    added_words, added_bytes = _calculate_initial_difference(lang, initial_revision['revid'])
+    previous_content = initial_revision['slots']['main']['content']
+    for revision in revisions[1:]:
+        content = revision['slots']['main']['content']
+        added_words += _calculate_difference(previous_content, content, )
+        previous_content = content
+        added_bytes += revision['size']
+    return (added_words, added_bytes)
+def calculate_word(content : str) -> int:
+    """
+    Calculate the word count of the content
+    """
+    content = _preprocess(content)
+    return len(content.split())

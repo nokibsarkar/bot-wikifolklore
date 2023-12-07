@@ -2,6 +2,7 @@ from ._sql import *
 from ._schema import *
 from ..._shared._model import *
 import dateparser as dp
+from ._calculate_criteria import *
 class Server(BaseServer):
     pass
 
@@ -212,7 +213,7 @@ class Submission:
             'title' : page['title'],
             'content' : revision['*'],
             'bytes' : revision['size'],
-            'words' : 0,
+            'words' : calculate_word(revision['*']),
             'oldid' : revision['revid'],
         }
         return stat
@@ -222,6 +223,7 @@ class Submission:
         current_info = Submission._fetch_current_info(lang, title)
         pageid = current_info['pageid']
         first_revision_info = Submission._fetch_first_revision(lang, pageid)
+        added_words, added_bytes = calculate_addition(lang, pageid, start_at, end_at, submitted_by_username)
         errors = []
         stats = {
             'title' : title,
@@ -232,8 +234,8 @@ class Submission:
             'created_at' : first_revision_info['timestamp'],
             'created_by_username' : first_revision_info['username'],
             'created_by_id' : first_revision_info['user_id'],
-            'added_words' : 100,
-            'added_bytes' : 100,
+            'added_words' : added_words,
+            'added_bytes' : added_bytes,
         }
         return errors, stats
     @staticmethod

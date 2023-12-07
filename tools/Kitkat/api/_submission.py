@@ -62,6 +62,7 @@ async def create_submission(req: Request, submission: SubmissionCreateScheme):
                 created_by_username=current_stat['created_by_username'],
                 campaign_id=submission.campaign_id,
                 added_bytes=current_stat['added_bytes'],
+                added_words=current_stat['added_words'],
             )
             newSubmission = Submission.create(conn, newSubmission)
         return ResponseSingle[SubmissionScheme](success=True, data=newSubmission)
