@@ -29,16 +29,17 @@ async def create_submission(submission: SubmissionCreateScheme):
             campaign = Campaign.get_by_id(conn, campaign_id)
             if not campaign:
                 raise HTTPException(status_code=400, detail="Campaign not found")
-            language = campaign.language.value
-            usernames = [
-                submission.submitted_by_username,
-            ]
+            if campaign.status != CampaignStatus.running:
+                raise HTTPException(status_code=400, detail=f"Campaign status is {campaign.status}")
+            language = campaign.language.value # Language of the campaign
+            usernames = [submission.submitted_by_username]
+            # If the user is not in the database, add it, then get the user id
             users = User.get_username_map_guaranteed(conn, usernames, lang=language)
             submitted_by = users[submission.submitted_by_username]
             
         
             
-        errors, current_stat = Submission.fetch_stats(language, submission.title, None, None, None)
+        errors, current_stat = Submission.fetch_stats(language, submission.title, submitted_by['username'], campaign.start_at, campaign.end_at)
         if errors:
             raise HTTPException(status_code=400, detail=errors)
         newSubmission = SubmissionScheme(
