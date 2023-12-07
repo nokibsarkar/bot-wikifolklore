@@ -32,6 +32,7 @@ VALUES
     :created_by_id
 )
 """
+SQL1_GET_SUBMISSION_BY_ID = "SELECT * FROM `submission` WHERE `id` = :id LIMIT 1"
 SQL1_GET_CAMPAIGN_BY_ID = "SELECT * FROM `campaign` WHERE `id` = :id"
 SQL1_GET_USERS_BY_USERNAME_PREFIX = "SELECT * FROM `user` WHERE `username` IN "
 SQL1_ADD_JURY_TO_CAMPAIGN = """

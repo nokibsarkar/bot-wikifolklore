@@ -11,21 +11,13 @@ type APIResponseMultiple<T> = {
     data: T[];
     detail?: string;
 }
-type PageInfo = {
-    totalWords: number; // UTF-8
-    totalBytes: number; // UTF-8
-    addedBytes: number; // UTF-8
-    addedWords: number; // UTF-8
-    createdAt: string; // ISO 8601
-    createdBy: string; // User name
-    additionConsideredAfter: string; // ISO 8601
-}
+type PageInfo = Submission;
 type PageInfoRequest = {
     language: string;
     title: string;
-    submitter: string;
+    submitted_by_username: string;
     consideredAfter?: string;
-    submissionId?: number | null
+    submissionId: number
 }
 type WikiTextParseResponse = {
     parse: {
@@ -52,14 +44,14 @@ type Campaign = {
     status: CampaignStatus;
 };
 type SubmissionRequest = {
-    campaignID: number;
-    submitter: string;
+    campaign_id: number;
+    submitted_by_username: string;
     title: string;
 };
 type Submission = {
-    submissionID: number;
+    id: number;
     campaignID: number;
-    submitter: string;
+    submitted_by_username: string;
     title: string;
     createdAt: string;
     language: string;
@@ -102,19 +94,11 @@ const sampleUsernames = [
     'User:Example2',
     'User:Example3',
 ]
-const samplePageInfo: PageInfo = {
-    totalWords: 100,
-    totalBytes: 1000,
-    createdAt: "2021-10-01",
-    createdBy: "User:Example",
-    additionConsideredAfter: "2021-10-01",
-    addedBytes: 100,
-    addedWords: 10
-}
+
 const sampleSubmission: Submission = {
-    submissionID: 1,
+    id: 1,
     campaignID: 1,
-    submitter: "User:Example",
+    submitted_by_username: "User:Example",
     title: "Bangladesh",
     createdAt: new Date().toISOString(),
     language: "en",
@@ -209,7 +193,24 @@ class CampaignServer {
 
     }
     static async getSubmissions(campaignID: number): Promise<Submission[]> {
-        return [sampleSubmission];
+         const params = new URLSearchParams({
+            campaignID: campaignID.toString()
+        });
+        const url = '/api/kitkat/submission/' + '?' + params.toString();
+       
+        const res = await fetchWithErrorHandling(url)
+        const submissions = res.data;
+        const submissionCount = submissions.length;
+        var previousSubmission = null;
+        for(let i = 0; i < submissionCount; i++) {
+            const submission = submissions[i];
+            if(previousSubmission){
+                submission.prev = previousSubmission.id;
+                previousSubmission.next = submission.id;
+            }
+            previousSubmission = submission;
+        }
+        return submissions;
     }
     static async getJury(campaignID: number): Promise<string[]> {
         const url = '/api/kitkat/campaign/' + campaignID + '/jury';
@@ -238,11 +239,13 @@ class CampaignServer {
     }
 }
 class PageServer {
-    static async getPageInfo({ language, submitter, title, submissionId }: PageInfoRequest): Promise<PageInfo> {
-        return samplePageInfo;
+    static async getPageInfo({ language, submitted_by_username, title, submissionId }: PageInfoRequest): Promise<PageInfo> {
+        return PageServer.getSubmission(submissionId)
     }
     static async getSubmission(submissionID: number): Promise<Submission> {
-        return sampleSubmission;
+        const url = '/api/kitkat/submission/' + submissionID;
+        const res = await fetchWithErrorHandling(url)
+        return res.data;
     }
 
     static async judgeSubmission(submissionID: number, point: number, note?: string): Promise<Submission> {

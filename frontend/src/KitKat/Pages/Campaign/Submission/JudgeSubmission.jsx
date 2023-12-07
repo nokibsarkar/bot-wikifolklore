@@ -234,14 +234,14 @@ const Preview = ({ title, language }) => {
     )
 }
 const JudgeSubmission = () => {
-    console.log('rendering judge submission')
-    const { campaignID, submissionID } = useParams();
+     const { campaignID, submissionID } = useParams();
     const [submission, setSubmission] = useState(null);
+    
     const [campaign, setCampaign] = useState(null);
     const [title, setTitle] = useState('');
     const preview = useMemo(() => {
         if (!submission) return <div>Loading Preview</div>
-        return <Preview title={title} language={submission.language} />
+        return <Preview title={title} language={submission.target_wiki} />
     }, [submissionID, submission]);
     const judge = useCallback((point) => {
         KitKatServer.Page.judgeSubmission(submission.id, point).then(
@@ -249,8 +249,7 @@ const JudgeSubmission = () => {
         )
     }, [submission]);
     useEffect(() => {
-        // KitKatServer.addWikiStyle();
-        const newBase = document.createElement('base');
+        
         // create a new base element and set it's href to the intended url
         (async () => {
             const [subm, camp] = await Promise.all([KitKatServer.Page.getSubmission(submissionID), KitKatServer.Campaign.getCampaign(campaignID)])
@@ -260,8 +259,7 @@ const JudgeSubmission = () => {
             setCampaign(camp);
 
         })();
-        return () => newBase.remove();
-    }, []);
+    }, [submissionID]);
     if (!submission || !campaign) return <div>Loading Submission</div>
     return <div>
         {/* <CampaignHeader campaign={campaign} /> */}
@@ -270,7 +268,7 @@ const JudgeSubmission = () => {
             <AllButton campaign={campaign} />
         </div>
         <div style={{ textAlign: 'center', height: '8%', position: 'relative' }}>
-            <PageInfo title={title} campaign={campaign} />
+            {submission && <PageInfo title={title} campaign={campaign} submission={submission} />}
         </div>
         {preview}
         <JudgeMentBox judge={judge} campaignID={campaignID} submissionID={submissionID} />
