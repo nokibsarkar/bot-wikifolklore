@@ -24,13 +24,19 @@ async def get_submission(submission_id: int):
 async def create_submission(submission: SubmissionCreateScheme):
     try:
         campaign_id = submission.campaign_id
-        language = submission.language.value
+        language = 'bn'
         with Server.get_parmanent_db() as conn:
+            campaign = Campaign.get_by_id(conn, campaign_id)
+            if not campaign:
+                raise HTTPException(status_code=400, detail="Campaign not found")
+            language = campaign.language.value
             usernames = [
                 submission.submitted_by_username,
             ]
             users = User.get_username_map_guaranteed(conn, usernames, lang=language)
             submitted_by = users[submission.submitted_by_username]
+            
+        
             
         errors, current_stat = Submission.fetch_stats(language, submission.title, None, None, None)
         if errors:
