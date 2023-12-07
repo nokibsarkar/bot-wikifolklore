@@ -97,7 +97,7 @@ async def update_campaign(campaign_id: int, campaign: CampaignUpdate):
 @campaign_router.delete("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def delete_campaign(campaign_id: int):
     """Cancel or reject a campaign.
-    if the user is the creator of the campaign, cancel the campaign.
+    if the user is the created_by of the campaign, cancel the campaign.
     else if the user is the admin and the campaign is not pending, reject the campaign.
     else, return 403.
     """

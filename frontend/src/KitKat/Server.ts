@@ -196,6 +196,15 @@ class CampaignServer {
         return res.data;
     }
     static async submitArticle(req: SubmissionRequest): Promise<Submission> {
+        const url = '/api/kitkat/submission/';
+        const res = await fetchWithErrorHandling(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(req)
+        });
+        console.log(res)
         return sampleSubmission;
 
     }

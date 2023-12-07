@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `campaign` (
     `start_at`    TEXT NOT NULL,
     `end_at`    TEXT NOT NULL,
     `created_at`    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `creator_id`    INTEGER NOT NULL,
+    `created_by_id`    INTEGER NOT NULL,
     `approved_by`    INTEGER NULL DEFAULT NULL,
     `approved_at`    TIMESTAMP NULL DEFAULT NULL,
     `description`    TEXT NULL DEFAULT NULL,
@@ -35,35 +35,36 @@ CREATE TABLE IF NOT EXISTS `campaign` (
     `allowJuryToParticipate`    BOOLEAN NOT NULL DEFAULT TRUE,
     `allowMultipleJudgement`    BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT `campaign_approved_by_fkey` FOREIGN KEY(`approved_by`) REFERENCES `user`(`id`),
-    CONSTRAINT `campaign_creator_id_fkey` FOREIGN KEY(`creator_id`) REFERENCES `user`(`id`),
+    CONSTRAINT `campaign_created_by_id_fkey` FOREIGN KEY(`created_by_id`) REFERENCES `user`(`id`),
     CONSTRAINT `campaign_start_end_check` CHECK(NOT `start_at` > `end_at`),
     CONSTRAINT `campaign_approved_at_check` CHECK(`created_at` <= `approved_at` AND `approved_at` <= `start_at`)
 );
 CREATE TABLE IF NOT EXISTS `submission` (
-    `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `page_id`	INTEGER NOT NULL, -- page_id of the page on the target wiki
+    `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `pageid`	INTEGER NOT NULL, -- pageid of the page on the target wiki
     `campaign_id`	INTEGER NOT NULL, -- campaign id
     `title`	TEXT NOT NULL, -- title of the page on the target wiki
-    `old_id`	INTEGER NOT NULL, -- revision id of the page on the home wiki
+    `oldid`	INTEGER NOT NULL, -- revision id of the page on the home wiki
     `target_wiki`	TEXT NOT NULL, -- target wiki language code
-    `submitted_at`	TEXT NOT NULL, -- submission time
-    `submitter_id`	INTEGER NOT NULL, -- user id of the submitter
-    `submitter_username`	TEXT NOT NULL, -- username of the submitter
+    `submitted_at`	TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- submission time
+    `submitted_by_id`	INTEGER NOT NULL, -- user id of the submitter
+    `submitted_by_username`	TEXT NOT NULL, -- username of the submitter
     `created_at`	TEXT NOT NULL, -- creation time of the page on the target wiki
-    `creator_id`	INTEGER NOT NULL, -- user id of the creator
-    `creator_username`	TEXT NOT NULL, -- username of the creator
+    `created_by_id`	INTEGER NOT NULL, -- user id of the created_by
+    `created_by_username`	TEXT NOT NULL, -- username of the created_by
     `total_bytes`	INTEGER NOT NULL, -- total bytes of the page on the target wiki
-    `total_words`	INTEGER NOT NULL, -- total words of the page on the target wiki
-    `added_bytes`	INTEGER NOT NULL, -- added bytes of the page on the target wiki
-    `added_words`	INTEGER NOT NULL, -- added words of the page on the target wiki
+    `total_words`	INTEGER  NULL DEFAULT NULL, -- total words of the page on the target wiki
+    `added_bytes`	INTEGER  NULL DEFAULT NULL, -- added bytes of the page on the target wiki
+    `added_words`	INTEGER  NULL DEFAULT NULL, -- added words of the page on the target wiki
+    `positive_votes`	INTEGER NOT NULL DEFAULT 0, -- positive votes of the submission
+    `negative_votes`	INTEGER NOT NULL DEFAULT 0, -- negative votes of the submission
+    `total_votes`	INTEGER NOT NULL DEFAULT 0, -- total votes of the submission
     `points`	INTEGER NOT NULL DEFAULT 0, -- points of the submission
-    `positive_votes`	INTEGER NOT NULL, -- positive votes of the submission
-    `negative_votes`	INTEGER NOT NULL, -- negative votes of the submission
-    `total_votes`	INTEGER NOT NULL, -- total votes of the submission
-    `judgable`	INTEGER NOT NULL DEFAULT TRUE, -- whether the submission is judgable
+    `judgable`	BOOLEAN NOT NULL DEFAULT TRUE, -- whether the submission is judgable
     CONSTRAINT `submission_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
-    CONSTRAINT `submission_submitter_id_fkey` FOREIGN KEY(`submitter_id`) REFERENCES `user`(`id`),
-    CONSTRAINT `submission_date_check` CHECK(`submitted_at` < `created_at`)
+    CONSTRAINT `submission_submitted_by_id_fkey` FOREIGN KEY(`submitted_by_id`) REFERENCES `user`(`id`),
+    CONSTRAINT `submission_date_check` CHECK(`submitted_at` > `created_at`),
+    CONSTRAINT `submission_unique_campaign_id_pageid` UNIQUE(`campaign_id`, `pageid`)
 );
 CREATE TABLE IF NOT EXISTS `jury` (
     `user_id`	INTEGER NOT NULL, -- user id of the jury
@@ -161,7 +162,7 @@ VALUES
     (:id, :task_id, :title, :target, :wikidata, :category, :target_lang)
     ON CONFLICT DO NOTHING;
 """
-SQL2_GET_ARTICLE_BY_PAGE_ID_AND_TASK_ID = """
+SQL2_GET_ARTICLE_BY_pageid_AND_TASK_ID = """
 SELECT * FROM `article` WHERE `id` = :id AND `task_id` = :task_id;
 """
 

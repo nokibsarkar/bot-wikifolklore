@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Request, Query
+from fastapi import APIRouter, Request, Query, HTTPException
 from ..models import *
+from pprint import pprint as print
 submission_router = APIRouter(
     prefix="/submission",
     tags=["Submission"],
@@ -20,8 +21,45 @@ async def list_all_submissions(req : Request, campaign_id: str, judgable : bool 
 async def get_submission(submission_id: int):
     return {"message": "Hello World"}
 @submission_router.post("/", response_model=ResponseSingle[SubmissionScheme])
-async def create_submission(submission: SubmissionScheme):
-    return {"message": "Hello World"}
+async def create_submission(submission: SubmissionCreateScheme):
+    try:
+        campaign_id = submission.campaign_id
+        language = submission.language.value
+        with Server.get_parmanent_db() as conn:
+            usernames = [
+                submission.submitted_by_username,
+            ]
+            users = User.get_username_map_guaranteed(conn, usernames, lang=language)
+            submitted_by = users[submission.submitted_by_username]
+            
+        errors, current_stat = Submission.fetch_stats(language, submission.title, None, None, None)
+        if errors:
+            raise HTTPException(status_code=400, detail=errors)
+        newSubmission = SubmissionScheme(
+            title=current_stat['title'],
+            pageid=current_stat['pageid'],
+            oldid=current_stat['oldid'],
+            target_wiki=language,
+            submitted_by_username=submitted_by['username'],
+            submitted_by_id=submitted_by['id'],
+            total_bytes=current_stat['bytes'],
+            total_words=current_stat['words'],
+            total_votes=0,
+            created_at=current_stat['created_at'],
+            created_by_id=current_stat['created_by_id'],
+            created_by_username=current_stat['created_by_username'],
+            campaign_id=submission.campaign_id,
+            added_bytes=current_stat['added_bytes'],
+        )
+        with Server.get_parmanent_db() as conn:
+            newSubmission = Submission.create(conn, newSubmission)
+        
+        return ResponseSingle[SubmissionScheme](success=True, data=newSubmission)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400, detail=str(e))
 @submission_router.post("/{submission_id}", response_model=ResponseSingle[SubmissionScheme])
 async def update_submission(submission_id: int, submission: SubmissionScheme):
     return {"message": "Hello World"}
