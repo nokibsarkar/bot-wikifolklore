@@ -68,7 +68,6 @@ async def create_submission(req: Request, submission: SubmissionCreateScheme):
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise e
         raise HTTPException(status_code=400, detail=str(e))
 @submission_router.post("/{submission_id}", response_model=ResponseSingle[SubmissionScheme])
 async def update_submission(submission_id: int, submission: SubmissionScheme):
