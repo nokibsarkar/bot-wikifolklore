@@ -1,7 +1,6 @@
 from ._sql import *
 from ._schema import *
 from ..._shared._model import *
-import json
 import dateparser as dp
 class Server(BaseServer):
     pass
@@ -66,7 +65,7 @@ class Campaign:
             'rules': rules,
             'blacklist': blacklist,
             'image': campaign.image,
-            'creator_id': 1,
+            'created_by_id': 1,
             'maximumSubmissionOfSameArticle': campaign.maximumSubmissionOfSameArticle,
             'allowExpansions': campaign.allowExpansions,
             'minimumTotalBytes': campaign.minimumTotalBytes,
@@ -156,12 +155,109 @@ class Campaign:
         return conn.execute(SQL1_GET_CAMPAIGN_BY_ID, {'id': id}).fetchone()
 class Submission:
     @staticmethod
-    def fetch_stats(lang :str, title : str, submitter : str, start_at : str, end_at : str) -> dict:
-        pass
+    def _fetch_first_revision(lang : str, pageid : int) -> dict[str, str]:
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "revisions",
+            "pageids": pageid,
+            "rvprop": "timestamp|user|size|ids|userid",
+            "rvlimit": "1",
+            "rvdir": "newer",
+        }
+        info = Server.get(lang=lang, params=params)
+        assert 'query' in info, "query not found"
+        assert 'pages' in info['query'], 'No pages found'
+    
+        assert len(info['query']['pages']) == 1, "Must be a single "
+        assert pageid in info['query']['pages'], "Page does not match"
+        page = info['query']['pages'][pageid]
+        assert 'revisions' in page, "No revision found"
+        revision = page['revisions'][0]
+        return {
+            'oldid' : revision['revid'],
+            'title' : page['title'],
+            'user_id' : revision['userid'],
+            'username' : revision['user'],
+            'timestamp' : revision['timestamp'],
+            'size' : revision['size'],
+        }
     @staticmethod
-    def create(conn : sqlite3.Cursor, articles) -> int:
-        cur = conn.executemany(SQL2_INSERT_ARTICLE, articles)
-        return cur.rowcount
+    def _fetch_current_info(lang : str, title : str) -> dict[str, str]:
+        """
+        Fetch current information of the article from the API
+        """
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "revisions",
+            "titles": title,
+            "rvprop": "timestamp|tags|user|size|ids|content|userid",
+            "rvlimit": "1",
+            "indexpageids" : 1
+        }
+        info = Server.get(lang=lang, params=params)
+        assert 'query' in info, "query not found"
+        assert 'pages' in info['query'], 'No pages found'
+    
+        assert len(info['query']['pages']) == 1 and len(info['query']['pageids']) == 1, "Must be a single "
+        pageid = info['query']['pageids'][0]
+        page = info['query']['pages'][pageid]
+        assert 'revisions' in page, "No revision found"
+        revision = page['revisions'][0]
+        assert '*' in revision, 'No content'
+        stat = {
+            'pageid' : pageid,
+            'ns' : page['ns'],
+            'title' : page['title'],
+            'content' : revision['*'],
+            'bytes' : revision['size'],
+            'words' : 0,
+            'oldid' : revision['revid'],
+        }
+        return stat
+    @staticmethod
+    def fetch_stats(lang :str, title : str, submitted_by_username : str, start_at : str, end_at : str) -> dict:
+        current_info = Submission._fetch_current_info(lang, title)
+        pageid = current_info['pageid']
+        first_revision_info = Submission._fetch_first_revision(lang, pageid)
+        errors = []
+        stats = {
+            'title' : title,
+            'pageid' : pageid,
+            'oldid' : current_info['oldid'],
+            'words' : current_info['words'],
+            'bytes' : current_info['bytes'],
+            'added_words' : 100,
+            'added_bytes' : 100,
+            'created_at' : first_revision_info['timestamp'],
+            'created_by_username' : first_revision_info['username'],
+            'created_by_id' : first_revision_info['user_id'],
+            'submitted_by_username' : submitted_by_username,
+            'submitted_by_id' : 100,
+        }
+        return errors, stats
+    @staticmethod
+    def create(conn : sqlite3.Cursor, submission: SubmissionScheme) -> SubmissionScheme:
+        params = {
+            'campaign_id': submission.campaign_id,
+            'pageid': submission.pageid,
+            'oldid': submission.oldid,
+            'title': submission.title,
+            'created_at': submission.created_at,
+            'created_by_id': submission.created_by_id,
+            'created_by_username': submission.created_by_username,
+            'submitted_by_id': submission.submitted_by_id,
+            'submitted_by_username': submission.submitted_by_username,
+            'total_words': submission.total_words,
+            'total_bytes': submission.total_bytes,
+            'added_words': submission.added_words,
+            'added_bytes': submission.added_bytes,
+            'target_wiki': submission.target_wiki
+        }
+        cur = conn.execute(SQL1_CREATE_SUBMISSION, params)
+        new_submission = cur.fetchone()
+        return SubmissionScheme(**new_submission)
     @staticmethod
     def get_all_by_campaign_id(conn : sqlite3.Cursor, campaign_id, judgable : bool=None, judged : bool=None):
 

@@ -23,18 +23,18 @@ class SubmissionScheme:
     A class to store the article that was gathered
     """
     id : int = None # Submission ID
-    page_id : int = None # Page ID of the article
+    pageid : int = None # Page ID of the article
     campaign_id : str = None # Campaign ID of the article
     title : str = None
-    old_id : int = None # Revision ID of the article
+    oldid : int = None # Revision ID of the article
     target_wiki : Language = None # Target wiki of the article, this must be as same as the campaign's target wiki
     # Statistics
     submitted_at : datetime | date = None # When was the article submitted
-    submitter_id : int = None # User ID of the user who submitted the article
-    submitter_username : str = None # Username of the user who submitted the article
+    submitted_by_id : int = None # User ID of the user who submitted the article
+    submitted_by_username : str = None # Username of the user who submitted the article
     created_at : datetime | date = None # When was the article created
-    creator_id : int = None # User ID of the user who created the article
-    creator_username : str = None # Username of the user who created the article
+    created_by_id : int = None # User ID of the user who created the article
+    created_by_username : str = None # Username of the user who created the article
     # Article statistics
     total_bytes : int = 0 # Total bytes of the article
     total_words : int = 0 # Total words of the article
@@ -48,6 +48,16 @@ class SubmissionScheme:
     # If multiple judgements are allowed, 
     # this will be True all the time before the campaign ends
     judgable : bool = True 
+@dataclass
+class SubmissionCreateScheme:
+    """
+    A class to store the article that was gathered
+    """
+    campaign_id : str # Campaign ID of the article
+    title : str
+    language : Language  # Target wiki of the article, this must be as same as the campaign's target wiki
+    submitted_by_username : str = None # Username of the user who submitted the article
+    
 @dataclass
 class CategoryScheme(SubmissionScheme):
     pass
@@ -139,7 +149,7 @@ class CampaignScheme(_Campaign):
     id : int
     approved_by : int
     approved_at : datetime | date
-    creator_id : int
+    created_by_id : int
     created_at : datetime | date
     status : CampaignStatus = CampaignStatus.pending
     @staticmethod
@@ -155,7 +165,7 @@ class CampaignScheme(_Campaign):
             rules=data['rules'] and data['rules'].split('\n'),
             blacklist=data['blacklist'] and data['blacklist'].split(','),
             image=data['image'],
-            creator_id=data['creator_id'],
+            created_by_id=data['created_by_id'],
             approved_by=data['approved_by'],
             approved_at=data['approved_at'],
             created_at=data['created_at'],

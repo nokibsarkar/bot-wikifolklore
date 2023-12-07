@@ -1,4 +1,4 @@
-from requests import Session
+from requests import Session, get as request_get, post as request_post
 import uuid, os
 from dotenv import load_dotenv
 if not load_dotenv():
@@ -19,7 +19,8 @@ def _google_auth_token():
     """
     This function would return a valid google auth token.
     """
-    import json, jwt, time, requests
+    return "ya29.c.c0AY_VpZjMzK-gRPy97t9tmakPbP3IYa-l3UZLuh_KSTcZUX2rypVRMYrosTqDS7SnDqtcGpmNlUodYWAJ6QN_Uf-VTEWAxjB4LOoJGrPECJnMaIVio5uRRSuAjIG-_iZqVIm1f3W_p8x2qRFAgY5C0tVrDHZ21rSH28qu8sxi3CPmGRLvB7RrK17yqsfqhlbyCKK2mcgSvqM93qlxdJJrJmTpWYVTlit7plCu7U8y6oCTxg0P0WmdIA7ml-xpkd46pSjs534tjChOH8PYe03KBZsGndpz--FQeiSMrAi4NMFIM9SGiI4iX8BuLY9tD2JCBjwypVFo9IcCugC7ocD5UA5TqPRv2Y7xqlbXWWgEw4vb6CpsqBPZLYfKE385Aor9xz7S7o-W-gJ6tZopJqRfV7It9Fvhvo-lWu7Qb2r09ry9wd-Sf-wRgssyq22v7nehzlJhuy2Sqnd3mp500n4RF_12zBcw-FY8ecqwX6Mj1I9-OJ8nSwo4_klMuJ2JiJ5jR5y6gweYnx1VmVSzRW4ovaOowQ2aIJnyU3OYvUBWoB0jnOZhZQpoYY4pnUV_5JY5aRr2I6_jZmUy45UOR2_2Urj_l7ln54Wfmr4jvYXM9B2W740upbMtkfuX3p-1SWoBva5wwxou9nhcQywJ8Xi3tdFtOg3Ze1vyhIpk-v2qSWkz9lzuz5d1yjQnolr08SYzh5Uo2tyS2fX7JMbQQc5pVkbhr1XQb_MvSJ3BuXrWd_Osymfvdbbn1wxo9wfdavu4pS9-nnzcR4O6ir0mytc7kkF72W94yJ9gytR7s5XJiBji5WUX1vJbWov7jfcFpcz90-SjamieYd28W6an7pmfmcq0utxRSbfd9XO4h-Zd49dg30wkaB6y4-04gscO_jpfvIk36W_RrU1pU0ir2kjZwSfs1OfxyYoVx8ZQ5ZUWSISvql04BaZjvnIcXB77XQdwV5UsWVInuF2Ia5fXX1r4j-2dBQ7u8f2sxJOWO08y7idexInfBMi8iMk"
+    import json, jwt, time
     def load_json_credentials(filename):
         ''' Load the Google Service Account Credentials from Json file '''
         with open(filename, 'r') as f:
@@ -39,8 +40,8 @@ def _google_auth_token():
         '''
         # Google Endpoint for creating OAuth 2.0 Access Tokens from Signed-JWT
         auth_url = "https://www.googleapis.com/oauth2/v4/token"
-        issued = int(time.time())
-        expires = issued + 3600	# expires_in is in seconds
+        issued = int(time.time()) 
+        expires = issued + 1	# expires_in is in seconds
         # Note: this token expires and cannot be refreshed. The token must be recreated
         # JWT Headers
         additional_headers = {
@@ -72,10 +73,11 @@ def _google_auth_token():
             "assertion": signed_jwt
         }
     
-        r = requests.post(auth_url, data=params)
+        r = request_post(auth_url, data=params)
     
         if r.ok:
-            return(r.json()['access_token'], '')
+            res = r.json()
+            return(res['access_token'], '')
         return None, r.text
     scopes = 'https://www.googleapis.com/auth/cloud-translation'
     cred = load_json_credentials(GOOGLE_SERVICE_ACCOUNT)
@@ -90,7 +92,7 @@ def _google_auth_token():
     if err:
         raise Exception(err)
     return token
-GOOGLE_KEY = _google_auth_token()
+GOOGLE_KEY =  _google_auth_token()
 def _translate_azure(texts, target):
     """
     This function would take a list of texts and translate them to target language.
@@ -189,4 +191,5 @@ if __name__ == "__main__":
     pass
     # token = _google_auth_token()
     # print(token)
+    print(GOOGLE_KEY)
     print(translate(["I would really like to drive your car around the block a few times!", "weight"], "mr"))
