@@ -8,7 +8,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ErrorPage from "../../../Components/ErrorPage";
-
+import LoadingPage from "../../../../Layout/Loader";
 const defaultCampaign = {
     name: '',
     description : null,
@@ -112,9 +112,7 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
     if (loading)
-        return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <CircularProgress />
-        </div>
+        return <LoadingPage title="Loading, please wait..." />
     if (error)
         return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             {error}

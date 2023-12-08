@@ -4,6 +4,7 @@ import KitKatServer from "../../../Server";
 import EditIcon from '@mui/icons-material/Edit';
 import RightArrow from '@mui/icons-material/ArrowForward'
 import ImageSearcher from "../../../Components/ImageInput";
+import LoadingPage from "../../../../Layout/Loader";
 
 
 const Rules = ({ rules, setRules }) => {
@@ -70,7 +71,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
         wiki.push({ id: key, label: `${value} (${key})` })
     };
     if (loading)
-        return <CircularProgress />;
+        return <LoadingPage />
     return (
         <Box component="div" sx={{
             // display: { sm: 'flex' },

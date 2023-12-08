@@ -11,6 +11,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CampaignHeader from "../../../Components/CampaignHeader";
 import { AllButton, DetailsButton, JudgeButton } from "../../../Components/CampaignButtons";
+import LoadingPage from "../../../../Layout/Loader";
 const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [point, setPoint] = useState(0);
@@ -267,7 +268,7 @@ const JudgeSubmission = () => {
 
         })();
     }, [submissionID]);
-    if (!submission || !campaign) return <div>Loading Submission</div>
+    if (!submission || !campaign) return <LoadingPage title="Loading Submission" />
     return <div>
         {/* <CampaignHeader campaign={campaign} /> */}
         <div style={{ textAlign: 'center' }}>

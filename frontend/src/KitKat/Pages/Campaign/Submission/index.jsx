@@ -7,6 +7,7 @@ import JudgeIcon from '@mui/icons-material/HowToVote';
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { AllButton, DetailsButton, SubmitButton } from "../../../Components/CampaignButtons";
+import LoadingPage from "../../../../Layout/Loader";
 
 const SubmissionList = () => {
     const { campaignID } = useParams();
@@ -24,7 +25,7 @@ const SubmissionList = () => {
             setLoading(false);
         })()
     }, [campaignID]);
-    if (!campaign) return <div>Loading Campaign</div>
+    if (!campaign) return <LoadingPage />
     return (
         <div>
             <CampaignHeader campaign={campaign} />

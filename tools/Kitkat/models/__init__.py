@@ -218,7 +218,8 @@ class Submission:
             "titles": title,
             "rvprop": "timestamp|tags|user|size|ids|content|userid",
             "rvlimit": "1",
-            "indexpageids" : 1
+            "indexpageids" : 1,
+            'redirects' : 1
         }
         info = Server.get(lang=lang, params=params)
         assert 'query' in info, "query not found"
@@ -245,6 +246,7 @@ class Submission:
         errors = []
         current_info = Submission._fetch_current_info(lang, title)
         pageid = current_info['pageid']
+        title = current_info['title']
         first_revision_info = Submission._fetch_first_revision(lang, pageid)
         added_words, added_bytes = calculate_addition(lang, pageid, start_at, end_at, submitted_by_username)
         errors = []

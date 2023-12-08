@@ -1,12 +1,14 @@
 import { createRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import ArticleInput from "../../../Components/ArticleInput";
 import KitKatServer from "../../../Server";
+import Loader from "../../../../Layout/Loader";
 import PageInfo from "../../../Components/PageInfo";
 import CheckIcon from '@mui/icons-material/Check';
 import { Button, CircularProgress, LinearProgress, Typography } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import { AllButton, DetailsButton } from "../../../Components/CampaignButtons";
+import LoadingPage from "../../../../Layout/Loader";
 
 const ArticleSubmissionSuccess = ({ campaignID }) => {
     return <div style={{ textAlign: 'center' }}>
@@ -81,9 +83,7 @@ const ArticleSubmissionPage = () => {
         setLoading(false);
             
     }, [campaign, article, draftID]);
-    if (!campaign) return <div style={{ textAlign: 'center' }}>
-        <CircularProgress />
-    </div>
+    if (!campaign) return <LoadingPage />
     if (error) return <div style={{ textAlign: 'center' }}>
         <Typography variant="h6" component="div" color="error.main" sx={{ mb: 3, flexGrow: 1, textAlign: 'center' }}>
             {error.message}
@@ -115,7 +115,7 @@ const ArticleSubmissionPage = () => {
                 Article submission
             </Typography>
 
-            {loading ? <div style={{ textAlign: 'center' }}><CircularProgress /></div> : (
+            {loading ? <Loader title="Loading Campaign" />: (
                 articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} /> :
                     <>
                         {!article && <ArticleInput language={campaign?.language} onNewArticle={createDraft} submitButtonLabel="Check" />}

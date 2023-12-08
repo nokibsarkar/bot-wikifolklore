@@ -4,6 +4,7 @@ import CampaignHeader from "../../Components/CampaignHeader";
 import KitKatServer from "../../Server";
 import RuleIcon from '@mui/icons-material/Rule';
 import GavelIcon from '@mui/icons-material/Gavel';
+import LoadingPage from "../../../Layout/Loader";
 import { Box, Chip, List, Typography } from "@mui/material";
 import { AllButton, JudgeButton, SettingsButton, SubmitButton } from "../../Components/CampaignButtons";
 const Rules = ({ rules }) => {
@@ -90,7 +91,7 @@ const Campaign = () => {
             }
         })()
     }, [campaignID]);
-    if (loading) return <div>Loading Campaign</div>
+    if (loading) return <LoadingPage title="Loading Campaign" />
     if (error) return <div>{error}</div>
     return (
         <Box sx={{
