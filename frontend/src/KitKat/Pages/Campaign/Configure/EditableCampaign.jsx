@@ -9,6 +9,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ErrorPage from "../../../Components/ErrorPage";
 import LoadingPage from "../../../../Layout/Loader";
+import {DetailsButton} from "../../../Components/CampaignButtons";
 const defaultCampaign = {
     name: '',
     description : null,
@@ -106,7 +107,7 @@ const StepSelector = ({ step, props }) => {
     }
 
 }
-const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null }) => {
+const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null, showGotoDetailsButton = false}) => {
 
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
@@ -137,9 +138,8 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
                     </Button> : SaveButton
                     }
                 </p> : SaveButton
-
-
             }
+            {showGotoDetailsButton && <DetailsButton campaign={campaign} />}
         </div>
     )
 

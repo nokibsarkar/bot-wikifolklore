@@ -4,11 +4,11 @@ import KitKatServer from "./Server.ts"
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Dashboard from "./Dashboard.jsx"
 import ArticleSubmissionPage from "./Pages/Campaign/Submission/NewSubmission.jsx"
+import CampaignList from "./Pages/Campaign/index.jsx";
 import {withSentryReactRouterV6Routing} from "@sentry/react";
 const Routes = withSentryReactRouterV6Routing(_Routes);
 const JudgeSubmission = lazy(() => import("./Pages/Campaign/Submission/JudgeSubmission.jsx"))
 const SubmissionList = lazy(() => import("./Pages/Campaign/Submission/index.jsx"))
-const CampaignList = lazy(() => import("./Pages/Campaign/index.jsx"))
 const Campaign = lazy(() => import("./Pages/Campaign/Campaign.jsx"));
 const CampaignEdit = lazy(() => import("./Pages/Campaign/Configure/Edit.jsx"));
 const CampaignCreate = lazy(() => import("./Pages/Campaign/Configure/Create.jsx"));

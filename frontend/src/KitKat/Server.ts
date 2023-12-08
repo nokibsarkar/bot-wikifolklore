@@ -194,7 +194,6 @@ class CampaignServer {
             },
             body: JSON.stringify(req)
         });
-        console.log(res)
         return sampleSubmission;
 
     }

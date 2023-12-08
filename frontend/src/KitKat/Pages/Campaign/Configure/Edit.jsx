@@ -58,6 +58,7 @@ const CampaignEdit = () => {
                 defaultStep={3}
                 onSave={handleSave}
                 initialCampaign={campaign}
+                showGotoDetailsButton
             />
         </div>
     )

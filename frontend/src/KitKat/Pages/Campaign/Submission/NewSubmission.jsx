@@ -57,7 +57,6 @@ const ArticleSubmissionPage = () => {
         }
         try {
             const draft = await KitKatServer.Page.createDraft(draftRequest);
-            console.log(draft);
             setDraft(draft);
             setDraftID(draft.id);
             setPageInfo(draft);
