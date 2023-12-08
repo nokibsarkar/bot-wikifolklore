@@ -38,13 +38,14 @@ const ArticleSubmissionPage = () => {
     const [draft, setDraft] = useState(null); // [draft, setDraft
     const [campaign, setCampaign] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null); // [error, setError
     const [pageinfo, setPageInfo] = useState(null);
     const [article, setArticle] = useState(null);
     const [articleSubmitted, setArticleSubmitted] = useState(false);
     useEffect(() => {
         KitKatServer.Campaign.getCampaign(campaignID).then(setCampaign);
     }, [campaignID]);
-    const createDraft = useCallback((article) => {
+    const createDraft = useCallback(async (article) => {
         setLoading(true);
         setArticle(article);
         const draftRequest = {
@@ -52,28 +53,56 @@ const ArticleSubmissionPage = () => {
             submitted_by_username: KitKatServer.BaseServer.loginnedUser().username,
             campaign_id: campaign.id.toString()
         }
-        KitKatServer.Page.createDraft(draftRequest).then(draft => {
+        try {
+            const draft = await KitKatServer.Page.createDraft(draftRequest);
             console.log(draft);
             setDraft(draft);
             setDraftID(draft.id);
-            setLoading(false);
             setPageInfo(draft);
-        })
+        } catch (e) {
+            setError(e);
+        }
+
+        setLoading(false);
     }, [campaign, article]);
-    const submit = useCallback(() => {
+    const submit = useCallback(async () => {
         setLoading(true);
         const submissionRequest = {
-            draft_id : draftID.toString(),
+            draft_id: draftID.toString(),
         }
-        KitKatServer.Campaign.submitArticle(submissionRequest).then(submission => {
+        try{
+            const submission = await KitKatServer.Campaign.submitArticle(submissionRequest)
             console.log(submission);
-            setLoading(false);
             setPageInfo(null);
             setArticleSubmitted(true);
-        })
+        } catch (e) {
+            setError(e);
+        }
+        setLoading(false);
+            
     }, [campaign, article, draftID]);
     if (!campaign) return <div style={{ textAlign: 'center' }}>
         <CircularProgress />
+    </div>
+    if (error) return <div style={{ textAlign: 'center' }}>
+        <Typography variant="h6" component="div" color="error.main" sx={{ mb: 3, flexGrow: 1, textAlign: 'center' }}>
+            {error.message}
+        </Typography>
+        <Button variant="outlined" color="primary" size="small"
+            sx={{ mr: 2 }}
+            component={Link}
+            to={`/kitkat/campaign/${campaignID}`}
+        >
+            Back to Campaign
+        </Button>
+        <Button variant="contained" color="error" size="small"
+            component={Link}
+            to={`/kitkat/campaign/${campaignID}/submission/new`}
+            target="_self"
+            onClick={e => window.location.reload()}
+        >
+            Try Again
+        </Button>
     </div>
     return (
         <div>
