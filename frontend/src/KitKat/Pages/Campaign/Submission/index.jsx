@@ -43,11 +43,11 @@ const SubmissionList = () => {
                     { field: 'title', headerName: 'Title', flex: 1 },
                     { field: 'submitted_by_username', headerName: 'Submitter', flex: 1 },
                     {
-                        field: 'points', headerName: 'Score', flex: 0.5, renderCell: (params) => {
+                        field: 'score', headerName: 'Score', flex: 0.5, renderCell: (params) => {
                             const scores = []
-                            const positiveScore = params.row.positive_votes;
-                            const zeroScore = 0;
-                            const negativeScore = params.row.negative_votes;
+                            const positiveScore = 2;
+                            const zeroScore = 1;
+                            const negativeScore = 1;
                             scores.push(
                                 <font color='green' key='pass'>
                                     {'❚'.repeat(positiveScore)}
@@ -70,8 +70,8 @@ const SubmissionList = () => {
                                 alignItems: 'center',
                                 flexWrap: 'wrap',
                                 fontSize: '10px'
-                            }}>
-                                {scores}
+                            }}> {params.value}
+                                ({scores})
                             </span>
                         }
                     },
