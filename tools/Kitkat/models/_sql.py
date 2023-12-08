@@ -120,3 +120,47 @@ INSERT INTO
     :added_words
 ) RETURNING *
 """
+SQL1_CREATE_DRAFT = """
+INSERT INTO
+    `draft`
+(
+    `pageid`,
+    `campaign_id`,
+    `title`,
+    `oldid`,
+    `target_wiki`,
+    `submitted_by_id`,
+    `submitted_by_username`,
+    `created_at`,
+    `created_by_id`,
+    `created_by_username`,
+    `total_bytes`,
+    `total_words`,
+    `added_bytes`,
+    `added_words`
+) VALUES (
+    :pageid,
+    :campaign_id,
+    :title,
+    :oldid,
+    :target_wiki,
+    :submitted_by_id,
+    :submitted_by_username,
+    :created_at,
+    :created_by_id,
+    :created_by_username,
+    :total_bytes,
+    :total_words,
+    :added_bytes,
+    :added_words
+) RETURNING *
+"""
+SQL1_GET_DRAFT_BY_ID = "SELECT * FROM `draft` WHERE `id` = :id LIMIT 1"
+SQL1_UPDATE_DRAFT = """
+UPDATE `draft` SET
+    `calculated` = :calculated,
+    `passed` = :passed,
+    `submitted` = :submitted
+WHERE `id` = :id
+RETURNING *
+"""

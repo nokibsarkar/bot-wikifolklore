@@ -247,6 +247,22 @@ class PageServer {
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
+    static async createDraft({ campaign_id, submitted_by_username, title }: SubmissionRequest): Promise<Submission> {
+        const url = '/api/kitkat/submission/draft';
+        const res = await fetchWithErrorHandling(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ campaign_id, submitted_by_username, title })
+        });
+        return res.data;
+    }
+    static async getDraft(draftID: number): Promise<Submission> {
+        const url = '/api/kitkat/submission/draft/' + draftID;
+        const res = await fetchWithErrorHandling(url)
+        return res.data;
+    }
 
     static async judgeSubmission(submissionID: number, point: number, note?: string): Promise<Submission> {
         return sampleSubmission;

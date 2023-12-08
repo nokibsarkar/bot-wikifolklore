@@ -128,7 +128,30 @@ CREATE TABLE IF NOT EXISTS `topic_category` (
     `category_id`	INTEGER NOT NULL,
     PRIMARY KEY(`topic_id`,`category_id`)
 );
---- INSERT OR IGNORE INTO `user` (`id`, `username`, `rights`) VALUES (1, 'admin', 1);
+-- The Table would be used to store the statistics of a submission
+CREATE TABLE IF NOT EXISTS `draft` (
+    `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `pageid`	INTEGER NOT NULL, -- pageid of the page on the target wiki
+    `campaign_id`	INTEGER NOT NULL, -- campaign id
+    `title`	TEXT NOT NULL, -- title of the page on the target wiki
+    `oldid`	INTEGER NOT NULL, -- revision id of the page on the home wiki
+    `target_wiki`	TEXT NOT NULL, -- target wiki language code
+    `submitted_at`	TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- submission time
+    `submitted_by_id`	INTEGER NOT NULL, -- user id of the submitter
+    `submitted_by_username`	TEXT NOT NULL, -- username of the submitter
+    `created_at`	TEXT NOT NULL, -- creation time of the page on the target wiki
+    `created_by_id`	INTEGER NOT NULL, -- user id of the created_by
+    `created_by_username`	TEXT NOT NULL, -- username of the created_by
+    `total_bytes`	INTEGER NOT NULL, -- total bytes of the page on the target wiki
+    `total_words`	INTEGER  NULL DEFAULT NULL, -- total words of the page on the target wiki
+    `added_bytes`	INTEGER  NULL DEFAULT NULL, -- added bytes of the page on the target wiki
+    `added_words`	INTEGER  NULL DEFAULT NULL, -- added words of the page on the target wiki
+    `calculated`	BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is calculated
+    `passed`    BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is passed
+    `submitted`	BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is submitted
+    CONSTRAINT `criteria_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
+    CONSTRAINT `submission_submitted_by_id_fkey` FOREIGN KEY(`submitted_by_id`) REFERENCES `user`(`id`)
+);
 """
 SQL2_INIT = """
 -- This Table would be used to store the article

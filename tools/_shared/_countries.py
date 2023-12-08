@@ -117,7 +117,6 @@ class Country(Enum):
     Iraq   =   "IQ"
     Ireland   =   "IE"
     Isle_of_Man   =   "IM"
-    Israel   =   "IL"
     Italy   =   "IT"
     Jamaica   =   "JM"
     Japan   =   "JP"

@@ -18,10 +18,7 @@ class CampaignStatus(Enum):
     running = "running"
     ended = "ended"
 @dataclass
-class SubmissionScheme:
-    """
-    A class to store the article that was gathered
-    """
+class SubmissionBase:
     id : int = None # Submission ID
     pageid : int = None # Page ID of the article
     campaign_id : str = None # Campaign ID of the article
@@ -40,6 +37,29 @@ class SubmissionScheme:
     total_words : int = 0 # Total words of the article
     added_bytes : int = 0 # Added bytes of the article
     added_words : int = 0 # Added words of the article
+@dataclass
+class DraftSubmissionScheme(SubmissionBase):
+    """
+    A class to store pre-submitted submissions and check their validity
+    """
+    passed : bool = False # Is the article passed the pre-submission check?
+    submitted : bool = False # Is the article submitted?
+    calculated : bool = False # Is the article statistics calculated?
+@dataclass
+class DraftCreateScheme:
+    """
+    A class to store pre-submitted submissions and check their validity
+    """
+    campaign_id : str
+    title : str
+    submitted_by_username : str = None # Username of the user who submitted the article
+
+@dataclass
+class SubmissionScheme(SubmissionBase):
+    """
+    A class to store the article that was gathered
+    """
+    
     points : int = 0 # Points of the article as of now
     positive_votes : int = 0 # Positive votes of the article as of now
     negative_votes : int = 0 # Negative votes of the article as of now
@@ -53,11 +73,7 @@ class SubmissionCreateScheme:
     """
     A class to store the article that was gathered
     """
-    campaign_id : str # Campaign ID of the article
-    title : str
-    language : Language  # Target wiki of the article, this must be as same as the campaign's target wiki
-    submitted_by_username : str = None # Username of the user who submitted the article
-    
+    draft_id : int = None # Draft ID of the submission that has passed = True
 @dataclass
 class CategoryScheme(SubmissionScheme):
     pass

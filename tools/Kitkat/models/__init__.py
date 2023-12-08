@@ -2,7 +2,7 @@ from ._sql import *
 from ._schema import *
 from ..._shared._model import *
 import dateparser as dp
-from ._calculate_criteria import *
+from ._draft import *
 class Server(BaseServer):
     pass
 
@@ -239,26 +239,62 @@ class Submission:
         }
         return errors, stats
     @staticmethod
-    def create(conn : sqlite3.Cursor, submission: SubmissionScheme) -> SubmissionScheme:
+    def submit(conn : sqlite3.Cursor, draft : DraftSubmissionScheme) -> SubmissionScheme:
+        
         params = {
-            'campaign_id': submission.campaign_id,
-            'pageid': submission.pageid,
-            'oldid': submission.oldid,
-            'title': submission.title,
-            'created_at': submission.created_at,
-            'created_by_id': submission.created_by_id,
-            'created_by_username': submission.created_by_username,
-            'submitted_by_id': submission.submitted_by_id,
-            'submitted_by_username': submission.submitted_by_username,
-            'total_words': submission.total_words,
-            'total_bytes': submission.total_bytes,
-            'added_words': submission.added_words,
-            'added_bytes': submission.added_bytes,
-            'target_wiki': submission.target_wiki
+            'campaign_id': draft['campaign_id'],
+            'pageid': draft['pageid'],
+            'oldid': draft['oldid'],
+            'title': draft['title'],
+            'created_at': draft['created_at'],
+            'created_by_id': draft['created_by_id'],
+            'created_by_username': draft['created_by_username'],
+            'submitted_by_id': draft['submitted_by_id'],
+            'submitted_by_username': draft['submitted_by_username'],
+            'total_words': draft['total_words'],
+            'total_bytes': draft['total_bytes'],
+            'added_words': draft['added_words'],
+            'added_bytes': draft['added_bytes'],
+            'target_wiki': draft['target_wiki']
         }
         cur = conn.execute(SQL1_CREATE_SUBMISSION, params)
         new_submission = cur.fetchone()
         return SubmissionScheme(**new_submission)
+    @staticmethod
+    def create_draft(conn : sqlite3.Cursor, draft : DraftSubmissionScheme) -> DraftSubmissionScheme:
+        params = {
+            'campaign_id': draft.campaign_id,
+            'pageid': draft.pageid,
+            'oldid': draft.oldid,
+            'title': draft.title,
+            'created_at': draft.created_at,
+            'created_by_id': draft.created_by_id,
+            'created_by_username': draft.created_by_username,
+            'submitted_by_id': draft.submitted_by_id,
+            'submitted_by_username': draft.submitted_by_username,
+            'total_words': draft.total_words,
+            'total_bytes': draft.total_bytes,
+            'added_words': draft.added_words,
+            'added_bytes': draft.added_bytes,
+            'target_wiki': draft.target_wiki
+        }
+        cur = conn.execute(SQL1_CREATE_DRAFT, params)
+        new_draft = cur.fetchone()
+        return DraftSubmissionScheme(**new_draft)
+    @staticmethod
+    def get_draft_by_id(conn : sqlite3.Cursor, id : int) -> DraftSubmissionScheme:
+        return conn.execute(SQL1_GET_DRAFT_BY_ID, {'id': id}).fetchone()
+    @staticmethod
+    def update_draft(conn : sqlite3.Cursor, draft_id, calculated : bool, passed : bool, submitted : bool) -> DraftSubmissionScheme:
+        params = {
+            'id': draft_id,
+            'calculated': calculated,
+            'passed': passed,
+            'submitted': submitted,
+        }
+        cur = conn.execute(SQL1_UPDATE_DRAFT, params)
+        updated_draft = cur.fetchone()
+        return DraftSubmissionScheme(**updated_draft)
     @staticmethod
     def get_all_by_campaign_id(conn : sqlite3.Cursor, campaign_id, judgable : bool=None, judged : bool=None):
         return conn.execute(SQL1_SELECT_SUBMISSIONS, {'campaign_id': campaign_id}).fetchall()
