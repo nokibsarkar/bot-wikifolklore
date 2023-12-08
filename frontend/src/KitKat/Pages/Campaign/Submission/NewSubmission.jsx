@@ -33,7 +33,9 @@ const ArticleSubmissionSuccess = ({ campaignID }) => {
     </div>
 }
 const ArticleSubmissionPage = () => {
-    const { campaignID } = useParams()
+    const { campaignID } = useParams();
+    const [draftID, setDraftID] = useState(null); // [draftID, setDraftID
+    const [draft, setDraft] = useState(null); // [draft, setDraft
     const [campaign, setCampaign] = useState(null);
     const [loading, setLoading] = useState(false);
     const [pageinfo, setPageInfo] = useState(null);
@@ -42,13 +44,26 @@ const ArticleSubmissionPage = () => {
     useEffect(() => {
         KitKatServer.Campaign.getCampaign(campaignID).then(setCampaign);
     }, [campaignID]);
-    const submit = useCallback(() => {
+    const createDraft = useCallback((article) => {
         setLoading(true);
-        const submissionRequest = {
-            language: campaign.language,
+        setArticle(article);
+        const draftRequest = {
             title: article,
             submitted_by_username: KitKatServer.BaseServer.loginnedUser().username,
             campaign_id: campaign.id.toString()
+        }
+        KitKatServer.Page.createDraft(draftRequest).then(draft => {
+            console.log(draft);
+            setDraft(draft);
+            setDraftID(draft.id);
+            setLoading(false);
+            setPageInfo(draft);
+        })
+    }, [campaign, article]);
+    const submit = useCallback(() => {
+        setLoading(true);
+        const submissionRequest = {
+            draft_id : draftID.toString(),
         }
         KitKatServer.Campaign.submitArticle(submissionRequest).then(submission => {
             console.log(submission);
@@ -56,7 +71,7 @@ const ArticleSubmissionPage = () => {
             setPageInfo(null);
             setArticleSubmitted(true);
         })
-    }, [campaign, article]);
+    }, [campaign, article, draftID]);
     if (!campaign) return <div style={{ textAlign: 'center' }}>
         <CircularProgress />
     </div>
@@ -74,12 +89,10 @@ const ArticleSubmissionPage = () => {
             {loading ? <div style={{ textAlign: 'center' }}><CircularProgress /></div> : (
                 articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} /> :
                     <>
-                        {!article && <ArticleInput language={campaign?.language} onNewArticle={setArticle} submitButtonLabel="Check" />}
+                        {!article && <ArticleInput language={campaign?.language} onNewArticle={createDraft} submitButtonLabel="Check" />}
                         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            {article && <PageInfo setPageInfo={setPageInfo} title={article} campaign={campaign} submitter={null} />}
-                            {pageinfo &&
-                                <Button variant="contained" onClick={submit}>Submit</Button>
-                            }
+                            {draft && <PageInfo setPageInfo={setPageInfo} title={article} campaign={campaign} submission={draft} draftID={draftID} />}
+                            {pageinfo && <Button variant="contained" onClick={submit}>Submit</Button>}
                         </div>
                     </>
             )}
