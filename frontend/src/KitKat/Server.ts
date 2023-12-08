@@ -271,7 +271,15 @@ class PageServer {
     }
 
     static async judgeSubmission(submissionID: number, point: number, note?: string): Promise<Submission> {
-        return sampleSubmission;
+        const url = '/api/kitkat/submission/' + submissionID + '/judge';
+        const res = await fetchWithErrorHandling(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ submission_id : submissionID, vote : point })
+        });
+        return res.data;
     }
 
 

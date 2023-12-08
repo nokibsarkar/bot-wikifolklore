@@ -301,4 +301,15 @@ class Submission:
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str) -> SubmissionScheme:
         return conn.execute(SQL1_GET_SUBMISSION_BY_ID, {'id': id}).fetchone()
+class Judgement:
+    @staticmethod
+    def add(conn : sqlite3.Cursor, submission_id : int, jury_id : int, vote : int):
+        params = {
+            'submission_id': submission_id,
+            'jury_id': jury_id,
+            'vote': vote,
+        }
+        cur = conn.execute(SQL1_ADD_JUDGEMENT, params)
+        new_judgement = cur.fetchone()
+        return new_judgement
     

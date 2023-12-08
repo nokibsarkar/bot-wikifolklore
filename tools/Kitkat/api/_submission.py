@@ -115,10 +115,25 @@ async def create_submission(req: Request, submission: SubmissionCreateScheme):
     
 
 
-    
+
 @submission_router.post("/{submission_id}", response_model=ResponseSingle[SubmissionScheme])
 async def update_submission(submission_id: int, submission: SubmissionScheme):
     return {"message": "Hello World"}
 @submission_router.post("/{submission_id}/judge", response_model=ResponseSingle[SubmissionScheme])
-async def judge_submission(submission_id: int, submission: SubmissionScheme):
-    return {"message": "Hello World"}
+async def judge_submission(req: Request, submission_id: int, judgement : JudgementScheme):
+    try:
+        jury_id = req.state.user['id']
+        with Server.get_parmanent_db() as conn:
+            submission = Submission.get_by_id(conn.cursor(), submission_id)
+            if not submission:
+                raise HTTPException(status_code=400, detail="Submission not found")
+            assert submission['judgable'] == True, "Submission is not judgable"
+            campaign = Campaign.get_by_id(conn, submission['campaign_id'])
+            assert campaign['status'] in [CampaignStatus.running.value], "Campaign is not in judging mode"
+            new_judgement = Judgement.add(conn, submission_id, jury_id, judgement.vote)
+            submission = Submission.get_by_id(conn.cursor(), submission_id)
+        return ResponseSingle[SubmissionScheme](success=True, data=SubmissionScheme(**submission))
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

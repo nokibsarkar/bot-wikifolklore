@@ -164,3 +164,16 @@ UPDATE `draft` SET
 WHERE `id` = :id
 RETURNING *
 """
+SQL1_ADD_JUDGEMENT = """
+INSERT INTO
+    `jury_vote`
+(
+    `submission_id`,
+    `jury_id`,
+    `vote`
+) VALUES (
+    :submission_id,
+    :jury_id,
+    :vote
+) ON CONFLICT DO UPDATE SET `vote` = :vote RETURNING *
+"""
