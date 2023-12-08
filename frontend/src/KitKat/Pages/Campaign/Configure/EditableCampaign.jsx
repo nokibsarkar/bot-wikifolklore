@@ -80,11 +80,13 @@ const steps = ['Details', 'Restrictions', 'Jury', 'Overview'];
 
 const Steps = ({ activeStep, setActiveStep, minimumStep }) => {
     return (
-        <Stepper activeStep={activeStep} sx={{ m: 1 }} alternativeLabel>
+        <Stepper activeStep={activeStep} sx={{ m: 1, '&.MuiStepLabel-root' : {
+            cursor: 'pointer'
+        } }} alternativeLabel>
             {steps.map((label, index) => {
                 return (
-                    <Step disabled={true} key={label}>
-                        <StepLabel disabled={true} onClick={() => index >= minimumStep && setActiveStep(index)} sx={{ cursor: 'pointer' }}>{label}</StepLabel>
+                    <Step key={label} disabled={index < minimumStep}>
+                        <StepLabel  onClick={() => index >= minimumStep && setActiveStep(index)} sx={{ cursor: 'pointer' }}>{label}</StepLabel>
                     </Step>
                 );
             })}
