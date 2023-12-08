@@ -166,13 +166,14 @@ class Campaign:
     def update_status(conn : sqlite3.Cursor, id : str) -> CampaignScheme:
         campaign = Campaign.get_by_id(conn, id)
         now = dp.parse("now")
+        status = campaign['status']
         start_date = dp.parse(campaign['start_at'])
         end_date = dp.parse(campaign['end_at'])
-        if campaign['status'] in CampaignStatus.scheduled.value and now >= start_date:
-            campaign['status'] = CampaignStatus.running.value
-        if campaign['status'] == CampaignStatus.running.value and now >= end_date:
-            campaign['status'] = CampaignStatus.evaluating.value
-        return conn.execute(SQL1_UPDATE_CAMPAIGN_STATUS, {'id': id, 'status': campaign['status']}).fetchone()
+        if status == CampaignStatus.scheduled.value and now >= start_date:
+            status = CampaignStatus.running.value
+        if status == CampaignStatus.running.value and now >= end_date:
+            status = CampaignStatus.evaluating.value
+        return conn.execute(SQL1_UPDATE_CAMPAIGN_STATUS, {'id': id, 'status': status}).fetchone()
             
 
 
