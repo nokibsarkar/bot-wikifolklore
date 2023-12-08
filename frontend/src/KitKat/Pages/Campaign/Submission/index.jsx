@@ -40,40 +40,42 @@ const SubmissionList = () => {
                 density="compact"
                 // getRowId={(row) => row.submissionID}
                 columns={[
-                    { field: 'title', headerName: 'Title', flex: 1 },
-                    { field: 'submitted_by_username', headerName: 'Submitter', flex: 1 },
+                    { field: 'title', headerName: 'Title', flex: 1 , minWidth: 200},
+                    { field: 'submitted_by_username', headerName: 'Submitter', flex: 1 , minWidth : 200},
                     {
-                        field: 'score', headerName: 'Score', flex: 0.5, renderCell: (params) => {
-                            const scores = []
-                            const positiveScore = params.row.positive_votes;
-                            const zeroScore = 0;
-                            const negativeScore = params.row.negative_votes;
-                            scores.push(
-                                <font color='green' key='pass'>
-                                    {'❚'.repeat(positiveScore)}
-                                </font>
-                            )
-                            scores.push(
-                                <font color='gray' key='zero'>
-                                    {'❚'.repeat(zeroScore)}
-                                </font>
-                            )
-                            scores.push(
-                                <font color='red' key='negative'>
-                                    {'❚'.repeat(negativeScore)}
-                                </font>
-                            )
-                            return <span style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                flexWrap: 'wrap',
-                                fontSize: '10px'
-                            }}> {params.value}
-                                ({scores})
-                            </span>
-                        }
+                        field: 'points', headerName: 'Points', flex: 0.5, renderCell: (params) => {
+                            // const scores = []
+                            // const positiveScore = params.row.positive_votes;
+                            // const zeroScore = 0;
+                            // const negativeScore = params.row.negative_votes;
+                            // scores.push(
+                            //     <font color='green' key='pass'>
+                            //         {'❚'.repeat(positiveScore)}
+                            //     </font>
+                            // )
+                            // scores.push(
+                            //     <font color='gray' key='zero'>
+                            //         {'❚'.repeat(zeroScore)}
+                            //     </font>
+                            // )
+                            // scores.push(
+                            //     <font color='red' key='negative'>
+                            //         {'❚'.repeat(negativeScore)}
+                            //     </font>
+                            // )
+                            // return params.row.total_votes && <span style={{
+                            //     display: 'flex',
+                            //     flexDirection: 'row',
+                            //     justifyContent: 'center',
+                            //     alignItems: 'center',
+                            //     flexWrap: 'wrap',
+                            //     fontSize: '10px'
+                            // }}> {params.value}
+                            //     ({scores})
+                            // </span>
+                            return params.value
+                        },
+                        minWidth : 130, disableColumnMenu : true
                     },
                     {
                         field: 'action', headerName: 'Judge', renderCell: (params) => {
