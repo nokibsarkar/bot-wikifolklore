@@ -16,6 +16,7 @@ class CampaignStatus(Enum):
     rejected = "rejected"
     cancelled = "cancelled"
     running = "running"
+    evaluating = "evaluating"
     ended = "ended"
 @dataclass
 class SubmissionBase:

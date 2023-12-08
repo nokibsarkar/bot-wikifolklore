@@ -26,11 +26,14 @@ async def create_draft(req : Request, draft_request : DraftCreateScheme):
     try:
         campaign_id = draft_request.campaign_id
         with Server.get_parmanent_db() as conn:
-            campaign = Campaign.get_by_id(conn, campaign_id)
+            campaign = Campaign.update_status(conn, campaign_id)
             if not campaign:
                 raise HTTPException(status_code=400, detail="Campaign not found")
-            # if campaign['status'] != CampaignStatus.running:
-            #     raise HTTPException(status_code=400, detail=f"Campaign status is {campaign['status']}")
+            statusError = None
+            if campaign['status'] not in CampaignStatus.running.value:
+                pass
+            if statusError:
+                raise HTTPException(status_code=400, detail=statusError)
             language : str = campaign['language'] # Language of the campaign
             usernames : list[str] = [draft_request.submitted_by_username]
             # If the user is not in the database, add it, then get the user id
@@ -128,9 +131,13 @@ async def judge_submission(req: Request, submission_id: int, judgement : Judgeme
             if not submission:
                 raise HTTPException(status_code=400, detail="Submission not found")
             assert submission['judgable'] == True, "Submission is not judgable"
-            campaign = Campaign.get_by_id(conn, submission['campaign_id'])
-            assert campaign['status'] in [CampaignStatus.running.value], "Campaign is not in judging mode"
-            new_judgement = Judgement.add(conn, submission_id, jury_id, judgement.vote)
+            campaign = Campaign.update_status(conn, submission['campaign_id'])
+            assert campaign['status'] in [CampaignStatus.running.value, CampaignStatus.scheduled.value], "Campaign is not in judging mode"
+            jury = Judgement.verify_judge(conn,  submission['campaign_id'], jury_id,)
+            assert jury, "Sorry, you are not a judge for this campaign"
+            assert jury['allowed'] == True, "Sorry, you are not allowed to judge this campaign"
+            Judgement.add(conn, submission_id, jury_id, judgement.vote)
+            Judgement.calculate_points(conn, submission_id)
             submission = Submission.get_by_id(conn.cursor(), submission_id)
         return ResponseSingle[SubmissionScheme](success=True, data=SubmissionScheme(**submission))
     except HTTPException as e:
