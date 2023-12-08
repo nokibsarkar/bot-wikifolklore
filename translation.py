@@ -135,7 +135,7 @@ def _translate_azure(texts, target):
             done.extend(texts[:element_count])
             texts = texts[element_count:]
         return dict(zip(done, results)), texts
-GOOGLE_KEY = "" # _google_auth_token()
+GOOGLE_KEY =  _google_auth_token()
 RETRY = 5
 def _translate_google(texts, target):
     """
