@@ -45,9 +45,9 @@ const SubmissionList = () => {
                     {
                         field: 'score', headerName: 'Score', flex: 0.5, renderCell: (params) => {
                             const scores = []
-                            const positiveScore = 2;
-                            const zeroScore = 1;
-                            const negativeScore = 1;
+                            const positiveScore = params.row.positive_votes;
+                            const zeroScore = 0;
+                            const negativeScore = params.row.negative_votes;
                             scores.push(
                                 <font color='green' key='pass'>
                                     {'❚'.repeat(positiveScore)}
