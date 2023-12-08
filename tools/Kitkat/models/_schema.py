@@ -16,6 +16,7 @@ class CampaignStatus(Enum):
     rejected = "rejected"
     cancelled = "cancelled"
     running = "running"
+    evaluating = "evaluating"
     ended = "ended"
 @dataclass
 class SubmissionBase:
@@ -74,6 +75,14 @@ class SubmissionCreateScheme:
     A class to store the article that was gathered
     """
     draft_id : int = None # Draft ID of the submission that has passed = True
+@dataclass
+class JudgementScheme:
+    """
+    A class to store the judgement of the article
+    """
+    submission_id : int
+    vote : int = 0 # 1 for positive, -1 for negative
+    judge_username : str = None # Username of the judge
 @dataclass
 class CategoryScheme(SubmissionScheme):
     pass

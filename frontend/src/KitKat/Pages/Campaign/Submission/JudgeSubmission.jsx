@@ -15,13 +15,20 @@ const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [point, setPoint] = useState(0);
     const [submiting, setSubmiting] = useState(false);
+    const [error, setError] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const judgeWrapper = useCallback(async (point, note) => {
         setSubmiting(true);
-        await judge(point, note);
+        try{
+            await judge(point, note);
+            setDialogOpen(false);
+
+            setSubmitted(true);
+            setError(null);
+        }catch(e){
+            setError(e);
+        }
         setSubmiting(false);
-        setSubmitted(true);
-        setDialogOpen(false);
     }, [judge]);
     const close = useCallback(() => {
         if (submiting) return;
@@ -123,6 +130,7 @@ const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
                         />
 
                         {submiting && <LinearProgress color="success" />}
+                        {error && <b style={{ color: 'red', textAlign: 'center', display : 'block' }}>{error.message}</b>}
                     </DialogContent>
                     <DialogActions>
                         <Button variant="outlined" color="error" size="small"
@@ -132,7 +140,8 @@ const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
                             }}
                             onClick={close}
                             disabled={submiting}
-                        ><LinearProgress />
+                        >
+                            <LinearProgress />
                             Cancel
                         </Button>
                         <Button variant="contained" color="error" size="small"
@@ -243,10 +252,8 @@ const JudgeSubmission = () => {
         if (!submission) return <div>Loading Preview</div>
         return <Preview title={title} language={submission.target_wiki} />
     }, [submissionID, submission]);
-    const judge = useCallback((point) => {
-        KitKatServer.Page.judgeSubmission(submission.id, point).then(
-            () => console.log('judged')
-        )
+    const judge = useCallback(async (point) => {
+        const judgement = await KitKatServer.Page.judgeSubmission(submission.id, point)
     }, [submission]);
     useEffect(() => {
         

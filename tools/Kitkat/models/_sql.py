@@ -164,3 +164,31 @@ UPDATE `draft` SET
 WHERE `id` = :id
 RETURNING *
 """
+SQL1_ADD_JUDGEMENT = """
+INSERT INTO
+    `jury_vote`
+(
+    `submission_id`,
+    `jury_id`,
+    `vote`
+) VALUES (
+    :submission_id,
+    :jury_id,
+    :vote
+) ON CONFLICT DO UPDATE SET `vote` = :vote RETURNING *
+"""
+SQL1_GET_JUDGEMENTS_BY_SUBMISSION_ID = "SELECT * FROM `jury_vote` WHERE `submission_id` = :submission_id"
+SQL1_GET_JURY_BY_SUBMISSION_ID = """
+SELECT * FROM `jury` JOIN `jury_vote` ON `jury`.`user_id` = `jury_vote`.`jury_id` WHERE `jury_vote`.`submission_id` = :submission_id AND `jury`.`allowed` = TRUE
+"""
+SQL1_UPDATE_SUBMISSION_POINTS = """
+UPDATE `submission` SET
+    `positive_votes` = :positive_votes,
+    `negative_votes` = :negative_votes,
+    `total_votes` = :total_votes,
+    `points` = :points
+WHERE `id` = :id
+RETURNING *
+"""
+SQL1_VERIFY_JUDGE = "SELECT * FROM `jury` WHERE `user_id` = :user_id AND `campaign_id` = :campaign_id LIMIT 1"
+SQL1_UPDATE_CAMPAIGN_STATUS = "UPDATE `campaign` SET `status` = :status WHERE `id` = :id RETURNING *"

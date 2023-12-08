@@ -109,10 +109,16 @@ const fetchWithErrorHandling= async (url: string, options?: RequestInit) => {
     if(res.ok){
         const data = await res.json();
         if(data.success) return data;
-        console.log(data);
         throw new Error(data.detail);
     } else {
-        throw new Error(res.statusText);
+        var err = null;
+        try {
+            const data = await res.json();
+            err = data.detail
+        } catch (error) {
+            err = await res.text();
+        }
+        throw new Error(err);
     }
 };
 class Wiki {
@@ -265,7 +271,15 @@ class PageServer {
     }
 
     static async judgeSubmission(submissionID: number, point: number, note?: string): Promise<Submission> {
-        return sampleSubmission;
+        const url = '/api/kitkat/submission/' + submissionID + '/judge';
+        const res = await fetchWithErrorHandling(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ submission_id : submissionID, vote : point })
+        });
+        return res.data;
     }
 
 
