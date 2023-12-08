@@ -115,9 +115,7 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
     if (loading)
         return <LoadingPage title="Loading, please wait..." />
     if (error)
-        return <div style={{ textAlign: 'center', height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            {error}
-        </div>
+        return <ErrorPage errorMsg={error} />
     const SaveButton = <Button variant="contained" color="success" onClick={e => onSave(campaign, setLoading)} sx={{ m: 1 }}>
         <SaveIcon /> Save
     </Button>
@@ -128,6 +126,8 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
             <StepSelector step={step} props={{ campaign, campaignDispatch: dispatchCampaign, showActions }} />
             
             {error && <ErrorPage errorMsg={error} />}
+
+            {showGotoDetailsButton && <DetailsButton campaign={campaign} />}
             {
                 linear ? <p>
                     <Button disabled={step - 1 < minimumStep} variant="contained" color="success" onClick={() => setStep(step - 1)} sx={{ m: 1 }}>
@@ -139,7 +139,6 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
                     }
                 </p> : SaveButton
             }
-            {showGotoDetailsButton && <DetailsButton campaign={campaign} />}
         </div>
     )
 
