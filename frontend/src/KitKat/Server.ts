@@ -109,10 +109,16 @@ const fetchWithErrorHandling= async (url: string, options?: RequestInit) => {
     if(res.ok){
         const data = await res.json();
         if(data.success) return data;
-        console.log(data);
         throw new Error(data.detail);
     } else {
-        throw new Error(res.statusText);
+        var err = null;
+        try {
+            const data = await res.json();
+            err = data.detail
+        } catch (error) {
+            err = await res.text();
+        }
+        throw new Error(err);
     }
 };
 class Wiki {
