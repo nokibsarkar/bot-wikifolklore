@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ListIcon from '@mui/icons-material/List';
 import SettingIcon from '@mui/icons-material/Settings';
 import PeopleIcon from '@mui/icons-material/People';
-import Server from "./Server";
+import Server from "../Server";
 export default function Description({ user }) {
     const sections = [];
     // if(Server.hasAccess(user.rights, Server.RIGHTS.TASK))

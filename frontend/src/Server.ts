@@ -32,7 +32,7 @@ const PERMISSIONS: { [key: string]: Permission } = {
     CATEGORY: 1 << 2,
     TOPIC: 1 << 3,
     GRANT: 1 << 4,
-    REVOKE: 1 << 5,
+    CAMPAIGN : 1 << 5
 };
 class BaseServer {
     static RIGHTS = PERMISSIONS;
@@ -77,6 +77,9 @@ class BaseServer {
     }
     static hasAccess(rights: Permission, permission: Permission) {
         return (rights & permission) == permission;
+    }
+    static toggleAccess(rights : number, permission : number){
+        return rights & permission ? rights & ~permission : rights | permission;
     }
     static logout() {
         deleteCookie(AUTH_COOKIE_NAME);

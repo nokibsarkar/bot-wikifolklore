@@ -86,7 +86,6 @@ class Campaign:
         
         blacklist = ','.join(campaign.blacklist or [])
         rules = '\n'.join(campaign.rules or [])
-        
         params = {
             'id' : campaign.id,
             'name': campaign.name,
@@ -122,6 +121,15 @@ class Campaign:
         up = conn.execute(sql, params)
         
         updated_campaign = up.fetchone()
+        return updated_campaign
+    @staticmethod
+    def _update_status(conn : sqlite3.Cursor, campaign_id : str, status : CampaignStatus):
+        params = {
+            'id': campaign_id,
+            'status': status.value,
+        }
+        cur = conn.execute(SQL1_UPDATE_CAMPAIGN_STATUS, params)
+        updated_campaign = cur.fetchone()
         return updated_campaign
     @staticmethod
     def get_all(conn : sqlite3.Cursor, language : Language=None, status : list[CampaignStatus]=None, limit : int=50, offset : int= 0):

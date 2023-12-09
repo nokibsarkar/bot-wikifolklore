@@ -10,14 +10,22 @@ class TaskResultFormat(Enum):
     wikitext : str = "wikitext"
     csv : str = "csv"
     pagepile : str = "pagepile"
-class CampaignStatus(Enum):
-    pending = "pending"
+class UpdatableStatus(Enum):
     scheduled = "scheduled"
     rejected = "rejected"
     cancelled = "cancelled"
+    ended = "ended"
+class CampaignStatus( Enum):
+    pending = "pending"
     running = "running"
     evaluating = "evaluating"
-    ended = "ended"
+    scheduled = UpdatableStatus.scheduled.value
+    rejected = UpdatableStatus.rejected.value
+    cancelled = UpdatableStatus.cancelled.value
+    ended = UpdatableStatus.ended.value
+@dataclass
+class CampaignStatusUpdate:
+    status : UpdatableStatus
 @dataclass
 class SubmissionBase:
     id : int = None # Submission ID

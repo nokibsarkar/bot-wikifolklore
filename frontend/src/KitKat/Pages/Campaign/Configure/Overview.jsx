@@ -105,14 +105,15 @@ const CancelPrompt = ({ onCancel }) => {
     )
 
 }
-const Buttons = ({ campaign, campaignDispatch }) => {
+const Buttons = ({ campaign, campaignDispatch, setError }) => {
     const updateStatus = useCallback(async (status) => {
-        const nCampaign = { id: campaign.id, status };
         try {
-            const updatedCampaign = await KitKatServer.Campaign.updateCampaign(nCampaign);
+            const updatedCampaign = await KitKatServer.Campaign.updateCampaignStatus(campaign.id, status);
             campaignDispatch({ type: 'status', payload: updatedCampaign.status });
+            setError(null);
         } catch (e) {
             console.log(e);
+            setError(e.message);
         }
     }, [campaignDispatch]);
 
@@ -124,7 +125,6 @@ const Buttons = ({ campaign, campaignDispatch }) => {
     } 
     if (campaign.status !== 'cancelled' && campaign.status !== 'rejected' && campaign.status !== 'ended') {
         const onCancel = () => updateStatus('cancelled');
-
         actionButtons.push(<CancelPrompt key='cancel' onCancel={onCancel} />);
     }
     return actionButtons.length > 0 && (
@@ -137,6 +137,7 @@ const Buttons = ({ campaign, campaignDispatch }) => {
     )
 }
 const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) => {
+    const [error, setError] = useState(null);
     return (
         <Box component='div' sx={{ backgroundColor: 'rules.light', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant='h4' sx={{ m: 1 }}>
@@ -144,7 +145,7 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
             </Typography>
             <CampaignHeader campaign={campaign} />
             {showActions && (
-                <Buttons campaign={campaign} campaignDispatch={campaignDispatch} />
+                <Buttons campaign={campaign} campaignDispatch={campaignDispatch} setError={setError} />
             )}
             <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row', width: 'max-content' }} component='fieldset'>
                 <legend>Duration</legend>

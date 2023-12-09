@@ -74,14 +74,14 @@ type Topic = {
 const LANGUAGE_KEY = "tk-lang"
 const COUNTRY_KEY = "tk-country"
 type Permission = number;
-type PermissionKey = "TASK" | "STATS" | "CATEGORY" | "TOPIC" | "GRANT" | "REVOKE";
+type PermissionKey = "TASK" | "STATS" | "CATEGORY" | "TOPIC" | "GRANT" | "CAMPAIGN";
 const PERMISSIONS : {[key in PermissionKey] : Permission} = {
     TASK : 1 << 0,
     STATS : 1 << 1,
     CATEGORY : 1 << 2,
     TOPIC : 1 << 3,
     GRANT : 1 << 4,
-    REVOKE : 1 << 5,
+    CAMPAIGN : 1 << 5
 };
 class FnF {
     static baseURL = new URL(window.location.origin);

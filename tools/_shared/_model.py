@@ -246,8 +246,8 @@ class BaseUser:
         return conn.fetchone()
     @staticmethod
     def update_rights(conn : sqlite3.Cursor, id, rights : int):
-        conn.execute("UPDATE `user` SET `rights` = ? WHERE `id` = ?", (rights, id))
+        return conn.execute("UPDATE `user` SET `rights` = ? WHERE `id` = ? RETURNING *", (rights, id)).fetchone()
     @staticmethod
     def update_username(conn : sqlite3.Cursor, id, username):
-        return conn.execute("UPDATE `user` SET `username` = ? WHERE `id` = ?", (username, id))
+        return conn.execute("UPDATE `user` SET `username` = ? WHERE `id` = ? RETURNING *", (username, id)).fetchone()
 

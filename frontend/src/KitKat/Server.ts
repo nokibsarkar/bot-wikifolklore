@@ -73,27 +73,12 @@ type WikimediaUser = {
         local: number;
     };
 }
-const sampleCampaign: Campaign = {
-    id: 1,
-    name: "Sample Campaign",
-    description: "This is a sample campaign",
-    image: "https://upload.wikimedia.org/wikipedia/commons/7/71/Wikipedia_Asian_Month_Logo.svg",
-    link: "https://en.wikipedia.org/wiki/Kit_Kat",
-    startDate: "2021-10-01",
-    endDate: "2021-10-31",
-    active: true,
-    language: "en",
-    rules: [
-        "No vandalism",
-        "No spam",
-    ],
-    status: "active",
+type User = {
+    id: number;
+    username: string;
+    rights: number;
+    campaign_count : number;
 }
-const sampleUsernames = [
-    'User:Example',
-    'User:Example2',
-    'User:Example3',
-]
 
 const sampleSubmission: Submission = {
     id: 1,
@@ -104,7 +89,7 @@ const sampleSubmission: Submission = {
     language: "en",
     status: "pending"
 }
-const fetchWithErrorHandling= async (url: string, options?: RequestInit) => {
+const fetchWithErrorHandling = async (url: string, options?: RequestInit) => {
     const res = await fetch(url, options);
     if(res.ok){
         const data = await res.json();
@@ -242,6 +227,17 @@ class CampaignServer {
         }).then(res => res.data);
         return updatedCampaign;
     }
+    static async updateCampaignStatus(campaignID: number, status: CampaignStatus): Promise<Campaign> {
+        const updatedCampaign = await fetchWithErrorHandling('/api/kitkat/campaign/' + campaignID + '/status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        }).then(res => res.data);
+        return updatedCampaign;
+    
+    }
 }
 class PageServer {
     static async getPageInfo({ language, submitted_by_username, title, submissionId }: PageInfoRequest): Promise<PageInfo> {
@@ -305,6 +301,28 @@ class UserServer {
         UserServer.fetching = false;
         return res.query.allusers;
     }
+    static async getUsers() : Promise<User[]> {
+        const url = '/api/kitkat/user/';
+        const res = await fetchWithErrorHandling(url)
+        return res.data;
+    }
+    static async getUser(id : string) : Promise<User> {
+        const url = '/api/kitkat/user/' + id;
+        const res = await fetchWithErrorHandling(url)
+        return res.data;
+    }
+    static async updateUser({id, rights } : User) : Promise<User> {
+        const url = '/api/kitkat/user/' + id;
+        const res = await fetchWithErrorHandling(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({rights})
+        })
+        return res.data;
+    
+    }
 }
 
 class KitKatServer {
@@ -313,12 +331,19 @@ class KitKatServer {
     static Campaign = CampaignServer;
     static Page = PageServer;
     static User = UserServer;
+    static RIGHTS = BaseServer.RIGHTS;
     static languages: Object | null = {};
     static countries: Object | null = {};
     static async init() {
         await BaseServer.init();
         KitKatServer.languages = BaseServer.languages;
         KitKatServer.countries = BaseServer.countries;
+    }
+    static hasAccess(rights : number, permissions : number) {
+        return BaseServer.hasAccess(rights, permissions);
+    }
+    static toggleAccess(rights : number, permissions : number) {
+        return BaseServer.toggleAccess(rights, permissions);
     }
     static getParameter(key: string): string | null {
         const url = new URL(window.location.href);

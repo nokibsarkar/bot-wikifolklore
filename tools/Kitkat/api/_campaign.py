@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from ..models import *
 campaign_router = APIRouter(
     prefix="/campaign",
@@ -89,17 +89,32 @@ async def update_campaign(campaign_id: int, campaign: CampaignUpdate):
             cmp = CampaignScheme.from_dict(updated_campaign)
             return ResponseSingle[CampaignScheme](success=True, data=cmp)
     except Exception as e:
-        raise e
         raise HTTPException(status_code=400, detail=str(e))
 #------------------------------------------------------------------------------
-
-
-#---------------------------------- DELETE A CAMPAIGN ----------------------------------#
-@campaign_router.delete("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
-async def delete_campaign(campaign_id: int):
-    """Cancel or reject a campaign.
-    if the user is the created_by of the campaign, cancel the campaign.
-    else if the user is the admin and the campaign is not pending, reject the campaign.
-    else, return 403.
+#---------------------------------- Approve, reject or cancel a CAMPAIGN ----------------------------------#
+@campaign_router.post("/{campaign_id}/status", response_model=ResponseSingle[CampaignScheme])
+async def approve_campaign(req : Request, campaign_id: int, update : CampaignStatusUpdate):
     """
-    return {"message": "Hello World"}
+    Approve, reject or cancel a campaign
+    It can be cancelled by both the admin and the campaign owner
+    But it can be approved or rejected only by the admin.
+    """
+    try:
+        user = req.state.user
+        with Server.get_parmanent_db() as conn:
+            campaign = Campaign.get_by_id(conn.cursor(), campaign_id)
+            assert campaign is not None, "Campaign not found"
+            assert campaign['status'] not in (UpdatableStatus.cancelled.value, UpdatableStatus.ended.value), "Campaign is already cancelled or ended"
+            is_admin = User.has_access(user['rights'], Permission.CAMPAIGN.value)
+            if update.status in (UpdatableStatus.cancelled, UpdatableStatus.ended):
+                assert is_admin, "Only admin or campaign owner can cancel or end a campaign"
+            elif update.status in (UpdatableStatus.scheduled, UpdatableStatus.rejected):
+                assert is_admin, "Only admin can approve or reject a campaign"
+            campaign = Campaign._update_status(conn.cursor(), campaign_id, update.status)
+            result = CampaignScheme.from_dict(campaign)
+            return ResponseSingle[CampaignScheme](success=True, data=result)
+    except Exception as e:
+        raise HTTPException(status_code=403, detail=str(e))
+
+#---------------------------------- Approve or Reject a CAMPAIGN ----------------------------------#
+
