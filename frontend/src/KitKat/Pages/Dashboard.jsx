@@ -16,7 +16,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/fnf/task/create"
+    //             to="/kitkat/task/create"
     //         >
     //             <AddIcon /> &nbsp; Add Task
     //         </Button>
@@ -25,7 +25,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/fnf/task"
+    //             to="/kitkat/task"
     //         >
     //             <ListIcon /> &nbsp; List Tasks
     //         </Button>
@@ -40,7 +40,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/fnf/topic/create"
+    //             to="/kitkat/topic/create"
     //         >
     //             <AddIcon /> &nbsp; Create New Topic
     //         </Button>
@@ -49,7 +49,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/fnf/topic"
+    //             to="/kitkat/topic"
     //         >
     //             <ListIcon /> &nbsp; See All Topics
     //         </Button>
@@ -90,16 +90,16 @@ export default function Description({ user }) {
             >
                 <SettingIcon /> &nbsp; Settings
             </Button>
-            {/* {(Server.hasAccess(user.rights, Server.RIGHTS.STATS) || Server.hasAccess(user.rights, Server.RIGHTS.GRANT) ) && 
+            {(Server.hasAccess(user.rights, Server.RIGHTS.STATS) || Server.hasAccess(user.rights, Server.RIGHTS.GRANT) ) && 
             <Button variant="contained" color="secondary" size="small" sx={{
                 padding: 1,
                 m: 1
             }}
                 component={Link}
-                to="/fnf/user"
+                to="/kitkat/user"
             >
                 <PeopleIcon /> &nbsp; See All Users
-            </Button>} */}
+            </Button>}
         </Box>
     );
     return (
