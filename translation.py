@@ -15,10 +15,15 @@ GOOGLE_PROJECT_ID = os.environ['GOOGLE_PROJECT_ID']
 GOOGLE_SERVICE_ACCOUNT = os.environ['GOOGLE_SERVICE_ACCOUNT_JSON']
 
 GOOGLE_ENDPOINT = f"https://translation.googleapis.com/v3beta1/projects/{GOOGLE_PROJECT_ID}:translateText"
-def _google_auth_token():
+def _google_auth_token(force_refresh = True):
     """
     This function would return a valid google auth token.
     """
+    if not force_refresh and os.environ.get('NODE_ENV', None) == 'development':
+        if os.path.exists('.access.token'):
+            print("Loading cached Token")
+            with open('.access.token', 'r') as fp:
+                return fp.read()
     import json, jwt, time
     def load_json_credentials(filename):
         ''' Load the Google Service Account Credentials from Json file '''
@@ -90,6 +95,8 @@ def _google_auth_token():
     token, err = exchangeJwtForAccessToken(s_jwt)
     if err:
         raise Exception(err)
+    with open('.access.token', 'w') as fp:
+        return fp.write(token)
     return token
 
 def _translate_azure(texts, target):
@@ -135,7 +142,8 @@ def _translate_azure(texts, target):
             done.extend(texts[:element_count])
             texts = texts[element_count:]
         return dict(zip(done, results)), texts
-GOOGLE_KEY =  _google_auth_token()
+
+GOOGLE_KEY =  _google_auth_token(force_refresh=False)
 RETRY = 5
 def _translate_google(texts, target):
     """
@@ -169,7 +177,7 @@ def _translate_google(texts, target):
                         if RETRY > 0:
                             print("Google auth token expired, retrying")
                             RETRY -= 1
-                            GOOGLE_KEY = _google_auth_token()
+                            GOOGLE_KEY = _google_auth_token(force_refresh=True)
                             continue
                         else:
                             raise Exception("Google auth token expired with all the retrying failed")

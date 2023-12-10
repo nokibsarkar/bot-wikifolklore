@@ -83,11 +83,13 @@ CREATE TABLE IF NOT EXISTS `jury` (
 CREATE TABLE IF NOT EXISTS `jury_vote` (
     `jury_id`	INTEGER NOT NULL, -- user id of the jury
     `submission_id`	INTEGER NOT NULL, -- submission id
+    `campaign_id` INTEGER NOT NULL, -- Campaign id
     `created_at`	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- creation time of the vote
     `vote`	INTEGER NOT NULL, -- vote value
+    CONSTRAINT `PK_jury_vote` PRIMARY KEY (`jury_id`,`submission_id`),
     CONSTRAINT `jury_vote_jury_id_fkey` FOREIGN KEY(`jury_id`) REFERENCES `jury`(`user_id`),
     CONSTRAINT `jury_vote_submission_id_fkey` FOREIGN KEY(`submission_id`) REFERENCES `submission`(`id`),
-    CONSTRAINT `PK_jury_vote` PRIMARY KEY (`jury_id`,`submission_id`)
+    CONSTRAINT `jury_vote_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`)
 );
 -- The Table would be used to store the statistics of a submission
 CREATE TABLE IF NOT EXISTS `draft` (

@@ -5,6 +5,8 @@ campaign_router = APIRouter(
     tags=["Campaign"],
     responses={404: {"details": "Not found"}},
 )
+
+
 @campaign_router.get("/", response_model=ResponseMultiple[CampaignScheme])
 async def list_campaigns(language : Language = None, status : Annotated[list[CampaignStatus] | None, Query()] = None, limit : int=50, offset : int= 0):
     """
@@ -62,11 +64,12 @@ async def list_jury(campaign_id: int):
 
 #---------------------------------- CREATE A CAMPAIGN ----------------------------------#
 @campaign_router.post("/", response_model=ResponseSingle[CampaignScheme])
-async def create_campaign(campaign: CampaignCreate):
+async def create_campaign(req : Request, campaign: CampaignCreate):
     """
     This endpoint is used to create a new campaign.
     """
     try:
+        assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
         with Server.get_parmanent_db() as conn:
             new_campaign_id = Campaign.create(conn.cursor(), campaign)
             new_campaign = Campaign.get_by_id(conn.cursor(), new_campaign_id)
@@ -81,8 +84,10 @@ async def create_campaign(campaign: CampaignCreate):
 
 #---------------------------------- UPDATE A CAMPAIGN ----------------------------------#
 @campaign_router.post("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
-async def update_campaign(campaign_id: int, campaign: CampaignUpdate):
+async def update_campaign(req : Request, campaign_id: int, campaign: CampaignUpdate):
     try:
+        assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
+        
         with Server.get_parmanent_db() as conn:
             existing_campaign = Campaign.get_by_id(conn, campaign_id)
             updated_campaign = Campaign.update(conn, campaign, existing_campaign)
@@ -101,11 +106,13 @@ async def approve_campaign(req : Request, campaign_id: int, update : CampaignSta
     """
     try:
         user = req.state.user
+        
         with Server.get_parmanent_db() as conn:
             campaign = Campaign.get_by_id(conn.cursor(), campaign_id)
             assert campaign is not None, "Campaign not found"
             assert campaign['status'] not in (UpdatableStatus.cancelled.value, UpdatableStatus.ended.value), "Campaign is already cancelled or ended"
-            is_admin = User.has_access(user['rights'], Permission.CAMPAIGN.value)
+            is_admin = User.is_admin(user['rights'])
+        
             if update.status in (UpdatableStatus.cancelled, UpdatableStatus.ended):
                 assert is_admin, "Only admin or campaign owner can cancel or end a campaign"
             elif update.status in (UpdatableStatus.scheduled, UpdatableStatus.rejected):

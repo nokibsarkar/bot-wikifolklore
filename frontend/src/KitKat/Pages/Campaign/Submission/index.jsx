@@ -8,23 +8,34 @@ import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { AllButton, DetailsButton, SubmitButton } from "../../../Components/CampaignButtons";
 import LoadingPage from "../../../../Layout/Loader";
+import Tabs from "@mui/material/Tabs"
+import Tab from "@mui/material/Tab"
 
 const SubmissionList = () => {
     const { campaignID } = useParams();
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState(null);
+    const [judgedByMe, setJudgedByMe] = useState(0);
     useEffect(() => {
         (async () => {
             setLoading(true);
             const campaign = await KitKatServer.Campaign.getCampaign(campaignID);
-            const submissions = await KitKatServer.Campaign.getSubmissions(campaignID);
-            
             setCampaign(campaign);
+            setLoading(false);
+        })()
+    }, [campaignID, judgedByMe]);
+    useEffect(() => {
+        setLoading(true);
+        (async () => {
+            const params = {}
+            if (judgedByMe < 2)
+                params['judged_by_me'] = judgedByMe == 1;
+            const submissions = await KitKatServer.Campaign.getSubmissions(campaignID, params);
             setSubmissions(submissions);
             setLoading(false);
         })()
-    }, [campaignID]);
+    }, [campaignID, judgedByMe])
     if (!campaign) return <LoadingPage />
     return (
         <div>
@@ -35,14 +46,25 @@ const SubmissionList = () => {
                 <DetailsButton campaign={campaign} />
                 <AllButton campaign={campaign} />
             </div>
+            <Tabs value={judgedByMe} onChange={(e, val) => setJudgedByMe(val)} aria-label="Judged By Me" sx={{
+                '& .MuiTabs-flexContainer' : {
+                    display: 'flex',
+                flexDirection : 'row',
+                justifyContent: 'center'
+            }
+            }}>
+                <Tab label="Not judged Yet" />
+                <Tab label="Judge By me" />
+                <Tab label="All" />
+            </Tabs>
             <DataGrid
                 rows={submissions}
                 loading={loading}
                 density="compact"
                 // getRowId={(row) => row.submissionID}
                 columns={[
-                    { field: 'title', headerName: 'Title', flex: 1 , minWidth: 200},
-                    { field: 'submitted_by_username', headerName: 'Submitter', flex: 1 , minWidth : 200},
+                    { field: 'title', headerName: 'Title', flex: 1, minWidth: 200 },
+                    { field: 'submitted_by_username', headerName: 'Submitter', flex: 1, minWidth: 200 },
                     {
                         field: 'points', headerName: 'Points', flex: 0.5, renderCell: (params) => {
                             // const scores = []
@@ -76,7 +98,7 @@ const SubmissionList = () => {
                             // </span>
                             return params.value
                         },
-                        minWidth : 130, disableColumnMenu : true
+                        minWidth: 130, disableColumnMenu: true
                     },
                     {
                         field: 'action', headerName: 'Judge', renderCell: (params) => {

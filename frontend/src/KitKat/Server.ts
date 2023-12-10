@@ -182,11 +182,12 @@ class CampaignServer {
         return sampleSubmission;
 
     }
-    static async getSubmissions(campaignID: number): Promise<Submission[]> {
-         const params = new URLSearchParams({
-            campaignID: campaignID.toString()
+    static async getSubmissions(campaignID: number, params : { [key : string] : string}): Promise<Submission[]> {
+         const qs = new URLSearchParams({
+            campaignID: campaignID.toString(),
+            ...params
         });
-        const url = '/api/kitkat/submission/' + '?' + params.toString();
+        const url = '/api/kitkat/submission/' + '?' + qs.toString();
        
         const res = await fetchWithErrorHandling(url)
         const submissions = res.data;

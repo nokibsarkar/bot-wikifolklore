@@ -1,6 +1,19 @@
 SQL1_SELECT_SUBMISSIONS = """
 SELECT * FROM `submission` WHERE `campaign_id` = :campaign_id
 """
+SQL1_SELECT_SUBMISSIONS_EXCLUDING_USER_ID = """
+SELECT * FROM `submission` WHERE `id` NOT IN (
+    SELECT `submission_id` FROM `jury_vote` WHERE  `jury_vote`.`jury_id` = :exclude_judged_user_id AND  `jury_vote`.`campaign_id` = :campaign_id
+);
+"""
+SQL1_SELECT_SUBMISSIONS_JUDGED_BY_USER_ID = """
+SELECT * FROM `submission` WHERE `id` IN (
+    SELECT `submission_id` FROM `jury_vote` WHERE  `jury_vote`.`jury_id` = :jury_id AND  `jury_vote`.`campaign_id` = :campaign_id
+);
+"""
+SQL1_SELECT_SUBMISSIONS_SUBMITTED_BY_USER_ID = """
+SELECT * FROM `submission` WHERE `submitted_by_id` = :submitted_by_id AND `campaign_id` = :campaign_id
+"""
 SQL1_CREATE_CAMPAIGN = """
 INSERT INTO
     `campaign`
@@ -170,11 +183,13 @@ INSERT INTO
 (
     `submission_id`,
     `jury_id`,
-    `vote`
+    `vote`,
+    `campaign_id`
 ) VALUES (
     :submission_id,
     :jury_id,
-    :vote
+    :vote,
+    :campaign_id
 ) ON CONFLICT DO UPDATE SET `vote` = :vote RETURNING *
 """
 SQL1_GET_JUDGEMENTS_BY_SUBMISSION_ID = "SELECT * FROM `jury_vote` WHERE `submission_id` = :submission_id"
