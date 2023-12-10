@@ -2,7 +2,7 @@ SQL1_SELECT_SUBMISSIONS = """
 SELECT * FROM `submission` WHERE `campaign_id` = :campaign_id
 """
 SQL1_SELECT_SUBMISSIONS_EXCLUDING_USER_ID = """
-SELECT * FROM `submission` WHERE `id` NOT IN (
+SELECT * FROM `submission` WHERE `submission`.`campaign_id` = :campaign_id AND `id` NOT IN (
     SELECT `submission_id` FROM `jury_vote` WHERE  `jury_vote`.`jury_id` = :exclude_judged_user_id AND  `jury_vote`.`campaign_id` = :campaign_id
 );
 """

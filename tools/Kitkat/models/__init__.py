@@ -341,6 +341,7 @@ class Submission:
         if exclude_judged_user_id is not None:
             params['exclude_judged_user_id'] = exclude_judged_user_id 
             sql = SQL1_SELECT_SUBMISSIONS_EXCLUDING_USER_ID
+            print(sql)
         return conn.execute(sql, params).fetchall()
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str) -> SubmissionScheme:
