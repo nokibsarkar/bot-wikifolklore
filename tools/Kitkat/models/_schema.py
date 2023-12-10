@@ -77,6 +77,7 @@ class SubmissionScheme(SubmissionBase):
     # If multiple judgements are allowed, 
     # this will be True all the time before the campaign ends
     judgable : bool = True 
+    judged_by_me : bool | None = None
 @dataclass
 class SubmissionCreateScheme:
     """

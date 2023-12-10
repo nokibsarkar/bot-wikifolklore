@@ -18,6 +18,9 @@ class User(BaseUser):
         users = conn.execute(sql, list(usernames))
         return dict(map(lambda x: (x['username'], x), users))
     @staticmethod
+    def is_admin(rights : int):
+        return User.has_access(rights, Permission.CAMPAIGN.value)
+    @staticmethod
     def auto_create_users(conn : sqlite3.Cursor, usernames : set[str], lang : str = 'en') -> dict[str, UserScheme]:
         params = {
             'action': 'query',
@@ -329,18 +332,28 @@ class Submission:
         updated_draft = cur.fetchone()
         return DraftSubmissionScheme(**updated_draft)
     @staticmethod
-    def get_all_by_campaign_id(conn : sqlite3.Cursor, campaign_id, judgable : bool=None, judged : bool=None):
-        return conn.execute(SQL1_SELECT_SUBMISSIONS, {'campaign_id': campaign_id}).fetchall()
+    def get_all_by_campaign_id(conn : sqlite3.Cursor, campaign_id, judgable : bool=None, exclude_judged_user_id : int = None, only_judged_by : int = None):
+        params = {'campaign_id': campaign_id}
+        sql = SQL1_SELECT_SUBMISSIONS
+        if only_judged_by is not None:
+            sql = SQL1_SELECT_SUBMISSIONS_JUDGED_BY_USER_ID
+            params['jury_id'] = only_judged_by
+        if exclude_judged_user_id is not None:
+            params['exclude_judged_user_id'] = exclude_judged_user_id 
+            sql = SQL1_SELECT_SUBMISSIONS_EXCLUDING_USER_ID
+        print(params)
+        return conn.execute(sql, params).fetchall()
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str) -> SubmissionScheme:
         return conn.execute(SQL1_GET_SUBMISSION_BY_ID, {'id': id}).fetchone()
 class Judgement:
     @staticmethod
-    def add(conn : sqlite3.Cursor, submission_id : int, jury_id : int, vote : int):
+    def add(conn : sqlite3.Cursor, submission_id : int, jury_id : int, vote : int, campaign_id : int):
         params = {
             'submission_id': submission_id,
             'jury_id': jury_id,
             'vote': vote,
+            'campaign_id' : campaign_id
         }
         cur = conn.execute(SQL1_ADD_JUDGEMENT, params)
         new_judgement = cur.fetchone()

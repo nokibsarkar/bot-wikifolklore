@@ -7,16 +7,29 @@ submission_router = APIRouter(
     responses={404: {"details": "Not found"}},
 )
 @submission_router.get("/", response_model=ResponseMultiple[SubmissionScheme])
-async def list_all_submissions(req : Request, campaignID: str, judgable : bool = None, judged : bool = None ):
+async def list_all_submissions(req : Request, campaignID: str, judgable : bool = None, judged_by_me : bool = None ):
     """
     List all submissions.`
     """
-    with Server.get_parmanent_db() as conn:
-        submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaignID, judgable=judgable, judged=judged)
-    results = []
-    for submission in submissions:
-        results.append(SubmissionScheme(**submission))
-    return ResponseMultiple[SubmissionScheme](success=True, data=results)
+    try:
+        my_id = req.state.user['id']
+        with Server.get_parmanent_db() as conn:
+            print(judged_by_me)
+            if judged_by_me is not None:
+                if judged_by_me == True:
+                    submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaignID, judgable=judgable, only_judged_by=my_id)
+                elif judged_by_me == False:
+                    submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaignID, judgable=judgable, exclude_judged_user_id=my_id)
+            else:
+                submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaignID, judgable=judgable)
+        results = []
+        for submission in submissions:
+            # if submission.get('judged_by_me') is None:
+            #     submission['judged_by_me'] = judge_by_me
+            results.append(SubmissionScheme(**submission))
+        return ResponseMultiple[SubmissionScheme](success=True, data=results)
+    except Exception as e:
+        raise HTTPException(404, detail=str(e))
 
 
 
@@ -24,6 +37,7 @@ async def list_all_submissions(req : Request, campaignID: str, judgable : bool =
 @submission_router.post("/draft", response_model=ResponseSingle[DraftSubmissionScheme])
 async def create_draft(req : Request, draft_request : DraftCreateScheme):
     try:
+        current_user = req.state.user
         campaign_id = draft_request.campaign_id
         with Server.get_parmanent_db() as conn:
             campaign = Campaign.update_status(conn, campaign_id)
@@ -119,9 +133,7 @@ async def create_submission(req: Request, submission: SubmissionCreateScheme):
 
 
 
-@submission_router.post("/{submission_id}", response_model=ResponseSingle[SubmissionScheme])
-async def update_submission(submission_id: int, submission: SubmissionScheme):
-    return {"message": "Hello World"}
+
 @submission_router.post("/{submission_id}/judge", response_model=ResponseSingle[SubmissionScheme])
 async def judge_submission(req: Request, submission_id: int, judgement : JudgementScheme):
     try:
@@ -136,7 +148,7 @@ async def judge_submission(req: Request, submission_id: int, judgement : Judgeme
             jury = Judgement.verify_judge(conn,  submission['campaign_id'], jury_id,)
             assert jury, "Sorry, you are not a judge for this campaign"
             assert jury['allowed'] == True, "Sorry, you are not allowed to judge this campaign"
-            Judgement.add(conn, submission_id, jury_id, judgement.vote)
+            Judgement.add(conn, submission_id, jury_id, judgement.vote, campaign_id=campaign['id'])
             Judgement.calculate_points(conn, submission_id)
             submission = Submission.get_by_id(conn.cursor(), submission_id)
         return ResponseSingle[SubmissionScheme](success=True, data=SubmissionScheme(**submission))
