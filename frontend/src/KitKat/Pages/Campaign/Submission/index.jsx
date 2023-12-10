@@ -53,8 +53,8 @@ const SubmissionList = () => {
                 justifyContent: 'center'
             }
             }}>
-                <Tab label="Not judged Yet" />
-                <Tab label="Judge By me" />
+                <Tab label="Not Judged" />
+                <Tab label="Judged" />
                 <Tab label="All" />
             </Tabs>
             <DataGrid

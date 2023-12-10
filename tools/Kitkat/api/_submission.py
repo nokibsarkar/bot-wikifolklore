@@ -14,7 +14,6 @@ async def list_all_submissions(req : Request, campaignID: str, judgable : bool =
     try:
         my_id = req.state.user['id']
         with Server.get_parmanent_db() as conn:
-            print(judged_by_me)
             if judged_by_me is not None:
                 if judged_by_me == True:
                     submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaignID, judgable=judgable, only_judged_by=my_id)
