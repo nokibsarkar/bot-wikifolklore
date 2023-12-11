@@ -138,13 +138,14 @@ const Buttons = ({ campaign, campaignDispatch, setError }) => {
 }
 const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) => {
     const [error, setError] = useState(null);
+    const hasCampaignRights = KitKatServer.BaseServer.hasRight(KitKatServer.RIGHTS.CAMPAIGN);
     return (
         <Box component='div' sx={{ backgroundColor: 'rules.light', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant='h4' sx={{ m: 1 }}>
                 Overview
             </Typography>
             <CampaignHeader campaign={campaign} />
-            {showActions && (
+            {hasCampaignRights && showActions && (
                 <Buttons campaign={campaign} campaignDispatch={campaignDispatch} setError={setError} />
             )}
             <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row', width: 'max-content' }} component='fieldset'>
