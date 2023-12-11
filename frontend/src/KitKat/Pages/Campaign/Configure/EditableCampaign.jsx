@@ -14,7 +14,7 @@ const defaultCampaign = {
     name: '',
     description : null,
     language: 'bn',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/%E0%A6%89%E0%A6%87%E0%A6%95%E0%A6%BF%E0%A6%AA%E0%A6%BF%E0%A6%A1%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE_%E0%A6%8F%E0%A6%B6%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%AE%E0%A6%BE%E0%A6%B8_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%A9_%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%A8%E0%A6%BE%E0%A6%B0.svg/425px-%E0%A6%89%E0%A6%87%E0%A6%95%E0%A6%BF%E0%A6%AA%E0%A6%BF%E0%A6%A1%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A6%BE_%E0%A6%8F%E0%A6%B6%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%AE%E0%A6%BE%E0%A6%B8_%E0%A7%A8%E0%A7%A6%E0%A7%A8%E0%A7%A9_%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%A8%E0%A6%BE%E0%A6%B0.svg.png',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Wiki_Loves_Folklore_banner_logo.jpg',
     rules: [
         'All Participants must be registered in Wikipedia',
         
