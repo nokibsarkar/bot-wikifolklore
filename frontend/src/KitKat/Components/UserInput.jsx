@@ -64,10 +64,13 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
                     m: 1
                 }}
                     onClick={() => {
-                        if (!value)
+                        if (!value.trim())
                             return;
                         if (users.includes(value.id))
                             return setError('User already added');
+                        const selectedUser = suggestedUsers.find(u => u.id === value.id);
+                        if (!selectedUser)
+                            return setError('User not found');
                         const values = [...users, value.id];
                         onChange(values);
                         setValue('');
