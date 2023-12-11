@@ -105,7 +105,7 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
         "formatversion" : "2",
         "rvprop": "tags|ids|size|content",
         "rvslots": "main",
-        "rvlimit": "max",
+        "rvlimit": "20",
         "rvstart": start_date,
         "rvend": end_date,
         "rvdir": "newer",

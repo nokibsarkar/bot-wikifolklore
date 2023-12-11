@@ -126,7 +126,7 @@ class Wiki {
         return response.parse.text["*"];
     }
     static async suggestArticles(language: string, query: string): Promise<string[]> {
-        if (query.length < 3) return [];
+        if (query.length < 2) return [];
         const baseURL = `https://${language}.wikipedia.org/w/api.php`;
         const params = new URLSearchParams({
             action: "query",
@@ -284,9 +284,9 @@ class PageServer {
 }
 class UserServer {
     static fetching = false;
-    static async searchUsersByPrefix(language: string = 'bn', prefix: string, previous: WikimediaUser[]): Promise<WikimediaUser[]> {
+    static async searchUsersByPrefix(language: string = 'bn', prefix: string, callback: (users: WikimediaUser[]) => void ) {
         if (UserServer.fetching){
-            return previous;
+            return;
         }
         const params = new URLSearchParams({
             action: "query",
@@ -301,7 +301,8 @@ class UserServer {
         UserServer.fetching = true;
         const res = await fetch(url).then(res => res.json());
         UserServer.fetching = false;
-        return res.query.allusers;
+        console.log(res.query.allusers)
+        callback(res.query.allusers);
     }
     static async getUsers() : Promise<User[]> {
         const url = '/api/kitkat/user/';
