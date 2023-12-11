@@ -72,6 +72,7 @@ async def create_draft(req : Request, draft_request : DraftCreateScheme):
                 added_words=current_stat['added_words'],
             )
             new_draft = Submission.create_draft(conn, new_draft)
+        Submission.async_calculate_addition(new_draft.id, language, current_stat['oldid'], campaign['start_at'], campaign['end_at'], submitted_by['username'])
         return ResponseSingle[DraftSubmissionScheme](success=True, data=new_draft)
     except HTTPException as e:
         raise e
@@ -118,7 +119,7 @@ async def create_submission(req: Request, submission: SubmissionCreateScheme):
             draft = Submission.get_draft_by_id(conn,  submission.draft_id)
             if not draft:
                 raise HTTPException(status_code=400, detail="Draft not found")
-            Submission.update_draft(
+            Submission.update_draft_flags(
                 conn, submission.draft_id, calculated=True, passed=True, submitted=True
             )
             newSubmission = Submission.submit(conn, draft)

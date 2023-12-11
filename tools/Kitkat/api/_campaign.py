@@ -96,9 +96,9 @@ async def update_campaign(req : Request, campaign_id: int, campaign: CampaignUpd
     try:
         
         assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
-        jury_list = campaign.jury
-        if len(jury_list) < 1:
-            raise Exception("At least one jury must be selected")
+        # jury_list = campaign.jury
+        # if len(jury_list) < 1:
+        #     raise Exception("At least one jury must be selected")
         with Server.get_parmanent_db() as conn:
 
             existing_campaign = Campaign.get_by_id(conn, campaign_id)

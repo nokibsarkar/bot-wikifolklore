@@ -260,7 +260,6 @@ class Submission:
         pageid = current_info['pageid']
         title = current_info['title']
         first_revision_info = Submission._fetch_first_revision(lang, pageid)
-        added_words, added_bytes = calculate_addition(lang, pageid, start_at, end_at, submitted_by_username)
         errors = []
         stats = {
             'title' : title,
@@ -271,8 +270,8 @@ class Submission:
             'created_at' : first_revision_info['timestamp'],
             'created_by_username' : first_revision_info['username'],
             'created_by_id' : first_revision_info['user_id'],
-            'added_words' : added_words,
-            'added_bytes' : added_bytes,
+            'added_words' : 0,
+            'added_bytes' : 0,
         }
         return errors, stats
     @staticmethod
@@ -322,7 +321,7 @@ class Submission:
     def get_draft_by_id(conn : sqlite3.Cursor, id : int) -> DraftSubmissionScheme:
         return conn.execute(SQL1_GET_DRAFT_BY_ID, {'id': id}).fetchone()
     @staticmethod
-    def update_draft(conn : sqlite3.Cursor, draft_id, calculated : bool, passed : bool, submitted : bool) -> DraftSubmissionScheme:
+    def update_draft_flags(conn : sqlite3.Cursor, draft_id, calculated : bool, passed : bool, submitted : bool) -> DraftSubmissionScheme:
         params = {
             'id': draft_id,
             'calculated': calculated,
@@ -332,6 +331,40 @@ class Submission:
         cur = conn.execute(SQL1_UPDATE_DRAFT, params)
         updated_draft = cur.fetchone()
         return DraftSubmissionScheme(**updated_draft)
+    @staticmethod
+    def async_calculate_addition(draft_id : int, lang: str, pageid : int , start_date : str, end_date : str, username : str) -> tuple[int, int]:
+        """
+        Calculate the addition of the article
+        """
+        print("Calculating addition")
+        with Server.get_parmanent_db() as conn:
+            draft = Submission.get_draft_by_id(conn, draft_id)
+            campaign = Campaign.get_by_id(conn, draft['campaign_id'])
+            campaign_allow_expansion = campaign['allowExpansions']
+            params = {
+                'id': draft_id,
+                'added_words': 0,
+                'added_bytes': 0,
+                'passed': True,
+                'calculated': True,
+            }
+            if campaign_allow_expansion:
+                campaign_minimum_added_bytes = campaign['minimumAddedBytes']
+                campaign_minimum_added_words = campaign['minimumAddedWords']
+                added_word, added_bytes = calculate_addition(lang, pageid, start_date, end_date, username)
+                if added_word < campaign_minimum_added_words or added_bytes < campaign_minimum_added_bytes:
+                    params['passed'] = False
+            else:
+                added_word, added_bytes = 0, 0
+                minimum_total_words = campaign['minimumTotalWords']
+                minimum_total_bytes = campaign['minimumTotalBytes']
+                if draft['total_words'] < minimum_total_words or draft['total_bytes'] < minimum_total_bytes:
+                    params['passed'] = False
+            params['added_words'] = added_word
+            params['added_bytes'] = added_bytes
+            conn.execute(SQL1_UPDATE_DRAFT_CALCULATION, params)
+            
+
     @staticmethod
     def get_all_by_campaign_id(conn : sqlite3.Cursor, campaign_id, judgable : bool=None, exclude_judged_user_id : int = None, only_judged_by : int = None):
         params = {'campaign_id': campaign_id}

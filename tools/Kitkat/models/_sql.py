@@ -207,3 +207,11 @@ RETURNING *
 """
 SQL1_VERIFY_JUDGE = "SELECT * FROM `jury` WHERE `user_id` = :user_id AND `campaign_id` = :campaign_id LIMIT 1"
 SQL1_UPDATE_CAMPAIGN_STATUS = "UPDATE `campaign` SET `status` = :status WHERE `id` = :id RETURNING *"
+SQL1_UPDATE_DRAFT_CALCULATION = """
+UPDATE `draft` SET
+    `calculated` = true,
+    `passed` = :passed,
+    `added_words` = :added_words,
+    `added_bytes` = :added_bytes
+WHERE `id` = :id
+"""

@@ -135,3 +135,4 @@ def calculate_word(content : str) -> int:
     """
     content = _preprocess(content)
     return len(content.split())
+
