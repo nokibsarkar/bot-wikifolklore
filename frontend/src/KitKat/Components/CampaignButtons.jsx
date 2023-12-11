@@ -54,7 +54,7 @@ export const SettingsButton = ({ campaign }) => (
         <SettingsIcon /> &nbsp; Settings
     </Button>
 )
-export const SubmissionListButton = ({ campaign }) => (
+export const SubmissionListButton = ({ campaign }) => !(campaign?.status in ['scheduled', 'rejected']) && (
     <Button variant="contained" color="primary" size="small" sx={{
         padding: 1,
         m: 1
