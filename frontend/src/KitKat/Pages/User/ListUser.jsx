@@ -57,7 +57,7 @@ const ListUser = ({ user }) => {
                 id: user.id,
                 username: user.username,
                 rights: user.rights,
-                action: <Link to={ hasGrantAccess ? `/fnf/user/edit?id=${user.id}` : ''}>
+                action: <Link to={ hasGrantAccess ? `/kitkat/user/edit?id=${user.id}` : ''}>
                     <Button color="primary" variant="contained" disabled={!hasGrantAccess} size="small">
                         <EditIcon />
                     </Button>
