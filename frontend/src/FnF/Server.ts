@@ -322,5 +322,8 @@ class FnF {
         }).then(res => res.json());
         return response.data;
     }
+    static getWikiList(exclude : string[] = []){
+        return BaseServer.getWikiList(exclude);
+    }
 }
 export default FnF;
