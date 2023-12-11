@@ -123,6 +123,7 @@ const Buttons = ({ campaign, campaignDispatch, setError }) => {
         const onReject = () => updateStatus('rejected');
         actionButtons.push(<ApprovalPrompt key='approval' onApprove={onApprove} onReject={onReject} />);
     } 
+    console.log(campaign.status)
     if (campaign.status !== 'cancelled' && campaign.status !== 'rejected' && campaign.status !== 'ended') {
         const onCancel = () => updateStatus('cancelled');
         actionButtons.push(<CancelPrompt key='cancel' onCancel={onCancel} />);

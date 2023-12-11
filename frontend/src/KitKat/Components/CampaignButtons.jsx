@@ -20,7 +20,7 @@ export const DetailsButton = ({ campaign }) => (
         <CampaignIcon />&nbsp; See Details
     </Button>
 )
-export const SubmitButton = ({ campaign }) => (
+export const SubmitButton = ({ campaign }) => campaign?.status == 'running' && (
     <Button variant="contained" color="success" size="small" sx={{
         p: 1,
         pr: 2,
@@ -43,7 +43,7 @@ export const AllButton = () => (
         <ListIcon /> &nbsp; All Campaigns
     </Button>
 )
-export const SettingsButton = ({ campaign }) => (
+export const SettingsButton = ({ campaign }) => !(['cancelled', 'rejected', 'ended'].includes(campaign?.status)) && (
     <Button variant="contained" color="primary" size="small" sx={{
         padding: 1,
         m: 1
@@ -61,6 +61,7 @@ export const SubmissionListButton = ({ campaign }) => (
     }}
         component={Link}
         to={`/kitkat/campaign/${campaign.id}/submission`}
+        disabled={(['scheduled', 'rejected', 'pending'].includes(campaign?.status))}
     >
         <GavelIcon /> &nbsp; Submissions
     </Button>
