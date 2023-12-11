@@ -20,7 +20,7 @@ export const DetailsButton = ({ campaign }) => (
         <CampaignIcon />&nbsp; See Details
     </Button>
 )
-export const SubmitButton = ({ campaign }) => (
+export const SubmitButton = ({ campaign }) => campaign?.status == 'running' && (
     <Button variant="contained" color="success" size="small" sx={{
         p: 1,
         pr: 2,

@@ -17,6 +17,7 @@ const SubmissionList = () => {
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState(null);
     const [judgedByMe, setJudgedByMe] = useState(0);
+    const judgable = campaign?.am_i_judge && (campaign?.status == 'running' || campaign?.status == 'evaluating');
     useEffect(() => {
         (async () => {
             setLoading(true);
@@ -79,7 +80,7 @@ const SubmissionList = () => {
             },
         ];
 
-        if(campaign?.am_i_judge){
+        if(judgable){
             columns.push(
                 {
                     field: 'action', headerName: 'Evaluate', renderCell: (params) => {
@@ -97,7 +98,7 @@ const SubmissionList = () => {
             )
         }
         return columns;
-    }, [judgedByMe, campaign])
+    }, [judgedByMe, campaign]);
     if (!campaign) return <LoadingPage />
     return (
         <div>
@@ -117,8 +118,8 @@ const SubmissionList = () => {
             }}>
 
                 <Tab label="All" />
-                {campaign?.am_i_judge && <Tab label="Not Evaluated" />}
-                {campaign?.am_i_judge && <Tab label="Evaluated" />}
+                {judgable && <Tab label="Not Evaluated" />}
+                {judgable && <Tab label="Evaluated" />}
             </Tabs>
             <DataGrid
                 rows={submissions}
