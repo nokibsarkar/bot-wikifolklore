@@ -13,7 +13,8 @@ for (const [key, value] of Object.entries(KitKatServer.languages)) {
 wiki.sort((a, b) => a.label.localeCompare(b.label));
 const CampaignFilter = ({ filter, setFilter }) => {
     const [language, setLanguage] = useState(filter.language)
-    const [status, setStatus] = useState(filter.status)
+    const [status, setStatus] = useState(filter.status);
+    console.log(wiki.length)
     return (
         <Box 
         component="div"
@@ -32,7 +33,7 @@ const CampaignFilter = ({ filter, setFilter }) => {
                 id="article-name"
                 options={wiki}
                 size="small"
-                loading={false}
+                // loading={false}
                 value={language}
                 onChange={(e, v) => setLanguage(v?.id || '')}
                 sx={{
