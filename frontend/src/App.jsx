@@ -68,11 +68,11 @@ function ToolSelector() {
   const tool = url.searchParams.get('tool') || url.pathname.split('/')[1];
   switch (tool) {
     case 'fnf':
-      return ['FnF', '/fnf', FnF]
+      return ['FnF', '/fnf', FnFRoutes]
     case 'kitkat':
-      return ['KitKat (development)', '/kitkat', KitKat]
+      return ['KitKat (development)', '/kitkat', KitKatRoutes]
     default:
-      return ['FnF', '', () => <FnF />];
+      return ['FnF', '', FnFRoutes ];
   }
 }
 
@@ -80,17 +80,18 @@ const Tools = []
 function App() {
   const [user, setUser] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const [toolName, toolPath, getRoutes] = ToolSelector();
   React.useEffect(() => {
     const decoded = Server.loginnedUser();
     if (decoded) {
       setUser(decoded);
-      Tools[0] = FnFRoutes(decoded);
+      Tools[0] = getRoutes(decoded);
       // Tools[1] = KitKatRoutes(decoded);
     } else {
       console.log("Please login to continue")
     }
   }, []);
-  const [toolName, toolPath, Tool] = ToolSelector();
   const commonProps = {
     user,
     setUser,

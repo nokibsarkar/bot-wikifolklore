@@ -53,7 +53,7 @@ export default function PrimarySearchAppBar({ username, toolName, open, setOpen,
 
 
       <MenuItem onClick={handleMenuClose} >
-        <Link to="/fnf/setting" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link to={`${toolPath}/setting`} style={{ textDecoration: 'none', color: 'inherit' }}>
           <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
