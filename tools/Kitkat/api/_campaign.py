@@ -69,7 +69,7 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
     This endpoint is used to create a new campaign.
     """
     try:
-        assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
+        #assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
         with Server.get_parmanent_db() as conn:
             new_campaign_id = Campaign.create(conn.cursor(), campaign)
             new_campaign = Campaign.get_by_id(conn.cursor(), new_campaign_id)

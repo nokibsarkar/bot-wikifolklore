@@ -6,11 +6,16 @@ const LANGUAGE_KEY = "tk-lang"
 const COUNTRY_KEY = "tk-country";
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth';
 const HIDDEN_USERNAME = "USERNAME HIDDEN";
-
+type UserToken = {
+    exp: number;
+    username: string;
+    id: number;
+    rights: number;
+}
 
 const checkToken = (token: string) => {
     try {
-        const decoded: { exp: number; username: string; id: number; } = jwt_decode(token);
+        const decoded: UserToken = jwt_decode(token);
         // check if token is expired
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
@@ -77,6 +82,10 @@ class BaseServer {
     }
     static hasAccess(rights: Permission, permission: Permission) {
         return (rights & permission) == permission;
+    }
+    static hasRight(permission: Permission){
+        const user = BaseServer.loginnedUser();
+        return user && BaseServer.hasAccess(user.rights, permission);
     }
     static toggleAccess(rights : number, permission : number){
         return rights & permission ? rights & ~permission : rights | permission;
