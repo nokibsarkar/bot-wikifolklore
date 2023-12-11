@@ -31,6 +31,10 @@ const checkToken = (token: string) => {
 const deleteCookie = (name: string) => {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
+type LanguageObject = {
+    [key: string]: string;
+} | null;
+type Option = {id : string; label : string};
 const PERMISSIONS: { [key: string]: Permission } = {
     TASK: 1 << 0,
     STATS: 1 << 1,
@@ -41,8 +45,8 @@ const PERMISSIONS: { [key: string]: Permission } = {
 };
 class BaseServer {
     static RIGHTS = PERMISSIONS;
-    static languages: Object | null = null;
-    static countries: Object | null = null;
+    static languages: LanguageObject = null;
+    static countries: LanguageObject = null;
     static async init() {
         if (!BaseServer.languages || !BaseServer.countries) {
             const localStorageCountries = localStorage.getItem(COUNTRY_KEY);
@@ -89,6 +93,16 @@ class BaseServer {
     }
     static toggleAccess(rights : number, permission : number){
         return rights & permission ? rights & ~permission : rights | permission;
+    }
+    static getWikiList(exclude: string[] = []): Option[] {
+        const languages = [];
+        for (const key in BaseServer.languages) {
+            if (exclude.includes(key)) continue;
+            const value = BaseServer.languages[key];
+            languages.push({ id: key, label: `${value} (${key})` });
+        }
+        languages.sort((a, b) => a.label.localeCompare(b.label));
+        return languages;
     }
     static logout() {
         deleteCookie(AUTH_COOKIE_NAME);

@@ -326,6 +326,9 @@ class UserServer {
     
     }
 }
+type LanguageObject = {
+    [key: string]: string;
+} | null;
 
 class KitKatServer {
     static BaseServer = BaseServer;
@@ -334,12 +337,15 @@ class KitKatServer {
     static Page = PageServer;
     static User = UserServer;
     static RIGHTS = BaseServer.RIGHTS;
-    static languages: Object | null = {};
-    static countries: Object | null = {};
+    static languages: LanguageObject = {};
+    static countries: LanguageObject = {};
     static async init() {
         await BaseServer.init();
         KitKatServer.languages = BaseServer.languages;
         KitKatServer.countries = BaseServer.countries;
+    }
+    static getWikiList(exclude: string[] = []){
+        return BaseServer.getWikiList(exclude);
     }
     static hasAccess(rights : number, permissions : number) {
         return BaseServer.hasAccess(rights, permissions);
