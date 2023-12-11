@@ -11,7 +11,6 @@ console.log(wiki.length)
 const CampaignFilter = ({ filter, setFilter }) => {
     const [language, setLanguage] = useState(filter.language)
     const [status, setStatus] = useState(filter.status);
-    
     return (
         <Box 
         component="div"
