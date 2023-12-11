@@ -37,7 +37,7 @@ async def get_campaign(req : Request, campaign_id: int, check_jury : bool = Fals
             result = CampaignScheme.from_dict(campaign)
             if check_jury:
                 is_judge = Judgement.verify_judge(conn.cursor(), campaign_id, user_id)
-                result.am_i_judge = False and bool(is_judge)
+                result.am_i_judge = bool(is_judge)
             
             return ResponseSingle[CampaignScheme](success=True, data=result)
     except Exception as e:
