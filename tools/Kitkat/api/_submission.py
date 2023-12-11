@@ -143,7 +143,7 @@ async def judge_submission(req: Request, submission_id: int, judgement : Judgeme
                 raise HTTPException(status_code=400, detail="Submission not found")
             assert submission['judgable'] == True, "Submission is not judgable"
             campaign = Campaign.update_status(conn, submission['campaign_id'])
-            assert campaign['status'] in [CampaignStatus.running.value, CampaignStatus.scheduled.value], "Campaign is not in judging mode"
+            assert campaign['status'] in [CampaignStatus.running.value, CampaignStatus.evaluating.value], "Campaign is not in judging mode"
             jury = Judgement.verify_judge(conn,  submission['campaign_id'], jury_id,)
             assert jury, "Sorry, you are not a judge for this campaign"
             assert jury['allowed'] == True, "Sorry, you are not allowed to judge this campaign"
