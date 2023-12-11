@@ -1,7 +1,6 @@
 import { Autocomplete, Box, Button, Chip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
-import GavelIcon from '@mui/icons-material/Gavel';
 import TextField from '@mui/material/TextField';
 import KitKatServer from "../Server";
 const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='black', backgroundColor = 'rules.main' }) => {
@@ -44,6 +43,7 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
                 {icon} {fieldName}</Typography>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1px' }}>
                 <Autocomplete
+                    freeSolo={false}
                     disablePortal
                     options={suggestedUsers}
                     loading={loading}
@@ -64,13 +64,13 @@ const UserInput = ({ users, onChange, fieldName, icon, language = 'bn', color='b
                     m: 1
                 }}
                     onClick={() => {
-                        if (!value.trim())
+                        if (!value)
                             return;
+                        if(!value.id)
+                            return setError('User is not available');
                         if (users.includes(value.id))
                             return setError('User already added');
-                        const selectedUser = suggestedUsers.find(u => u.id === value.id);
-                        if (!selectedUser)
-                            return setError('User not found');
+                        
                         const values = [...users, value.id];
                         onChange(values);
                         setValue('');

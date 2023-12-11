@@ -76,6 +76,9 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
     try:
         #assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
         with Server.get_parmanent_db() as conn:
+            jury_list = campaign.jury
+            if len(jury_list) < 1:
+                raise Exception("At least one jury must be selected")
             new_campaign_id = Campaign.create(conn.cursor(), campaign)
             new_campaign = Campaign.get_by_id(conn.cursor(), new_campaign_id)
         result = CampaignScheme.from_dict(new_campaign)
@@ -91,9 +94,13 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
 @campaign_router.post("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def update_campaign(req : Request, campaign_id: int, campaign: CampaignUpdate):
     try:
-        assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
         
+        assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
+        jury_list = campaign.jury
+        if len(jury_list) < 1:
+            raise Exception("At least one jury must be selected")
         with Server.get_parmanent_db() as conn:
+
             existing_campaign = Campaign.get_by_id(conn, campaign_id)
             updated_campaign = Campaign.update(conn, campaign, existing_campaign)
             cmp = CampaignScheme.from_dict(updated_campaign)
