@@ -4,6 +4,11 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import KitKatServer from "../Server"
 const CampaignHeader = ({ campaign }) => {
+    const linkoptions = {};
+    if(campaign.id){
+        linkoptions.to = `/kitkat/campaign/${campaign.id}`;
+        linkoptions.component = Link;
+    }
     return (
         <Box sx={{
             display: 'flex',
@@ -16,7 +21,7 @@ const CampaignHeader = ({ campaign }) => {
             borderRadius: 5,
             textAlign: 'center',
             textDecoration: 'none', color: 'inherit' 
-        }}  component={Link} to={`/kitkat/campaign/${campaign.id}`}>
+        }}  {...linkoptions}>
             <Typography variant="h5"  sx={{ flexGrow: 1, textAlign: 'center', textDecoration: 'none', color: 'inherit'  }} >
                 {campaign.name}
             </Typography>
