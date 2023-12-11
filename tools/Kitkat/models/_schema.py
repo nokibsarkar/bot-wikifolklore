@@ -186,6 +186,8 @@ class CampaignScheme(_Campaign):
     created_by_id : int
     created_at : datetime | date
     status : CampaignStatus = CampaignStatus.pending
+    am_i_judge : bool = False
+
     @staticmethod
     def from_dict(data : dict):
         return CampaignScheme(

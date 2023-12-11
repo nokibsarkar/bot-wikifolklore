@@ -6,7 +6,7 @@ import RuleIcon from '@mui/icons-material/Rule';
 import GavelIcon from '@mui/icons-material/Gavel';
 import LoadingPage from "../../../Layout/Loader";
 import { Box, Chip, List, Typography } from "@mui/material";
-import { AllButton, JudgeButton, SettingsButton, SubmitButton } from "../../Components/CampaignButtons";
+import { AllButton, SubmissionListButton, SettingsButton, SubmitButton } from "../../Components/CampaignButtons";
 const Rules = ({ rules }) => {
     return (
         <Box sx={{
@@ -73,11 +73,14 @@ const Campaign = () => {
     const [jury, setJury] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const hasCampaignRights = KitKatServer.BaseServer.hasRight(KitKatServer.RIGHTS.CAMPAIGN);
     useEffect(() => {
         (async () => {
             setLoading(true);
             try {
-                const campaign = await KitKatServer.Campaign.getCampaign(campaignID);
+                const campaign = await KitKatServer.Campaign.getCampaign(campaignID, {
+                    check_jury: true
+                })
                 if(!campaign) throw new Error("Campaign not found");
                 setCampaign(campaign);
                 const jury = await KitKatServer.Campaign.getJury(campaignID);
@@ -101,8 +104,8 @@ const Campaign = () => {
             <div style={{ textAlign: 'center' }}>
 
                 <SubmitButton campaign={campaign} />
-                <JudgeButton campaign={campaign} />
-                <SettingsButton campaign={campaign} />
+                <SubmissionListButton campaign={campaign} />
+                {hasCampaignRights && <SettingsButton campaign={campaign} />}
                 <AllButton campaign={campaign} />
             </div>
             <Rules rules={campaign.rules} />

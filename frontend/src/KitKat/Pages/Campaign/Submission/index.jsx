@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import KitKatServer from "../../../Server";
 import CampaignHeader from "../../../Components/CampaignHeader";
@@ -20,7 +20,9 @@ const SubmissionList = () => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const campaign = await KitKatServer.Campaign.getCampaign(campaignID);
+            const campaign = await KitKatServer.Campaign.getCampaign(campaignID, {
+                check_jury: true
+            })
             setCampaign(campaign);
             setLoading(false);
         })()
@@ -29,13 +31,73 @@ const SubmissionList = () => {
         setLoading(true);
         (async () => {
             const params = {}
-            if (judgedByMe < 2)
-                params['judged_by_me'] = judgedByMe == 1;
+            if (judgedByMe > 0)
+                params['judged_by_me'] = judgedByMe == 2;
             const submissions = await KitKatServer.Campaign.getSubmissions(campaignID, params);
             setSubmissions(submissions);
             setLoading(false);
         })()
-    }, [campaignID, judgedByMe])
+    }, [campaignID, judgedByMe]);
+    const columns = useMemo(() => {
+        const columns = [
+            { field: 'title', headerName: 'Title', flex: 1, minWidth: 200 },
+            { field: 'submitted_by_username', headerName: 'Submitter', flex: 1, minWidth: 200 },
+            {
+                field: 'points', headerName: 'Points', flex: 0.5, renderCell: (params) => {
+                    // const scores = []
+                    // const positiveScore = params.row.positive_votes;
+                    // const zeroScore = 0;
+                    // const negativeScore = params.row.negative_votes;
+                    // scores.push(
+                    //     <font color='green' key='pass'>
+                    //         {'❚'.repeat(positiveScore)}
+                    //     </font>
+                    // )
+                    // scores.push(
+                    //     <font color='gray' key='zero'>
+                    //         {'❚'.repeat(zeroScore)}
+                    //     </font>
+                    // )
+                    // scores.push(
+                    //     <font color='red' key='negative'>
+                    //         {'❚'.repeat(negativeScore)}
+                    //     </font>
+                    // )
+                    // return params.row.total_votes && <span style={{
+                    //     display: 'flex',
+                    //     flexDirection: 'row',
+                    //     justifyContent: 'center',
+                    //     alignItems: 'center',
+                    //     flexWrap: 'wrap',
+                    //     fontSize: '10px'
+                    // }}> {params.value}
+                    //     ({scores})
+                    // </span>
+                    return params.value
+                },
+                minWidth: 130, disableColumnMenu: true
+            },
+        ];
+
+        if(campaign?.am_i_judge){
+            columns.push(
+                {
+                    field: 'action', headerName: 'Evaluate', renderCell: (params) => {
+                        const url = `/kitkat/campaign/${campaignID}/submission/${params.row.id}`
+                        return <Button variant="contained" color="primary" size="small"
+                            component={Link}
+                            to={url}
+                            target="_self"
+                            style={{ color: 'white' }}
+                        >
+                            <JudgeIcon fontSize='small' />
+                        </Button>
+                    }
+                }
+            )
+        }
+        return columns;
+    }, [judgedByMe, campaign])
     if (!campaign) return <LoadingPage />
     return (
         <div>
@@ -47,73 +109,23 @@ const SubmissionList = () => {
                 <AllButton campaign={campaign} />
             </div>
             <Tabs value={judgedByMe} onChange={(e, val) => setJudgedByMe(val)} aria-label="Judged By Me" sx={{
-                '& .MuiTabs-flexContainer' : {
+                '& .MuiTabs-flexContainer': {
                     display: 'flex',
-                flexDirection : 'row',
-                justifyContent: 'center'
-            }
+                    flexDirection: 'row',
+                    justifyContent: 'center'
+                }
             }}>
-                <Tab label="Not Judged" />
-                <Tab label="Judged" />
+
                 <Tab label="All" />
+                {campaign?.am_i_judge && <Tab label="Not Evaluated" />}
+                {campaign?.am_i_judge && <Tab label="Evaluated" />}
             </Tabs>
             <DataGrid
                 rows={submissions}
                 loading={loading}
                 density="compact"
                 // getRowId={(row) => row.submissionID}
-                columns={[
-                    { field: 'title', headerName: 'Title', flex: 1, minWidth: 200 },
-                    { field: 'submitted_by_username', headerName: 'Submitter', flex: 1, minWidth: 200 },
-                    {
-                        field: 'points', headerName: 'Points', flex: 0.5, renderCell: (params) => {
-                            // const scores = []
-                            // const positiveScore = params.row.positive_votes;
-                            // const zeroScore = 0;
-                            // const negativeScore = params.row.negative_votes;
-                            // scores.push(
-                            //     <font color='green' key='pass'>
-                            //         {'❚'.repeat(positiveScore)}
-                            //     </font>
-                            // )
-                            // scores.push(
-                            //     <font color='gray' key='zero'>
-                            //         {'❚'.repeat(zeroScore)}
-                            //     </font>
-                            // )
-                            // scores.push(
-                            //     <font color='red' key='negative'>
-                            //         {'❚'.repeat(negativeScore)}
-                            //     </font>
-                            // )
-                            // return params.row.total_votes && <span style={{
-                            //     display: 'flex',
-                            //     flexDirection: 'row',
-                            //     justifyContent: 'center',
-                            //     alignItems: 'center',
-                            //     flexWrap: 'wrap',
-                            //     fontSize: '10px'
-                            // }}> {params.value}
-                            //     ({scores})
-                            // </span>
-                            return params.value
-                        },
-                        minWidth: 130, disableColumnMenu: true
-                    },
-                    {
-                        field: 'action', headerName: 'Judge', renderCell: (params) => {
-                            const url = `/kitkat/campaign/${campaignID}/submission/${params.row.id}`
-                            return <Button variant="contained" color="primary" size="small"
-                                component={Link}
-                                to={url}
-                                target="_self"
-                                style={{ color: 'white' }}
-                            >
-                                <JudgeIcon fontSize='small' />
-                            </Button>
-                        }
-                    }
-                ]}
+                columns={columns}
                 initialState={{
                     pagination: {
                         page: 1,

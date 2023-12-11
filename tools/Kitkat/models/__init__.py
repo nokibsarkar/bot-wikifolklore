@@ -173,6 +173,7 @@ class Campaign:
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str):
         return conn.execute(SQL1_GET_CAMPAIGN_BY_ID, {'id': id}).fetchone()
+    
     @staticmethod
     def update_status(conn : sqlite3.Cursor, id : str) -> CampaignScheme:
         campaign = Campaign.get_by_id(conn, id)

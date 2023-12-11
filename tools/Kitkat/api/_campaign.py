@@ -24,17 +24,22 @@ async def list_campaigns(language : Language = None, status : Annotated[list[Cam
 
 #---------------------------------- GET A CAMPAIGN ----------------------------------#
 @campaign_router.get("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
-async def get_campaign(campaign_id: int):
+async def get_campaign(req : Request, campaign_id: int, check_jury : bool = False):
     """
     This endpoint is used to get a campaign by id.
     """
     try:
+        user_id = req.state.user['id']
         with Server.get_parmanent_db() as conn:
             campaign = Campaign.get_by_id(conn.cursor(), campaign_id)
-        if not campaign:
-            raise Exception("Campaign not found")
-        result = CampaignScheme.from_dict(campaign)
-        return ResponseSingle[CampaignScheme](success=True, data=result)
+            if not campaign:
+                raise Exception("Campaign not found")
+            result = CampaignScheme.from_dict(campaign)
+            if check_jury:
+                is_judge = Judgement.verify_judge(conn.cursor(), campaign_id, user_id)
+                result.am_i_judge = False and bool(is_judge)
+            
+            return ResponseSingle[CampaignScheme](success=True, data=result)
     except Exception as e:
         
         raise HTTPException(status_code=404, detail=str(e))
