@@ -257,18 +257,20 @@ const JudgeSubmission = () => {
         const judgement = await KitKatServer.Page.judgeSubmission(submission.id, point)
     }, [submission]);
     useEffect(() => {
-        
         // create a new base element and set it's href to the intended url
         (async () => {
-            const [subm, camp] = await Promise.all([KitKatServer.Page.getSubmission(submissionID), KitKatServer.Campaign.getCampaign(campaignID)])
+            const [subm, camp] = await Promise.all([KitKatServer.Page.getSubmission(submissionID), KitKatServer.Campaign.getCampaign(campaignID, {check_jury : true})])
             setSubmission(subm);
             setTitle(subm.title);
             // setLanguage(subm.language);
             setCampaign(camp);
-
         })();
     }, [submissionID]);
-    if (!submission || !campaign) return <LoadingPage title="Loading Submission" />
+    if (!submission || !campaign) return <LoadingPage title="Loading Submission" />;
+    if(campaign.am_i_judge === false) return <div style={{ textAlign: 'center' }}>
+        <h1>You are not a judge in this campaign</h1>
+        <AllButton campaign={campaign} />
+    </div>
     return <div>
         {/* <CampaignHeader campaign={campaign} /> */}
         <div style={{ textAlign: 'center' }}>

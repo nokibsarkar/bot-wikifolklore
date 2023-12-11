@@ -54,7 +54,7 @@ export const SettingsButton = ({ campaign }) => (
         <SettingsIcon /> &nbsp; Settings
     </Button>
 )
-export const JudgeButton = ({ campaign }) => (
+export const SubmissionListButton = ({ campaign }) => (
     <Button variant="contained" color="primary" size="small" sx={{
         padding: 1,
         m: 1
@@ -62,7 +62,7 @@ export const JudgeButton = ({ campaign }) => (
         component={Link}
         to={`/kitkat/campaign/${campaign.id}/submission`}
     >
-        <GavelIcon /> &nbsp; Judge
+        <GavelIcon /> &nbsp; Submissions
     </Button>
 )
 export const CreateButton = () => (

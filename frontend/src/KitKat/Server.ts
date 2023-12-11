@@ -163,8 +163,9 @@ class CampaignServer {
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
-    static async getCampaign(id: number): Promise<Campaign> {
-        const url = '/api/kitkat/campaign/' + id;
+    static async getCampaign(id: number, params : any = {}): Promise<Campaign> {
+        const qs = new URLSearchParams(params);
+        const url = '/api/kitkat/campaign/' + id + '?' + qs.toString();
         const res = await fetchWithErrorHandling(url)
         const campaign = res.data;
         if(typeof campaign.rules === 'string') campaign.rules = campaign.rules.split('\n');
@@ -345,6 +346,9 @@ class KitKatServer {
     }
     static toggleAccess(rights : number, permissions : number) {
         return BaseServer.toggleAccess(rights, permissions);
+    }
+    static hasCampaignRight(){
+        return BaseServer.hasRight(KitKatServer.RIGHTS.CAMPAIGN);
     }
     static getParameter(key: string): string | null {
         const url = new URL(window.location.href);
