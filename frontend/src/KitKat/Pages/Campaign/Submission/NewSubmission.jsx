@@ -1,4 +1,4 @@
-import { createRef, forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import { createRef, forwardRef, useCallback, useEffect, useRef, useState, useMemo } from "react";
 import ArticleInput from "../../../Components/ArticleInput";
 import KitKatServer from "../../../Server";
 import Loader from "../../../../Layout/Loader";
@@ -10,7 +10,7 @@ import CampaignHeader from "../../../Components/CampaignHeader";
 import { AllButton, DetailsButton } from "../../../Components/CampaignButtons";
 import LoadingPage from "../../../../Layout/Loader";
 
-const ArticleSubmissionSuccess = ({ campaignID }) => {
+const ArticleSubmissionSuccess = ({ campaignID, resetButton }) => {
     return <div style={{ textAlign: 'center' }}>
         <CheckIcon variant="contained" fontSize='large' color='success' />
         <Typography variant="h6" component="div" color="success.main" sx={{ mb: 3, flexGrow: 1, textAlign: 'center' }}>
@@ -23,14 +23,7 @@ const ArticleSubmissionSuccess = ({ campaignID }) => {
         >
             Back to Campaign
         </Button>
-        <Button variant="contained" color="success" size="small"
-            component={Link}
-            to={`/kitkat/campaign/${campaignID}/submission/new`}
-            target="_self"
-            onClick={e => window.location.reload()}
-        >
-            Submit Another Article
-        </Button>
+        {resetButton}
 
     </div>
 }
@@ -47,6 +40,21 @@ const ArticleSubmissionPage = () => {
     useEffect(() => {
         KitKatServer.Campaign.getCampaign(campaignID).then(setCampaign);
     }, [campaignID]);
+    const reset = useCallback(() => {
+        setDraftID(null);
+        setDraft(null);
+        setPageInfo(null);
+        setArticle(null);
+        setArticleSubmitted(false);
+    }, []);
+    const resetButton = useMemo(() => (
+        <Button variant="outlined" color="primary" size="small"
+            onClick={reset}
+            sx={{m : 1}}
+        >
+            Try Again
+        </Button>
+    ), []);
     const createDraft = useCallback(async (article) => {
         setLoading(true);
         setArticle(article);
@@ -94,14 +102,7 @@ const ArticleSubmissionPage = () => {
         >
             Back to Campaign
         </Button>
-        <Button variant="contained" color="error" size="small"
-            component={Link}
-            to={`/kitkat/campaign/${campaignID}/submission/new`}
-            target="_self"
-            onClick={e => window.location.reload()}
-        >
-            Try Again
-        </Button>
+        {resetButton}
     </div>
     return (
         <div>
@@ -115,11 +116,13 @@ const ArticleSubmissionPage = () => {
             </Typography>
 
             {loading ? <Loader title="Loading Campaign" />: (
-                articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} /> :
+                articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} resetButton={resetButton}/> :
                     <>
                         {!article && <ArticleInput language={campaign?.language} onNewArticle={createDraft} submitButtonLabel="Check" />}
                         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             {draft && <PageInfo setPageInfo={setPageInfo} title={article} campaign={campaign} submission={draft} draftID={draftID} />}
+                            
+                            {pageinfo && resetButton}
                             {pageinfo && <Button variant="contained" onClick={submit}>Submit</Button>}
                         </div>
                     </>
