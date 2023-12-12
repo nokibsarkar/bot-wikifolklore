@@ -2,8 +2,9 @@ import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningIcon from '@mui/icons-material/Warning';
 import CrossIcon from '@mui/icons-material/Close';
+import CircularProgress from '@mui/material/CircularProgress';
 import KitKatServer from '../Server';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Typography } from '@mui/material';
 const StatementWithStatus = ({ statement, status }) => {
     switch (status) {
@@ -19,45 +20,102 @@ const StatementWithStatus = ({ statement, status }) => {
             return <Typography variant="body2" color="error">
                 <CrossIcon fontSize='small' /> {statement}
             </Typography>
+        case 'loading':
+            return <Typography variant="body2" color="text.secondary">
+                <CircularProgress size={10} /> {statement}
+            </Typography>
         default:
             return <Typography variant="body2" color="text.secondary">
                 {statement}
             </Typography>
     }
 }
-const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null, submission = null }) => {
+const calculateRestriction = (draft, campaign, previousRestrictions, setRestricted) => {
+    if(draft === null) return previousRestrictions;
+    const newRestrictions = {...previousRestrictions};
+    if(campaign.allowExpansions){
+        newRestrictions.totalBytes = 'success'; // Can be any amount
+        newRestrictions.totalWords = 'success'; // Can be any amount
+        if(draft.calculated){
+            newRestrictions.addedBytes = draft.added_bytes >= campaign.minimumAddedBytes ? 'success' : 'error';
+            newRestrictions.addedWords = draft.added_words >= campaign.minimumAddedWords ? 'success' : 'error';
+        }
+        newRestrictions.createdBy = 'success'; // Can be anyone 
+        newRestrictions.createdAt = 'success'; // Can be anytime
+    } else {
+        newRestrictions.addedBytes = 'success'; // Can be any amount
+        newRestrictions.addedWords = 'success'; // Can be any amount
+        newRestrictions.totalBytes = draft.total_bytes >= campaign.minimumTotalBytes ? 'success' : 'error';
+        newRestrictions.totalWords = draft.total_words >= campaign.minimumTotalWords ? 'success' : 'error';
+        newRestrictions.createdBy = draft.submitted_by_id === draft.created_by_id ? 'success' : 'error';
+        const submissionDate = new Date(draft.created_at);
+        const submittedAfter = new Date(campaign.start_at) <= submissionDate;
+        const submittedBefore = new Date(campaign.end_at) >= submissionDate;
+        newRestrictions.createdAt = submittedAfter && submittedBefore ? 'success' : 'error';
+    }
+    const allowSubmission = (
+        newRestrictions.addedBytes === 'success' &&
+        newRestrictions.addedWords === 'success' &&
+        newRestrictions.totalBytes === 'success' &&
+        newRestrictions.totalWords === 'success' &&
+        newRestrictions.createdAt === 'success' &&
+        newRestrictions.createdBy === 'success'
+    )
+    if(setRestricted) setRestricted(!allowSubmission);
+    return newRestrictions;
+}
+const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null, submission = null, draftId = null, setRestricted }) => {
     const [addedBytes, setAddedBytes] = useState(0);
     const [addedWords, setAddedWords] = useState(0);
     const [totalBytes, setTotalBytes] = useState(0);
     const [totalWords, setTotalWords] = useState(0);
     const [createdAt, setCreatedAt] = useState('');
     const [createdBy, setCreatedBy] = useState('');
-    useEffect(() => {
-        const setInfo = (submission) => {
-            if (setPageInfo) setPageInfo(submission);
-            setAddedBytes(submission.added_bytes);
-            setAddedWords(submission.added_words);
-            setTotalBytes(submission.total_bytes);
-            setTotalWords(submission.total_words);
-            setCreatedAt(submission.created_at);
-            setCreatedBy(submission.created_by_username);
+    const [restrictions, setRestrictions] = useState({
+        addedBytes: 'loading',
+        addedWords: 'loading',
+        totalBytes: 'loading',
+        totalWords: 'loading',
+        createdAt: 'loading',
+        createdBy: 'loading'
+    });
+    
+    const setInfo = useCallback(draft => {
+        if (setPageInfo) setPageInfo(draft);
+            setAddedBytes(draft.added_bytes);
+            setAddedWords(draft.added_words);
+            setTotalBytes(draft.total_bytes);
+            setTotalWords(draft.total_words);
+            setCreatedAt(draft.created_at);
+            setCreatedBy(draft.created_by_username);
+            setRestrictions(calculateRestriction(draft, campaign, restrictions, setRestricted));
+    }, []);
+    const fetchDraft = useCallback(async (draftId) => {
+        const draft = await KitKatServer.Page.getDraft(draftId);
+        if(!draft.calculated){
+            setTimeout(() => fetchDraft(draftId), 1000);
+        } else {
+            setInfo(draft);
         }
+    });
+    const fetchSubmission = useCallback(async (submissionId) => {
+        const submission = await KitKatServer.Campaign.getSubmission(submissionId);
+        submission.calculated = true;
+        setInfo(submission);
+    }, []);
+    useEffect(() => {
         if (!submission) {
-            const infoRequest = {
-                language: campaign.language,
-                title: title,
-                submitter: submitter,
-                campaignID: campaign.id,
-                submissionID: submissionId
+            if(draftId){
+                fetchDraft(draftId);
+            } else if(submissionId){
+                fetchSubmission(submissionId);
             }
-            KitKatServer.Page.getPageInfo(infoRequest).then(setInfo);
         } else {
             setInfo(submission);
         }
 
         
     }, [title]);
-
     return (
         <Box sx={{
             display: 'inline-block',
@@ -71,11 +129,12 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
                 {title}
             </Typography>
-            <StatementWithStatus statement={`Total ${totalBytes} bytes`} status="warning" />
-            <StatementWithStatus statement={`Total ${totalWords} words`} status="success" />
-            <StatementWithStatus statement={`Created at ${createdAt}`} status="error" />
-            <StatementWithStatus statement={`Added ${addedBytes} bytes`} status="success" />
-            <StatementWithStatus statement={`Added ${addedWords} words`} status="success" />
+            <StatementWithStatus statement={`Total ${totalBytes} bytes`} status={restrictions?.totalBytes} />
+            <StatementWithStatus statement={`Total ${totalWords} words`} status={restrictions?.totalWords} />
+            <StatementWithStatus statement={`Created at ${createdAt}`} status={restrictions?.createdAt} />
+            <StatementWithStatus statement={`Created by ${createdBy}`} status={restrictions?.createdBy} />
+            <StatementWithStatus statement={`Added ${addedBytes} bytes`} status={restrictions?.addedBytes} />
+            <StatementWithStatus statement={`Added ${addedWords} words`} status={restrictions?.addedWords} />
         </Box>
     );
 }
