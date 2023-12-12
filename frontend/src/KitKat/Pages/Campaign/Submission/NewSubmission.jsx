@@ -36,6 +36,7 @@ const ArticleSubmissionPage = () => {
     const [error, setError] = useState(null); // [error, setError
     const [pageinfo, setPageInfo] = useState(null);
     const [article, setArticle] = useState(null);
+    const [submitDisabled, setSubmitDisabled] = useState(false); // [allowSubmit, setAllowSubmit
     const [articleSubmitted, setArticleSubmitted] = useState(false);
     useEffect(() => {
         KitKatServer.Campaign.getCampaign(campaignID).then(setCampaign);
@@ -81,7 +82,6 @@ const ArticleSubmissionPage = () => {
         }
         try{
             const submission = await KitKatServer.Campaign.submitArticle(submissionRequest)
-            console.log(submission);
             setPageInfo(null);
             setArticleSubmitted(true);
         } catch (e) {
@@ -120,10 +120,10 @@ const ArticleSubmissionPage = () => {
                     <>
                         {!article && <ArticleInput language={campaign?.language} onNewArticle={createDraft} submitButtonLabel="Check" />}
                         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            {draft && <PageInfo setPageInfo={setPageInfo} title={article} campaign={campaign} submission={draft} draftID={draftID} />}
+                            {draft && <PageInfo setPageInfo={setPageInfo} title={article} campaign={campaign} draftId={draftID} setRestricted={setSubmitDisabled} />}
                             
                             {pageinfo && resetButton}
-                            {pageinfo && <Button variant="contained" onClick={submit}>Submit</Button>}
+                            {pageinfo && <Button variant="contained" onClick={submit} sx={{ m: 1 }} disabled={loading || submitDisabled}>Submit</Button>}
                         </div>
                     </>
             )}
