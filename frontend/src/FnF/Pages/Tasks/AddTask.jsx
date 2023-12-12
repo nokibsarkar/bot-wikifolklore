@@ -13,7 +13,7 @@ import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
 import { Autocomplete, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Server from "../../Server";
-const wiki = Server.getWikiList(['en']);
+
 function AddTask() {
     const categoryListRef = React.useRef([]);
     const [countries, setCountries] = useState([]);
@@ -29,7 +29,7 @@ function AddTask() {
     const [resultElement, setResultElement] = useState(null);
     const statusRef = React.useRef(false);
     const targetWikiRef = React.useRef(null);
-    
+    const wiki = Server.getWikiList(['en']);
     useEffect(() => {
         Server.fetchCountries(topicName).then(countries => {
             setCountries([...countries]);
