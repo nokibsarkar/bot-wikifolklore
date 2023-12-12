@@ -15,7 +15,7 @@ const CampaignEdit = lazy(() => import("./Pages/Campaign/Configure/Edit.jsx"));
 const CampaignCreate = lazy(() => import("./Pages/Campaign/Configure/Create.jsx"));
 const ListUser = lazy(() => import("./Pages/User/ListUser.jsx"));
 const EditUser = lazy(() => import("./Pages/User/EditUser.jsx"));
-KitKatServer.init();
+await KitKatServer.init();
 const KitKat = ({ user }) => {
     useEffect(() => {
         document.title = "KitKat"
