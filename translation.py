@@ -96,7 +96,7 @@ def _google_auth_token(force_refresh = True):
     if err:
         raise Exception(err)
     with open('.access.token', 'w') as fp:
-        return fp.write(token)
+        fp.write(token)
     return token
 
 def _translate_azure(texts, target):
@@ -143,7 +143,7 @@ def _translate_azure(texts, target):
             texts = texts[element_count:]
         return dict(zip(done, results)), texts
 
-GOOGLE_KEY =  _google_auth_token(force_refresh=True)
+GOOGLE_KEY =  _google_auth_token(force_refresh=False)
 RETRY = 5
 def _translate_google(texts, target):
     """
