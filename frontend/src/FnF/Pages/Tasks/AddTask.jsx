@@ -13,6 +13,8 @@ import ExpandedIcon from '@mui/icons-material/ExpandMore';
 import CollapseIcon from '@mui/icons-material/ExpandLess';
 import { Autocomplete, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Server from "../../Server";
+import FnF from "../../Server";
+await FnF.init();
 
 function AddTask() {
     const categoryListRef = React.useRef([]);
