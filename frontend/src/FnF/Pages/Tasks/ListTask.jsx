@@ -60,14 +60,14 @@ const DownloadButon = ({ id }) => {
     </Button>
 }
 const headers = [
-    { field: 'id', headerName: 'ID', maxWidth: 70, flex: 1 },
-    { field: 'status', headerName: 'Status',maxWidth: 100, flex : 1 },
+    { field: 'id', headerName: 'ID', maxWidth: 100, flex: 1 },
+    { field: 'status', headerName: 'Status',maxWidth: 150, flex : 1 },
     // { field: 'topic_id', headerName: 'Topic',  flex : 1 },
-    { field: 'country', headerName: 'Country',  flex : 1 },
-    { field: 'targetwiki', headerName: 'Language', minWidth : 100, flex : 1},
+    { field: 'country', headerName: 'Country',  flex : 1, minWidth : 200 },
+    { field: 'targetwiki', headerName: 'Language', minWidth : 150, flex : 1},
     { field: 'download', headerName: 'Download', renderCell : (params) => params.value},
     { field: 'pagepile_id', headerName: 'PagePile ID', maxWidth: 100, flex : 1, renderCell : (params) => params.value  && <a href={`https://pagepile.toolforge.org/api.php?id=${params.value}&action=get_data&format=html`} target="_blank" style={{ 'color' : 'white'}} >{params.value}</a>},
-    {field : 'article_count', headerName : 'Article', maxWidth : 100, flex : 1},
+    {field : 'article_count', headerName : 'Article', maxWidth : 150, flex : 1},
 ]
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
