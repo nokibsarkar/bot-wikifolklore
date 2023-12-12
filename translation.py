@@ -49,9 +49,9 @@ def _google_auth_token(force_refresh = True):
         # Note: this token expires and cannot be refreshed. The token must be recreated
         # JWT Headers
         additional_headers = {
-                'kid': pkey_id,
-                "alg": "RS256", # Google uses SHA256withRSA
-                "typ": "JWT"
+            'kid': pkey_id,
+            "alg": "RS256", # Google uses SHA256withRSA
+            "typ": "JWT"
         }
         # JWT Payload
         payload = {
@@ -81,7 +81,7 @@ def _google_auth_token(force_refresh = True):
     
         if r.ok:
             res = r.json()
-            return(res['access_token'], '')
+            return res['access_token'], ''
         return None, r.text
     scopes = 'https://www.googleapis.com/auth/cloud-translation'
     cred = load_json_credentials(GOOGLE_SERVICE_ACCOUNT)
@@ -173,7 +173,7 @@ def _translate_google(texts, target):
             if res.status_code != 200:
                 resp_json = res.json()
                 if res.status_code == 401:
-                    if any(x['reason'] == 'ACCESS_TOKEN_EXPIRED' for x in resp_json['error']['details']):
+                    if True or any(x['reason'] == 'ACCESS_TOKEN_EXPIRED' for x in resp_json['error']['details']):
                         if RETRY > 0:
                             print("Google auth token expired, retrying")
                             RETRY -= 1
