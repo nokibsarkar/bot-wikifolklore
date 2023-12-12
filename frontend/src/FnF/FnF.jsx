@@ -14,7 +14,7 @@ const EditTopic = lazy(() => import('./Pages/Topics/EditTopic.jsx'))
 const ListTopic = lazy(() => import('./Pages/Topics/ListTopics.jsx'))
 const ListUser = lazy(() => import('./Pages/User/ListUser.jsx'));
 const EditUser = lazy(() => import('./Pages/User/EditUser.jsx'));
-Server.init();
+await Server.init();
 const FnF = ({ user }) => {
     useEffect(() => {
         document.title = "FnF"
