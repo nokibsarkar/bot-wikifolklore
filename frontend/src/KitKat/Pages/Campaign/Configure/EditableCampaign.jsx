@@ -15,7 +15,7 @@ const defaultCampaign = {
     name: '',
     description : null,
     language: 'bn',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Wiki_Loves_Folklore_banner_logo.jpg',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Feminism_and_Folklore_2024_logo.svg',
     rules: [
         'All Participants must be registered in Wikipedia',
         
