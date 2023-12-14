@@ -21,6 +21,22 @@ class User(BaseUser):
     def is_admin(rights : int):
         return User.has_access(rights, Permission.CAMPAIGN.value)
     @staticmethod
+    def get_central_ids(usernames : list[str], lang : str = 'en') -> dict[str, int]:
+        params = {
+            'action': 'query',
+            'list': 'users',
+            'ususers': '|'.join(usernames),
+            'format': 'json',
+            'usprop': 'centralids',
+            'uslimit' : 'max'
+        }
+        res = Server.get(lang=lang, params=params)
+        users_dict = res['query']['users']
+        users = {}
+        for user in users_dict:
+            users[user['name']] = user['centralids']['CentralAuth']
+        return users
+    @staticmethod
     def auto_create_users(conn : sqlite3.Cursor, usernames : set[str], lang : str = 'en') -> dict[str, UserScheme]:
         params = {
             'action': 'query',
@@ -213,7 +229,6 @@ class Submission:
         return {
             'oldid' : revision['revid'],
             'title' : page['title'],
-            'user_id' : revision['userid'],
             'username' : revision['user'],
             'timestamp' : revision['timestamp'],
             'size' : revision['size'],
@@ -254,12 +269,14 @@ class Submission:
         }
         return stat
     @staticmethod
-    def fetch_stats(lang :str, title : str, submitted_by_username : str, start_at : str, end_at : str) -> tuple[list[str], dict[str, str | int]]:
+    def fetch_stats(lang :str, title : str) -> tuple[list[str], dict[str, str | int]]:
         errors = []
         current_info = Submission._fetch_current_info(lang, title)
         pageid = current_info['pageid']
         title = current_info['title']
         first_revision_info = Submission._fetch_first_revision(lang, pageid)
+        user_ids = User.get_central_ids([ first_revision_info['username']], lang=lang)
+        created_by_id = user_ids[first_revision_info['username']]
         errors = []
         stats = {
             'title' : title,
@@ -269,14 +286,13 @@ class Submission:
             'bytes' : current_info['bytes'],
             'created_at' : first_revision_info['timestamp'],
             'created_by_username' : first_revision_info['username'],
-            'created_by_id' : first_revision_info['user_id'],
+            'created_by_id' : created_by_id,
             'added_words' : 0,
             'added_bytes' : 0,
         }
         return errors, stats
     @staticmethod
     def submit(conn : sqlite3.Cursor, draft : DraftSubmissionScheme) -> SubmissionScheme:
-        
         params = {
             'campaign_id': draft['campaign_id'],
             'pageid': draft['pageid'],

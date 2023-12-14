@@ -24,7 +24,7 @@ async def list_campaigns(language : Language = None, status : Annotated[list[Cam
 
 #---------------------------------- GET A CAMPAIGN ----------------------------------#
 @campaign_router.get("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
-async def get_campaign(req : Request, campaign_id: int, check_jury : bool = False):
+async def get_campaign(req : Request, campaign_id: int, check_judge : bool = False):
     """
     This endpoint is used to get a campaign by id.
     """
@@ -35,7 +35,7 @@ async def get_campaign(req : Request, campaign_id: int, check_jury : bool = Fals
             if not campaign:
                 raise Exception("Campaign not found")
             result = CampaignScheme.from_dict(campaign)
-            if check_jury:
+            if check_judge:
                 is_judge = Judgement.verify_judge(conn.cursor(), campaign_id, user_id)
                 result.am_i_judge = bool(is_judge)
             

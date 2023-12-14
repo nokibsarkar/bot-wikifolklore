@@ -259,7 +259,7 @@ const JudgeSubmission = () => {
     useEffect(() => {
         // create a new base element and set it's href to the intended url
         (async () => {
-            const [subm, camp] = await Promise.all([KitKatServer.Page.getSubmission(submissionID), KitKatServer.Campaign.getCampaign(campaignID, {check_jury : true})])
+            const [subm, camp] = await Promise.all([KitKatServer.Page.getSubmission(submissionID), KitKatServer.Campaign.getCampaign(campaignID, {check_judge : true})])
             setSubmission(subm);
             setTitle(subm.title);
             // setLanguage(subm.language);
