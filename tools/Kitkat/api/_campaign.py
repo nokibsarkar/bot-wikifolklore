@@ -83,8 +83,7 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
         if len(jury_list) < 1:
             raise Exception("At least one jury must be selected")
         with Server.get_parmanent_db() as conn:
-            new_campaign_id = Campaign.create(conn.cursor(), campaign)
-            new_campaign = Campaign.get_by_id(conn.cursor(), new_campaign_id)
+            new_campaign = Campaign.create(conn.cursor(), campaign)
         result = CampaignScheme.from_dict(new_campaign)
         return ResponseSingle[CampaignScheme](success=True, data=result)
     except sqlite3.IntegrityError as e:

@@ -74,7 +74,6 @@ class Campaign:
         blacklist = ','.join(campaign.blacklist or [])
         rules = '\n'.join(campaign.rules or [])
         jury = campaign.jury or []
-        # jury = map(str, jury)
         params = {
             'name': campaign.name,
             'language': campaign.language.value,
@@ -96,10 +95,10 @@ class Campaign:
             'allowJuryToParticipate': campaign.allowJuryToParticipate,
             'allowMultipleJudgement': campaign.allowMultipleJudgement,
         }
-        cur = conn.execute(SQL1_CREATE_CAMPAIGN, params)
-        lastCampaignId = cur.lastrowid
+        new_campaign = conn.execute(SQL1_CREATE_CAMPAIGN, params).fetchone()
+        lastCampaignId = new_campaign['id']
         Campaign.add_jury(conn, lastCampaignId, jury, lang=campaign.language.value)
-        return lastCampaignId
+        return new_campaign
     @staticmethod
     def update(conn: sqlite3.Cursor, campaign: CampaignUpdate, existing_campaign : CampaignScheme) -> int:
         
@@ -138,8 +137,8 @@ class Campaign:
             
         sql = SQL1_UPDATE_CAMPAIGN_FORMAT.format(updates=", ".join([f"{k} = :{k}" for k in params.keys()]), id=campaign.id)
         up = conn.execute(sql, params)
-        
         updated_campaign = up.fetchone()
+        Campaign.update_status(conn, campaign.id)
         return updated_campaign
     @staticmethod
     def _update_status(conn : sqlite3.Cursor, campaign_id : str, status : CampaignStatus):
@@ -187,19 +186,24 @@ class Campaign:
             result = conn.execute(SQL1_GET_JURY_BY_ALLOWED, {'campaign_id': campaign_id, 'allowed' : allowed}).fetchall()
         return result
     @staticmethod
-    def get_by_id(conn : sqlite3.Cursor, id : str):
+    def _get_by_id(conn : sqlite3.Cursor, id : str):
         return conn.execute(SQL1_GET_CAMPAIGN_BY_ID, {'id': id}).fetchone()
+    @staticmethod
+    def get_by_id(conn : sqlite3.Cursor, id : str):
+        return Campaign.update_status(conn, id)
     
     @staticmethod
     def update_status(conn : sqlite3.Cursor, id : str) -> CampaignScheme:
-        campaign = Campaign.get_by_id(conn, id)
-        now = dp.parse("now")
+        campaign = Campaign._get_by_id(conn, id)
+        now = datetime.utcnow()
         status = campaign['status']
         start_date = dp.parse(campaign['start_at'])
         end_date = dp.parse(campaign['end_at'])
         if status == CampaignStatus.scheduled.value and now >= start_date:
+            print("Scheduled to running")
             status = CampaignStatus.running.value
         if status == CampaignStatus.running.value and now >= end_date:
+            print("Running to evaluating")
             status = CampaignStatus.evaluating.value
         return conn.execute(SQL1_UPDATE_CAMPAIGN_STATUS, {'id': id, 'status': status}).fetchone()
             

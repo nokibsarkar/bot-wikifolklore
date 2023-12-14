@@ -43,7 +43,7 @@ VALUES
     :blacklist,
     :image,
     :created_by_id
-)
+) RETURNING *
 """
 SQL1_GET_SUBMISSION_BY_ID = "SELECT * FROM `submission` WHERE `id` = :id LIMIT 1"
 SQL1_GET_CAMPAIGN_BY_ID = "SELECT * FROM `campaign` WHERE `id` = :id"
