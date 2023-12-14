@@ -9,6 +9,7 @@ import { Link, useParams } from "react-router-dom";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import { AllButton, DetailsButton } from "../../../Components/CampaignButtons";
 import LoadingPage from "../../../../Layout/Loader";
+import { UserInput } from "../../../Components/UserInput";
 
 const ArticleSubmissionSuccess = ({ campaignID, resetButton }) => {
     return <div style={{ textAlign: 'center' }}>
@@ -27,6 +28,9 @@ const ArticleSubmissionSuccess = ({ campaignID, resetButton }) => {
 
     </div>
 }
+const SubmitterInput = ({ setSubmitter, submitter }) => {
+    return <UserInput fieldName="Submit on Behalf of" onChange={setSubmitter} user={submitter} />
+}
 const ArticleSubmissionPage = () => {
     const { campaignID } = useParams();
     const [draftID, setDraftID] = useState(null); // [draftID, setDraftID
@@ -38,8 +42,11 @@ const ArticleSubmissionPage = () => {
     const [article, setArticle] = useState(null);
     const [submitDisabled, setSubmitDisabled] = useState(false); // [allowSubmit, setAllowSubmit
     const [articleSubmitted, setArticleSubmitted] = useState(false);
+    const [submitter, setSubmitter] = useState(KitKatServer.BaseServer.loginnedUser().username);
     useEffect(() => {
-        KitKatServer.Campaign.getCampaign(campaignID).then(setCampaign);
+        KitKatServer.Campaign.getCampaign(campaignID, {
+            check_judge : true
+        }).then(setCampaign);
     }, [campaignID]);
     const reset = useCallback(() => {
         setDraftID(null);
@@ -61,7 +68,7 @@ const ArticleSubmissionPage = () => {
         setArticle(article);
         const draftRequest = {
             title: article,
-            submitted_by_username: KitKatServer.BaseServer.loginnedUser().username,
+            submitted_by_username: submitter,
             campaign_id: campaign.id.toString()
         }
         try {
@@ -74,7 +81,7 @@ const ArticleSubmissionPage = () => {
         }
 
         setLoading(false);
-    }, [campaign, article]);
+    }, [campaign, article, submitter]);
     const submit = useCallback(async () => {
         setLoading(true);
         const submissionRequest = {
@@ -88,7 +95,6 @@ const ArticleSubmissionPage = () => {
             setError(e);
         }
         setLoading(false);
-            
     }, [campaign, article, draftID]);
     if (!campaign) return <LoadingPage />
     if (error) return <div style={{ textAlign: 'center' }}>
@@ -104,6 +110,7 @@ const ArticleSubmissionPage = () => {
         </Button>
         {resetButton}
     </div>
+
     return (
         <div>
             <CampaignHeader campaign={campaign} />
@@ -115,9 +122,12 @@ const ArticleSubmissionPage = () => {
                 Article submission
             </Typography>
 
-            {loading ? <Loader title="Loading Campaign" />: (
+            {loading ? <Loader title="Loading Campaign" /> :
+            (
                 articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} resetButton={resetButton}/> :
                     <>
+                        {(campaign.am_i_judge)  && <SubmitterInput setSubmitter={setSubmitter} submitter={submitter} />}
+            
                         {!article && <ArticleInput language={campaign?.language} onNewArticle={createDraft} submitButtonLabel="Check" />}
                         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             {draft && <PageInfo setPageInfo={setPageInfo} title={article} campaign={campaign} draftId={draftID} setRestricted={setSubmitDisabled} />}

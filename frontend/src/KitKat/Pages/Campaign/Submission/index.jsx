@@ -22,7 +22,7 @@ const SubmissionList = () => {
         (async () => {
             setLoading(true);
             const campaign = await KitKatServer.Campaign.getCampaign(campaignID, {
-                check_jury: true
+                check_judge: true
             })
             setCampaign(campaign);
             setLoading(false);

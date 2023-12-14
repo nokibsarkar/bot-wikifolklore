@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import UserInput from "../../../Components/UserInput";
+import UserInputMultiple from "../../../Components/UserInput";
 import BlackListIcon from '@mui/icons-material/Block';
 import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";

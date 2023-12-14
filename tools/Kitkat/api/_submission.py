@@ -52,7 +52,7 @@ async def create_draft(req : Request, draft_request : DraftCreateScheme):
             # If the user is not in the database, add it, then get the user id
             users = User.get_username_map_guaranteed(conn, usernames, lang=language)
             submitted_by = users[draft_request.submitted_by_username]
-            errors, current_stat = Submission.fetch_stats(language,draft_request.title, submitted_by['username'], campaign['start_at'], campaign['end_at'])
+            errors, current_stat = Submission.fetch_stats(language, draft_request.title)
             if errors:
                 raise HTTPException(status_code=400, detail=errors)
             new_draft = DraftSubmissionScheme(

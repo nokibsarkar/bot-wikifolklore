@@ -79,7 +79,7 @@ const Campaign = () => {
             setLoading(true);
             try {
                 const campaign = await KitKatServer.Campaign.getCampaign(campaignID, {
-                    check_jury: true
+                    check_judge: true
                 })
                 if(!campaign) throw new Error("Campaign not found");
                 setCampaign(campaign);

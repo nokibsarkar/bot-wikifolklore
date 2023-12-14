@@ -2,7 +2,7 @@
 import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import UserInput from "../../../Components/UserInput"
+import UserInputMultiple from "../../../Components/UserInput"
 import GavelIcon from '@mui/icons-material/Gavel';
 const JuryPage = ({ campaign, campaignDispatch }) => {
     return (
@@ -44,7 +44,7 @@ const JuryPage = ({ campaign, campaignDispatch }) => {
                 }
                 label="Allow multiple jury members to judge the same article"
             />
-            <UserInput
+            <UserInputMultiple
                 users={campaign.jury}
                 onChange={jury => campaignDispatch({ type: 'jury', payload: jury })}
                 icon={<GavelIcon />}
