@@ -61,7 +61,7 @@ const Rules = ({ rules, setRules }) => {
     )
 
 }
-const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
+const CampainEditableDetails = ({ campaign, campaignDispatch , setNextPermittable}) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [targetWikiError, setTargetWikiError] = useState(false);
@@ -109,6 +109,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
                     variant="outlined"
                     value={campaign.name}
                     onChange={(e) => {
+                        setNextPermittable(e.target.value !== "" && campaign.start_at !== "" && campaign.end_at !== "" && campaign.image !== "")
                         campaignDispatch({ type: 'name', payload: e.target.value })
                     }}
                 />
@@ -154,8 +155,6 @@ const CampainEditableDetails = ({ campaign, campaignDispatch }) => {
                 rules={campaign.rules}
                 setRules={rules => campaignDispatch({ type: 'rules', payload: rules })}
             />
-
-
         </Box>
     )
 };
