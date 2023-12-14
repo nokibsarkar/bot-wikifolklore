@@ -79,10 +79,10 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
             assert len(campaign.name.strip()) > 0, "Campaign name cannot be empty"
         assert campaign.start_at, "Campaign start date cannot be empty"
         assert campaign.end_at, "Campaign end date cannot be empty"
+        jury_list = campaign.jury
+        if len(jury_list) < 1:
+            raise Exception("At least one jury must be selected")
         with Server.get_parmanent_db() as conn:
-            jury_list = campaign.jury
-            if len(jury_list) < 1:
-                raise Exception("At least one jury must be selected")
             new_campaign_id = Campaign.create(conn.cursor(), campaign)
             new_campaign = Campaign.get_by_id(conn.cursor(), new_campaign_id)
         result = CampaignScheme.from_dict(new_campaign)
