@@ -1,4 +1,5 @@
 from enum import Enum
+# from ..tools._shared._wiki import Language
 class Language(Enum):
     @staticmethod
     def get():
@@ -8,6 +9,7 @@ class Language(Enum):
         return result
     German_Wikipedia = "de"
     French_Wikipedia = "fr"
+    English_Wikipedia = "en"
     Spanish_Wikipedia = "es"
     Japanese_Wikipedia = "ja"
     Russian_Wikipedia = "ru"
