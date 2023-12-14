@@ -115,7 +115,7 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
-    const [nextPermittable, setNextPermittable] = useState(true);
+    const [nextPermittable, setNextPermittable] = useState(false);
     if (loading)
         return <LoadingPage title="Loading, please wait..." />
     if (error)
