@@ -115,18 +115,19 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
+    const [nextPermittable, setNextPermittable] = useState(true);
     if (loading)
         return <LoadingPage title="Loading, please wait..." />
     if (error)
         return <ErrorPage errorMsg={error} />
-    const SaveButton = <Button variant="contained" color="success" onClick={e => onSave(campaign, setLoading)} sx={{ m: 1 }}>
+    const SaveButton = <Button disabled={!nextPermittable} variant="contained" color="success" onClick={e => onSave(campaign, setLoading)} sx={{ m: 1 }}>
         <SaveIcon /> Save
     </Button>
     return (
         <div style={{ textAlign: 'center' }}>
 
             <Steps activeStep={step} setActiveStep={linear ? () => null : setStep} minimumStep={minimumStep} />
-            <StepSelector step={step} props={{ campaign, campaignDispatch: dispatchCampaign, showActions }} />
+            <StepSelector step={step} props={{ campaign, campaignDispatch: dispatchCampaign, showActions, setNextPermittable }} />
             
             {error && <ErrorPage errorMsg={error} />}
 
@@ -136,7 +137,7 @@ const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = def
                     <Button disabled={step - 1 < minimumStep} variant="contained" color="success" onClick={() => setStep(step - 1)} sx={{ m: 1 }}>
                         <ArrowBackIcon /> Back
                     </Button>
-                    {step + 1 < steps.length ? <Button variant="contained" color="success" onClick={() => setStep(step + 1)} sx={{ m: 1 }}>
+                    {step + 1 < steps.length ? <Button disabled={!nextPermittable} variant="contained" color="success" onClick={() => setStep(step + 1)} sx={{ m: 1 }}>
                         Next <ArrowForwardIcon />
                     </Button> : SaveButton
                     }

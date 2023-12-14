@@ -74,7 +74,11 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
     This endpoint is used to create a new campaign.
     """
     try:
-        #assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
+        assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
+        if campaign.name is not None:
+            assert len(campaign.name.strip()) > 0, "Campaign name cannot be empty"
+        assert campaign.start_at, "Campaign start date cannot be empty"
+        assert campaign.end_at, "Campaign end date cannot be empty"
         with Server.get_parmanent_db() as conn:
             jury_list = campaign.jury
             if len(jury_list) < 1:
@@ -94,12 +98,14 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
 @campaign_router.post("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def update_campaign(req : Request, campaign_id: int, campaign: CampaignUpdate):
     try:
-        
         assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
         jury_list = campaign.jury
-        print(jury_list)
-        # if len(jury_list) < 1:
-        #     raise Exception("At least one jury must be selected")
+        if len(jury_list) < 1:
+            raise Exception("At least one jury must be selected")
+        if campaign.name is not None:
+            assert len(campaign.name.strip()) > 0, "Campaign name cannot be empty"
+        assert campaign.start_at, "Campaign start date cannot be empty"
+        assert campaign.end_at, "Campaign end date cannot be empty"
         with Server.get_parmanent_db() as conn:
             existing_campaign = Campaign.get_by_id(conn, campaign_id)
             updated_campaign = Campaign.update(conn, campaign, existing_campaign)
