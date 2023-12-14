@@ -149,9 +149,9 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
             {hasCampaignRights && showActions && (
                 <Buttons campaign={campaign} campaignDispatch={campaignDispatch} setError={setError} />
             )}
-            <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row', width: 'max-content' }} component='fieldset'>
+            <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row',  maxWidth : '99%' }} component='fieldset'>
                 <legend>Duration</legend>
-                <Typography variant='body1' sx={{ m: 1, textAlign: 'left', width: 'max-content' }} component='fieldset'>
+                <Typography variant='body1' sx={{ m: 1, textAlign: 'left',  }} component='fieldset'>
                     <legend>Start Date</legend>
                     {campaign.start_at}
                 </Typography>
@@ -159,7 +159,7 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
                     m: 1,
                     alignSelf: 'center'
                 }} />
-                <Typography variant='body1' sx={{ m: 1, textAlign: 'left', width: 'max-content' }} component='fieldset'>
+                <Typography variant='body1' sx={{ m: 1, textAlign: 'left',  }} component='fieldset'>
                     <legend>End Date</legend>
                     {campaign.end_at}
                 </Typography>
@@ -172,7 +172,7 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
                 <legend>Blacklist</legend>
                 {campaign.blackListedUsers?.map((judge, index) => <Chip key={index} label={judge} />)}
             </Typography> */}
-            <Typography variant='body1' sx={{ m: 1, textAlign: 'left', width: 'max-content' }} component='fieldset'>
+            <Typography variant='body1' sx={{ m: 1,  maxWidth : '99%' }} component='fieldset'>
                 <legend>Rules</legend>
                 <ol style={{ textAlign: 'left' }}>
                     {campaign.rules?.map((rule, index) => (

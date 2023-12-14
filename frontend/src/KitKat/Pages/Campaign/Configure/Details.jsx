@@ -23,7 +23,7 @@ const Rules = ({ rules, setRules }) => {
             border: 1,
             backgroundColor: 'rules.main',
             // width: 'max-content',
-            minWidth: '300px',
+            minWidth: '250px',
             maxWidth: '100%',
             // color : 'black'
         }}><Typography variant='h5' sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 1 }}>
