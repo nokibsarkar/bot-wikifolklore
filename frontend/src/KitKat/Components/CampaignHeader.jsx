@@ -24,6 +24,8 @@ const CampaignHeader = ({ campaign }) => {
             statusBgColor = 'warning.main';
             break;
         case 'finished':
+        case 'rejected':
+        case 'cancelled':
             statusBgColor = 'error.main';
             break;
         default:
