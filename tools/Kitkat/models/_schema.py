@@ -217,6 +217,15 @@ class CampaignScheme(_Campaign):
         )
     pass
 @dataclass
+class CampaignResultScheme:
+    user_id : int
+    username : str
+    total_points : int
+    total_submissions : int
+    total_votes : int
+    total_positive_votes : int
+    total_negative_votes : int
+@dataclass
 class Statistics:
     """
     "registered_user_count": 1,

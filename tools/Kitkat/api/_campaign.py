@@ -112,6 +112,26 @@ async def update_campaign(req : Request, campaign_id: int, campaign: CampaignUpd
             return ResponseSingle[CampaignScheme](success=True, data=cmp)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+#---------------------------------- GET RESULTS OF A CAMPAIGN ----------------------------------#
+@campaign_router.get("/{campaign_id}/result", response_model=ResponseSingle[CampaignResultScheme])
+async def get_campaign_result(req : Request, campaign_id: int):
+    """
+    This endpoint is used to get a campaign by id.
+    """
+    try:
+        with Server.get_parmanent_db() as conn:
+            campaign = Campaign.get_by_id(conn.cursor(), campaign_id)
+            if not campaign:
+                raise Exception("Campaign not found")
+            results = Campaign.get_results(conn.cursor(), campaign_id)
+            return ResponseSingle[CampaignResultScheme](success=True, data=results)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+
+
 #------------------------------------------------------------------------------
 #---------------------------------- Approve, reject or cancel a CAMPAIGN ----------------------------------#
 @campaign_router.post("/{campaign_id}/status", response_model=ResponseSingle[CampaignScheme])

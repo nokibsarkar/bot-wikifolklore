@@ -1,5 +1,14 @@
 {
     "yaml.schemas": {
         "https://json.schemastore.org/github-workflow.json": "file:///media/nokib/Data/Projects/Wikipedia/folklore-lover/.github/workflows/deploy.yml"
-    }
+    },
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "Main",
+            "database": "${workspaceFolder:folklore-lover}/data.db"
+        }
+    ]
 }

@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `submission` (
     `judgable`	BOOLEAN NOT NULL DEFAULT TRUE, -- whether the submission is judgable
     CONSTRAINT `submission_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
     CONSTRAINT `submission_submitted_by_id_fkey` FOREIGN KEY(`submitted_by_id`) REFERENCES `user`(`id`),
-    CONSTRAINT `submission_date_check` CHECK(`submitted_at` > `created_at`),
+    -- CONSTRAINT `submission_date_check` CHECK(`submitted_at` >= `created_at`),
     CONSTRAINT `submission_unique_campaign_id_pageid` UNIQUE(`campaign_id`, `pageid`)
 );
 CREATE TABLE IF NOT EXISTS `jury` (
@@ -115,6 +115,9 @@ CREATE TABLE IF NOT EXISTS `draft` (
     CONSTRAINT `criteria_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
     CONSTRAINT `submission_submitted_by_id_fkey` FOREIGN KEY(`submitted_by_id`) REFERENCES `user`(`id`)
 );
+
+
+
 
 -- This Table would be used to store the topic 
 CREATE TABLE IF NOT EXISTS `topic` (

@@ -215,3 +215,25 @@ UPDATE `draft` SET
     `added_bytes` = :added_bytes
 WHERE `id` = :id
 """
+SQL1_GET_RESULTS_BY_CAMPAIGN_ID = """
+SELECT
+    `submission`.`submitted_by_id` AS `user_id`,
+    `submission`.`submitted_by_username` AS `username`,
+    SUM(`submission`.`points`) AS `total_points`,
+    SUM(`submission`.`total_votes`) AS `total_votes`,
+    SUM(`submission`.`positive_votes`) AS `total_positive_votes`,
+    SUM(`submission`.`negative_votes`) AS `total_negative_votes`,
+    COUNT(*) AS `total_submissions`
+FROM
+    `submission`
+WHERE
+    `submission`.`campaign_id` = :campaign_id
+GROUP BY
+    `submission`.`submitted_by_id`
+ORDER BY
+    `total_points` DESC,
+    `total_votes` DESC,
+    `total_positive_votes` DESC,
+    `total_negative_votes` ASC,
+    `total_submissions` DESC;
+"""
