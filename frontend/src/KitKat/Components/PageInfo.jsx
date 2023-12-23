@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningIcon from '@mui/icons-material/Warning';
 import CrossIcon from '@mui/icons-material/Close';
+import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import KitKatServer from '../Server';
 import { useCallback, useEffect, useState } from 'react';
@@ -30,7 +31,7 @@ const StatementWithStatus = ({ statement, status }) => {
             </Typography>
     }
 }
-const calculateRestriction = (draft, campaign, previousRestrictions, setRestricted) => {
+const calculateRestriction = (draft, campaign, previousRestrictions, setRestricted, setNewlyCreated) => {
     if(draft === null) return previousRestrictions;
     const newRestrictions = {...previousRestrictions};
     if(campaign.allowExpansions){
@@ -42,6 +43,7 @@ const calculateRestriction = (draft, campaign, previousRestrictions, setRestrict
         }
         newRestrictions.createdBy = 'success'; // Can be anyone 
         newRestrictions.createdAt = 'success'; // Can be anytime
+        setNewlyCreated(false);
     } else {
         newRestrictions.addedBytes = 'success'; // Can be any amount
         newRestrictions.addedWords = 'success'; // Can be any amount
@@ -52,6 +54,7 @@ const calculateRestriction = (draft, campaign, previousRestrictions, setRestrict
         const submittedAfter = new Date(campaign.start_at) <= submissionDate;
         const submittedBefore = new Date(campaign.end_at) >= submissionDate;
         newRestrictions.createdAt = submittedAfter && submittedBefore ? 'success' : 'error';
+        setNewlyCreated(submittedAfter && submittedBefore);
     }
     const allowSubmission = (
         newRestrictions.addedBytes === 'success' &&
@@ -71,6 +74,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
     const [totalWords, setTotalWords] = useState(0);
     const [createdAt, setCreatedAt] = useState('');
     const [createdBy, setCreatedBy] = useState('');
+    const [newlyCreated, setNewlyCreated] = useState(false);
     const [restrictions, setRestrictions] = useState({
         addedBytes: 'loading',
         addedWords: 'loading',
@@ -88,7 +92,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
             setTotalWords(draft.total_words);
             setCreatedAt(draft.created_at);
             setCreatedBy(draft.created_by_username);
-            setRestrictions(calculateRestriction(draft, campaign, restrictions, setRestricted));
+            setRestrictions(calculateRestriction(draft, campaign, restrictions, setRestricted, setNewlyCreated));
     }, []);
     const fetchDraft = useCallback(async (draftId) => {
         const draft = await KitKatServer.Page.getDraft(draftId);
@@ -129,6 +133,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
                 {title}
             </Typography>
+            <Chip label={newlyCreated ? 'Newly Created' : 'Expanded'} color="info" />
             <StatementWithStatus statement={`Total ${totalBytes} bytes`} status={restrictions?.totalBytes} />
             <StatementWithStatus statement={`Total ${totalWords} words`} status={restrictions?.totalWords} />
             <StatementWithStatus statement={`Created at ${createdAt}`} status={restrictions?.createdAt} />
