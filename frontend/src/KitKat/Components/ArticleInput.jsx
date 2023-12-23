@@ -10,7 +10,7 @@ const ArticleInput = ({ onNewArticle, language , submitButtonLabel = 'Submit'}) 
     const [prefix, setPrefix] = useState('');
     useEffect(() => {
         console.log(articles)
-        KitKatServer.Wiki.suggestArticles(language, prefix).then(setArticles);
+        KitKatServer.Wiki.suggestArticles(language, prefix, "0").then(setArticles);
 
     }, [prefix, language]);
     return <Box sx={{
