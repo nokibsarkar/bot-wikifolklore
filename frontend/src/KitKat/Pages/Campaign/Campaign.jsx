@@ -112,7 +112,7 @@ const Campaign = () => {
             </div>
             <Rules rules={campaign.rules} />
             {jury && <Jury jury={jury} />}
-            {campaign.status === 'finished' && <CampaignResults campaign={campaign} />}
+            {campaign.status === 'ended' && <CampaignResults campaign={campaign} />}
         </Box>
     )
 }

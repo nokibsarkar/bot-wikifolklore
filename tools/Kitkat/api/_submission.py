@@ -21,6 +21,7 @@ async def list_all_submissions(req : Request, campaignID: str, judgable : bool =
                     submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaignID, judgable=judgable, exclude_judged_user_id=my_id)
             else:
                 submissions = Submission.get_all_by_campaign_id(conn.cursor(), campaign_id=campaignID, judgable=judgable)
+            
         results = []
         for submission in submissions:
             # if submission.get('judged_by_me') is None:
@@ -28,6 +29,7 @@ async def list_all_submissions(req : Request, campaignID: str, judgable : bool =
             results.append(SubmissionScheme(**submission))
         return ResponseMultiple[SubmissionScheme](success=True, data=results)
     except Exception as e:
+        print(e)
         raise HTTPException(404, detail=str(e))
 
 

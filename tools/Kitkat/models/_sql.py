@@ -237,3 +237,20 @@ ORDER BY
     `total_negative_votes` ASC,
     `total_submissions` DESC;
 """
+SQL1_UPDATE_CAMPAIGN_STATUS_TO_ENDED = """
+-- Check if all jury has voted for all submissions of the campaign
+SELECT
+    COUNT(*) AS `unjudged_submissions`
+FROM
+    `submission`
+WHERE
+    `submission`.`campaign_id` = :campaign_id
+    AND `submission`.`id` NOT IN (
+        SELECT
+            `submission_id`
+        FROM
+            `jury_vote`
+        WHERE
+            `jury_vote`.`campaign_id` = :campaign_id
+    )
+"""

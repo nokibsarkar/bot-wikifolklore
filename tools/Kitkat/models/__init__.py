@@ -197,7 +197,7 @@ class Campaign:
         return Campaign.update_status(conn, id)
     
     @staticmethod
-    def update_status(conn : sqlite3.Cursor, id : str) -> CampaignScheme:
+    def update_status(conn : sqlite3.Cursor, id : str, check_all_judged = False) -> CampaignScheme:
         campaign = Campaign._get_by_id(conn, id)
         now = datetime.utcnow()
         status = campaign['status']
@@ -206,11 +206,17 @@ class Campaign:
         if status == CampaignStatus.scheduled.value and now >= start_date:
             print("Scheduled to running")
             status = CampaignStatus.running.value
-        if status == CampaignStatus.running.value and now >= end_date:
-            print("Running to evaluating")
-            status = CampaignStatus.evaluating.value
+        if now >= end_date:
+            if status == CampaignStatus.running.value: 
+                print("Running to evaluating")
+                status = CampaignStatus.evaluating.value
+            elif status == CampaignStatus.evaluating.value:
+                all_judged = conn.execute(SQL1_UPDATE_CAMPAIGN_STATUS_TO_ENDED, {'campaign_id': id}).fetchone()
+                if all_judged['unjudged_submissions'] == 0:
+                    print("Evaluating to ended")
+                    status = CampaignStatus.ended.value
         return conn.execute(SQL1_UPDATE_CAMPAIGN_STATUS, {'id': id, 'status': status}).fetchone()
-            
+    
 
 
 class Submission:
@@ -461,3 +467,4 @@ class Judgement:
     @staticmethod
     def verify_judge(conn: sqlite3.Cursor, campaign_id : str, user_id : int):
         return conn.execute(SQL1_VERIFY_JUDGE, {'campaign_id': campaign_id, 'user_id': user_id}).fetchone()
+    
