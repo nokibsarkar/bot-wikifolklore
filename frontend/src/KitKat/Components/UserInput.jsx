@@ -43,7 +43,8 @@ export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', co
             m: 1,
             border: 1,
             backgroundColor: backgroundColor,
-            color: color
+            color: color,
+            maxWidth : '99%'
         }}>
             <Typography variant='h5' sx={{ textAlign: 'center', m: 1, color: color }}>
                 {icon} {fieldName}</Typography>

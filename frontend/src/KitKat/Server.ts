@@ -125,7 +125,7 @@ class Wiki {
         const response: WikiTextParseResponse = await fetch(url).then(res => res.json());
         return response.parse.text["*"];
     }
-    static async suggestArticles(language: string, query: string): Promise<string[]> {
+    static async suggestArticles(language: string, query: string, namespace : string = "*"): Promise<string[]> {
         if (query.length < 2) return [];
         const baseURL = `https://${language}.wikipedia.org/w/api.php`;
         const params = new URLSearchParams({
@@ -133,6 +133,7 @@ class Wiki {
             list: "prefixsearch",
             origin: "*",
             pssearch: query,
+            psnamespace: namespace,
             format: "json",
             utf8: "1",
             pslimit: "10"
