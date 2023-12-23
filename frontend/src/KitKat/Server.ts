@@ -240,6 +240,11 @@ class CampaignServer {
         return updatedCampaign;
     
     }
+    static async getResults(campaignID: number): Promise<Submission[]> {
+        const url = '/api/kitkat/campaign/' + campaignID + '/result';
+        const res = await fetchWithErrorHandling(url)
+        return res.data;
+    }
 }
 class PageServer {
     static async getPageInfo({ language, submitted_by_username, title, submissionId }: PageInfoRequest): Promise<PageInfo> {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import { useParams } from "react-router"
 import CampaignHeader from "../../Components/CampaignHeader";
 import KitKatServer from "../../Server";
@@ -7,6 +7,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import LoadingPage from "../../../Layout/Loader";
 import { Box, Chip, List, Typography } from "@mui/material";
 import { AllButton, SubmissionListButton, SettingsButton, SubmitButton } from "../../Components/CampaignButtons";
+const CampaignResults = lazy(() => import('./CampaignResults'));
 const Rules = ({ rules }) => {
     return (
         <Box sx={{
@@ -67,6 +68,7 @@ const Jury = ({ jury }) => {
         </Box>
     )
 }
+
 const Campaign = () => {
     const { campaignID } = useParams();
     const [campaign, setCampaign] = useState(null);
@@ -110,6 +112,7 @@ const Campaign = () => {
             </div>
             <Rules rules={campaign.rules} />
             {jury && <Jury jury={jury} />}
+            {campaign.status === 'finished' && <CampaignResults campaign={campaign} />}
         </Box>
     )
 }
