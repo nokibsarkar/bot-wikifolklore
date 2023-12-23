@@ -2451,7 +2451,7 @@ CREATE TABLE `submission` (
     `judgable`	BOOLEAN NOT NULL DEFAULT TRUE, -- whether the submission is judgable
     CONSTRAINT `submission_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
     CONSTRAINT `submission_submitted_by_id_fkey` FOREIGN KEY(`submitted_by_id`) REFERENCES `user`(`id`),
-    CONSTRAINT `submission_date_check` CHECK(`submitted_at` > `created_at`),
+    -- CONSTRAINT `submission_date_check` CHECK(`submitted_at` > `created_at`),
     CONSTRAINT `submission_unique_campaign_id_pageid` UNIQUE(`campaign_id`, `pageid`)
 );
 INSERT INTO submission VALUES(9,17991,3,'India',26554804,'hu','2023-12-10 08:54:33',50080034,'Nokib Sarkar','2005-04-14T20:35:59Z',255,'Dubaduba~huwiki',94775,6253,0,0,1,0,1,10,1);
