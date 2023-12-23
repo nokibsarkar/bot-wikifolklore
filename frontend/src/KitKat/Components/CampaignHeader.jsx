@@ -23,7 +23,7 @@ const CampaignHeader = ({ campaign }) => {
         case 'evaluating':
             statusBgColor = 'warning.main';
             break;
-        case 'finished':
+        case 'ended':
         case 'rejected':
         case 'cancelled':
             statusBgColor = 'error.main';
