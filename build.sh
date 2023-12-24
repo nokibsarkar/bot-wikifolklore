@@ -32,7 +32,7 @@ build_landing_page (){
     # Build landing page
     echo "Building landing page"
     cd $LANDING_PAGE_PATH
-    npm run build
+    yarn run build
     # Move the build static files to static directory
     cp -rf $LANDING_PAGE_STATIC_PATH/* $TARGET_STATIC_PATH
     rm -rf $LANDING_PAGE_STATIC_PATH
@@ -54,7 +54,7 @@ build_frontend (){
     # Go to frontend directory
     cd $FRONTEND_PATH
     # Build frontend
-    npm run build
+    yarn run build
     
     if [ -d "$INITIAL_STATIC_FOLDER" ]; then
         cp -r $INITIAL_STATIC_FOLDER/* $TARGET_STATIC_PATH

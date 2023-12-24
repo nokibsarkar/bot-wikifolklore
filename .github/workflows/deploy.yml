@@ -16,32 +16,32 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.14.x'
-          cache: 'npm'
+          cache: 'yarn'
           cache-dependency-path: |
-            frontend/package-lock.json
-            landing_page/package-lock.json
+            frontend/yarn.lock
+            landing_page/yarn.lock
       - name: Cache node modules
-        id: cache-npm
+        id: cache-yarn
         uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
+          # yarn cache files are stored in `~/.yarn` on Linux/macOS
           path: |
             landing_page/node_modules
             frontend/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      - if: ${{ steps.cache-yarn.outputs.cache-hit != 'true' }}
         name: Install dependencies
         run: |
           cd frontend
-          npm install
+          yarn install
           cd ../landing_page
-          npm install
+          yarn install
       - name: Build Setup
         env:
           CI: false
