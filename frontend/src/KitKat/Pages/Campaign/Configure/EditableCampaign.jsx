@@ -18,7 +18,6 @@ const defaultCampaign = {
     image: 'https://upload.wikimedia.org/wikipedia/commons/e/e2/Feminism_and_Folklore_2024_logo.svg',
     rules: [
         'All Participants must be registered in Wikipedia',
-        
     ],
     jury: [
         KitKatServer.BaseServer.loginnedUser().username

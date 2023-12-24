@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import RightArrow from '@mui/icons-material/ArrowForward'
 import ImageSearcher from "../../../Components/ImageInput";
 import LoadingPage from "../../../../Layout/Loader";
-
+const wiki = KitKatServer.BaseServer.getWikiList();
 
 const Rules = ({ rules, setRules }) => {
     const [editing, setEditing] = useState(false);
@@ -66,10 +66,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch , setNextPermittabl
     const [error, setError] = useState(null);
     const [targetWikiError, setTargetWikiError] = useState(false);
     const targetWikiRef = useRef(null);
-    const wiki = [];
-    for (const [key, value] of Object.entries(KitKatServer.BaseServer.languages)) {
-        wiki.push({ id: key, label: `${value} (${key})` })
-    };
+    
     if (loading)
         return <LoadingPage />
     return (
