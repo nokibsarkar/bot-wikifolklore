@@ -111,6 +111,7 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
         "rvdir": "newer",
         "rvuser": username,
     }
+    print(params)
     res = BaseServer.get(lang=lang, params=params)
     assert 'query' in res, res
     assert 'pages' in res['query'], "Pages not found"
