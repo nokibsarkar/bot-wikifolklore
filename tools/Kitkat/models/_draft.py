@@ -111,7 +111,6 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
         "rvdir": "newer",
         "rvuser": username,
     }
-    print(params)
     res = BaseServer.get(lang=lang, params=params)
     assert 'query' in res, res
     assert 'pages' in res['query'], "Pages not found"
@@ -128,6 +127,7 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
         content = revision['slots']['main']['content']
         added_words += _calculate_difference(previous_content, content, )
         previous_content = content
+        print(revision)
         added_bytes += revision['size']
     return (added_words, added_bytes)
 def calculate_word(content : str) -> int:

@@ -34,6 +34,10 @@ const StatementWithStatus = ({ statement, status }) => {
 const calculateRestriction = (draft, campaign, previousRestrictions, setRestricted, setNewlyCreated) => {
     if(draft === null) return previousRestrictions;
     const newRestrictions = {...previousRestrictions};
+    const creationDate = new Date(draft.created_at);
+    const submittedAfter = new Date(campaign.start_at) <= creationDate;
+    const submittedBefore = new Date(campaign.end_at) >= creationDate;
+    setNewlyCreated(submittedAfter && submittedBefore && draft.submitted_by_id === draft.created_by_id);
     if(campaign.allowExpansions){
         newRestrictions.totalBytes = 'success'; // Can be any amount
         newRestrictions.totalWords = 'success'; // Can be any amount
@@ -43,18 +47,15 @@ const calculateRestriction = (draft, campaign, previousRestrictions, setRestrict
         }
         newRestrictions.createdBy = 'success'; // Can be anyone 
         newRestrictions.createdAt = 'success'; // Can be anytime
-        setNewlyCreated(false);
     } else {
         newRestrictions.addedBytes = 'success'; // Can be any amount
         newRestrictions.addedWords = 'success'; // Can be any amount
         newRestrictions.totalBytes = draft.total_bytes >= campaign.minimumTotalBytes ? 'success' : 'error';
         newRestrictions.totalWords = draft.total_words >= campaign.minimumTotalWords ? 'success' : 'error';
         newRestrictions.createdBy = draft.submitted_by_id === draft.created_by_id ? 'success' : 'error';
-        const submissionDate = new Date(draft.created_at);
-        const submittedAfter = new Date(campaign.start_at) <= submissionDate;
-        const submittedBefore = new Date(campaign.end_at) >= submissionDate;
+        
         newRestrictions.createdAt = submittedAfter && submittedBefore ? 'success' : 'error';
-        setNewlyCreated(submittedAfter && submittedBefore);
+        
     }
     const allowSubmission = (
         newRestrictions.addedBytes === 'success' &&
