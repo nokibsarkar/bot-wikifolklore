@@ -5,10 +5,10 @@ import KitKatServer from "../../Server";
 const columns = [
     { field: 'username', headerName: 'Username', minWidth: 100, flex: 1 },
     { field: 'total_submissions', headerName: 'Submissions', minWidth: 100, flex: 1 },
+    // { field: 'total_votes', headerName: 'Votes', minWidth: 100, flex: 1 },
+    // { field: 'total_positive_votes', headerName: 'Positive Votes', minWidth: 100, flex: 1 },
+    // { field: 'total_negative_votes', headerName: 'Negative Votes', minWidth: 100, flex: 1 },
     { field: 'total_points', headerName: 'Points', minWidth: 100, flex: 1 },
-    { field: 'total_votes', headerName: 'Votes', minWidth: 100, flex: 1 },
-    { field: 'total_positive_votes', headerName: 'Positive Votes', minWidth: 100, flex: 1 },
-    { field: 'total_negative_votes', headerName: 'Negative Votes', minWidth: 100, flex: 1 },
 ];
 
 const CampaignResults = ({ campaign }) => {
