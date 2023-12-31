@@ -381,7 +381,7 @@ class Submission:
             if campaign_allow_expansion:
                 campaign_minimum_added_bytes = campaign['minimumAddedBytes']
                 campaign_minimum_added_words = campaign['minimumAddedWords']
-                added_word, added_bytes = calculate_addition(lang, pageid, start_date, end_date, username)
+                added_word, added_bytes = calculate_addition(lang, pageid, start_date, end_date, username, title=draft['title'])
                 if added_word < campaign_minimum_added_words or added_bytes < campaign_minimum_added_bytes:
                     params['passed'] = False
             else:

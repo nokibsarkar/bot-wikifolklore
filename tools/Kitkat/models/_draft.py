@@ -10,12 +10,31 @@ sess.headers.update({
     'User-Agent': 'Kitkat/1.0',
 })
 
-
+XTOOLS_API_FORMAT = "https://xtools.wmcloud.org/api/user/top_edits/{lang}.wikipedia.org/{username}/{namespace}/{article}/{start_date}/{end_date}"
+    
 
 REFERENCE = re.compile("<ref.*?(?:>.*?</ref>|/>)")
 MULTIPLE_NEWLINE = re.compile("\n+", re.MULTILINE)
 WHITESPACE = re.compile("[\t –]+")
 UNIFIED_HEADER = re.compile("@@ -(\d+),(\d+) \+(\d+),(\d+) @@", re.MULTILINE)
+
+def get_byte_added(lang : str, username : str, title : str, start_date , end_date) -> int:
+    """
+    This will return the byte change of the user
+    """
+    url = XTOOLS_API_FORMAT.format(
+        lang=lang,
+        username=username,
+        namespace="0",
+        article=title,
+        start_date=start_date.strftime("%Y-%m-%d"),
+        end_date=end_date.strftime("%Y-%m-%d"),
+    )
+    r = sess.get(url)
+    result = r.json()
+    edits = result['top_edits']
+    length_change = sum([edit['length_change'] for edit in edits])
+    return length_change
 def _remove_reference(content: str) -> str:
     """
     This will remove the reference from the content
@@ -91,12 +110,18 @@ def _calculate_initial_difference(lang : str, revision_id : int) -> tuple[int, i
     return added_words, added_bytes
     
    
-def calculate_addition(lang: str, pageid : int , start_date : str, end_date : str, username : str) -> tuple[int, int]:
+def calculate_addition(lang: str, pageid : int , start_date : str, end_date : str, username : str, title : str) -> tuple[int, int]:
     """
     Calculate the addition of the article
     """
-    start_date = dp.parse(start_date).isoformat()
-    end_date = dp.parse(end_date).isoformat()
+    start_date = dp.parse(start_date)
+    end_date = dp.parse(end_date)
+    print("Calculating addition", lang, pageid, start_date, end_date, username, title)
+    added_bytes = get_byte_added(lang, username, title, start_date, end_date)
+
+
+    start_date = start_date.isoformat()
+    end_date = end_date.isoformat()
     params = {
         "action": "query",
         "format": "json",
@@ -127,9 +152,9 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
         content = revision['slots']['main']['content']
         added_words += _calculate_difference(previous_content, content, )
         previous_content = content
-        print(revision)
-        added_bytes += revision['size']
     return (added_words, added_bytes)
+
+
 def calculate_word(content : str) -> int:
     """
     Calculate the word count of the content

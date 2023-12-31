@@ -74,7 +74,7 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
     This endpoint is used to create a new campaign.
     """
     try:
-        assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
+        # assert User.is_admin(req.state.user['rights']), "You don't have `campaign` rights"
         if campaign.name is not None:
             assert len(campaign.name.strip()) > 0, "Campaign name cannot be empty"
         assert campaign.start_at, "Campaign start date cannot be empty"
