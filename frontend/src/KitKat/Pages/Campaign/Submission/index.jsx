@@ -10,7 +10,7 @@ import { AllButton, DetailsButton, SubmitButton } from "../../../Components/Camp
 import LoadingPage from "../../../../Layout/Loader";
 import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
-
+import Chip from "@mui/material/Chip"
 const SubmissionList = () => {
     const { campaignID } = useParams();
     const [submissions, setSubmissions] = useState([]);
@@ -43,8 +43,11 @@ const SubmissionList = () => {
         const columns = [
             { field: 'title', headerName: 'Title', flex: 1, minWidth: 200 },
             { field: 'submitted_by_username', headerName: 'Submitter', flex: 1, minWidth: 200 },
-            {
-                field: 'points', headerName: 'Points', flex: 0.5, renderCell: (params) => {
+            {field: 'newly_created', headerName: 'Tag', flex: 0.5, minWidth: 130, renderCell: (params) => (
+                <Chip label={params.value ? 'N' : 'E'} color="info" />
+            
+            )},
+            {field: 'points', headerName: 'Points', flex: 0.5, renderCell: (params) => {
                     // const scores = []
                     // const positiveScore = params.row.positive_votes;
                     // const zeroScore = 0;

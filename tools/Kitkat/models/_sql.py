@@ -115,7 +115,8 @@ INSERT INTO
     `total_bytes`,
     `total_words`,
     `added_bytes`,
-    `added_words`
+    `added_words`,
+    `newly_created`
 ) VALUES (
     :pageid,
     :campaign_id,
@@ -130,7 +131,8 @@ INSERT INTO
     :total_bytes,
     :total_words,
     :added_bytes,
-    :added_words
+    :added_words,
+    :newly_created
 ) RETURNING *
 """
 SQL1_CREATE_DRAFT = """
@@ -150,7 +152,8 @@ INSERT INTO
     `total_bytes`,
     `total_words`,
     `added_bytes`,
-    `added_words`
+    `added_words`,
+    `newly_created`
 ) VALUES (
     :pageid,
     :campaign_id,
@@ -165,7 +168,8 @@ INSERT INTO
     :total_bytes,
     :total_words,
     :added_bytes,
-    :added_words
+    :added_words,
+    :newly_created
 ) RETURNING *
 """
 SQL1_GET_DRAFT_BY_ID = "SELECT * FROM `draft` WHERE `id` = :id LIMIT 1"
@@ -229,7 +233,7 @@ FROM
 WHERE
     `submission`.`campaign_id` = :campaign_id
 GROUP BY
-    `submission`.`submitted_by_id`
+    `submission`.`submitted_by_id`, `submission`.`newly_created`
 ORDER BY
     `total_points` DESC,
     `total_votes` DESC,

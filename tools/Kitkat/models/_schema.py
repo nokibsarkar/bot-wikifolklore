@@ -45,7 +45,7 @@ class SubmissionBase:
     total_bytes : int = 0 # Total bytes of the article
     total_words : int = 0 # Total words of the article
     added_bytes : int = 0 # Added bytes of the article
-    added_words : int = 0 # Added words of the article
+    added_words : int = 0 # Added words of the article   
 @dataclass
 class DraftSubmissionScheme(SubmissionBase):
     """
@@ -54,6 +54,7 @@ class DraftSubmissionScheme(SubmissionBase):
     passed : bool = False # Is the article passed the pre-submission check?
     submitted : bool = False # Is the article submitted?
     calculated : bool = False # Is the article statistics calculated?
+    newly_created : bool = False # Is the article newly created? 
 @dataclass
 class DraftCreateScheme:
     """
@@ -62,6 +63,7 @@ class DraftCreateScheme:
     campaign_id : str
     title : str
     submitted_by_username : str = None # Username of the user who submitted the article
+    
 
 @dataclass
 class SubmissionScheme(SubmissionBase):
@@ -78,6 +80,8 @@ class SubmissionScheme(SubmissionBase):
     # this will be True all the time before the campaign ends
     judgable : bool = True 
     judged_by_me : bool | None = None
+
+    newly_created : bool = False # Is the article newly created? 
 @dataclass
 class SubmissionCreateScheme:
     """

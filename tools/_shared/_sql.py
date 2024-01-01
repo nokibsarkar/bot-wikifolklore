@@ -61,6 +61,8 @@ CREATE TABLE IF NOT EXISTS `submission` (
     `total_votes`	INTEGER NOT NULL DEFAULT 0, -- total votes of the submission
     `points`	INTEGER NOT NULL DEFAULT 0, -- points of the submission
     `judgable`	BOOLEAN NOT NULL DEFAULT TRUE, -- whether the submission is judgable
+    `newly_created`	BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is newly created
+    CONSTRAINT `submission_newly_created_check` CHECK(NOT `newly_created` OR (`newly_created` AND `created_by_username` = `submitted_by_username` AND `created_by_id` = `submitted_by_id`)),
     CONSTRAINT `submission_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
     CONSTRAINT `submission_submitted_by_id_fkey` FOREIGN KEY(`submitted_by_id`) REFERENCES `user`(`id`),
     -- CONSTRAINT `submission_date_check` CHECK(`submitted_at` >= `created_at`),
@@ -112,6 +114,8 @@ CREATE TABLE IF NOT EXISTS `draft` (
     `calculated`	BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is calculated
     `passed`    BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is passed
     `submitted`	BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is submitted
+    `newly_created`	BOOLEAN NOT NULL DEFAULT FALSE, -- whether the submission is newly created
+    CONSTRAINT `draft_newly_created_check` CHECK(NOT `newly_created` OR (`newly_created` AND `created_by_username` = `submitted_by_username` AND `created_by_id` = `submitted_by_id`)),
     CONSTRAINT `criteria_campaign_id_fkey` FOREIGN KEY(`campaign_id`) REFERENCES `campaign`(`id`),
     CONSTRAINT `submission_submitted_by_id_fkey` FOREIGN KEY(`submitted_by_id`) REFERENCES `user`(`id`)
 );

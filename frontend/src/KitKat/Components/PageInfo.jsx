@@ -31,13 +31,14 @@ const StatementWithStatus = ({ statement, status }) => {
             </Typography>
     }
 }
-const calculateRestriction = (draft, campaign, previousRestrictions, setRestricted, setNewlyCreated) => {
+const calculateRestriction = (draft, campaign, previousRestrictions, setRestricted) => {
     if(draft === null) return previousRestrictions;
     const newRestrictions = {...previousRestrictions};
     const creationDate = new Date(draft.created_at);
     const submittedAfter = new Date(campaign.start_at) <= creationDate;
     const submittedBefore = new Date(campaign.end_at) >= creationDate;
-    setNewlyCreated(submittedAfter && submittedBefore && draft.submitted_by_id === draft.created_by_id);
+    const newlyCreated = draft.newly_created;
+    newRestrictions.newlyCreated = newlyCreated === 1;
     if(campaign.allowExpansions){
         newRestrictions.totalBytes = 'success'; // Can be any amount
         newRestrictions.totalWords = 'success'; // Can be any amount
@@ -75,14 +76,14 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
     const [totalWords, setTotalWords] = useState(0);
     const [createdAt, setCreatedAt] = useState('');
     const [createdBy, setCreatedBy] = useState('');
-    const [newlyCreated, setNewlyCreated] = useState(false);
     const [restrictions, setRestrictions] = useState({
         addedBytes: 'loading',
         addedWords: 'loading',
         totalBytes: 'loading',
         totalWords: 'loading',
         createdAt: 'loading',
-        createdBy: 'loading'
+        createdBy: 'loading',
+        newlyCreated : false
     });
     
     const setInfo = useCallback(draft => {
@@ -93,7 +94,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
             setTotalWords(draft.total_words);
             setCreatedAt(draft.created_at);
             setCreatedBy(draft.created_by_username);
-            setRestrictions(calculateRestriction(draft, campaign, restrictions, setRestricted, setNewlyCreated));
+            setRestrictions(calculateRestriction(draft, campaign, restrictions, setRestricted));
     }, []);
     const fetchDraft = useCallback(async (draftId) => {
         const draft = await KitKatServer.Page.getDraft(draftId);
@@ -134,7 +135,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center' }}>
                 {title}
             </Typography>
-            <Chip label={newlyCreated ? 'Newly Created' : 'Expanded'} color="info" />
+            <Chip label={restrictions?.newlyCreated ? 'Newly Created' : 'Expanded'} color="info" />
             <StatementWithStatus statement={`Total ${totalBytes} bytes`} status={restrictions?.totalBytes} />
             <StatementWithStatus statement={`Total ${totalWords} words`} status={restrictions?.totalWords} />
             <StatementWithStatus statement={`Created at ${createdAt}`} status={restrictions?.createdAt} />

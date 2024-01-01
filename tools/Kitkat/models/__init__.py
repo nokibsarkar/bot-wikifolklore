@@ -152,7 +152,9 @@ class Campaign:
     @staticmethod
     def get_results(conn : sqlite3.Cursor, campaign_id : str):
         results = conn.execute(SQL1_GET_RESULTS_BY_CAMPAIGN_ID, {'campaign_id': campaign_id}).fetchall()
-        return [CampaignResultScheme(**r) for r in results]
+        data = [CampaignResultScheme(**r) for r in results]
+        print(data)
+        return data
     @staticmethod
     def get_all(conn : sqlite3.Cursor, language : Language=None, status : list[CampaignStatus]=None, limit : int=50, offset : int= 0):
         params = {
@@ -321,7 +323,8 @@ class Submission:
             'total_bytes': draft['total_bytes'],
             'added_words': draft['added_words'],
             'added_bytes': draft['added_bytes'],
-            'target_wiki': draft['target_wiki']
+            'target_wiki': draft['target_wiki'],
+            'newly_created' : draft['newly_created'],
         }
         cur = conn.execute(SQL1_CREATE_SUBMISSION, params)
         new_submission = cur.fetchone()
@@ -342,7 +345,8 @@ class Submission:
             'total_bytes': draft.total_bytes,
             'added_words': draft.added_words,
             'added_bytes': draft.added_bytes,
-            'target_wiki': draft.target_wiki
+            'target_wiki': draft.target_wiki,
+            'newly_created': draft.submitted_by_username == draft.created_by_username,
         }
         cur = conn.execute(SQL1_CREATE_DRAFT, params)
         new_draft = cur.fetchone()
@@ -377,19 +381,25 @@ class Submission:
                 'added_bytes': 0,
                 'passed': True,
                 'calculated': True,
+                'newly_created': False
             }
+            if campaign['start_at'] <= draft['created_at'] and draft['created_at'] <= campaign['end_at']:
+                params['newly_created'] = draft['created_by_username'] == draft['submitted_by_username']
             if campaign_allow_expansion:
                 campaign_minimum_added_bytes = campaign['minimumAddedBytes']
                 campaign_minimum_added_words = campaign['minimumAddedWords']
                 added_word, added_bytes = calculate_addition(lang, pageid, start_date, end_date, username, title=draft['title'])
                 if added_word < campaign_minimum_added_words or added_bytes < campaign_minimum_added_bytes:
                     params['passed'] = False
+                
             else:
                 added_word, added_bytes = 0, 0
                 minimum_total_words = campaign['minimumTotalWords']
                 minimum_total_bytes = campaign['minimumTotalBytes']
                 if draft['total_words'] < minimum_total_words or draft['total_bytes'] < minimum_total_bytes:
                     params['passed'] = False
+            if campaign['start_at'] <= draft['created_at'] and draft['created_at'] <= campaign['end_at']:
+                params['newly_created'] = draft['created_by_username'] == draft['submitted_by_username']
             params['added_words'] = added_word
             params['added_bytes'] = added_bytes
             conn.execute(SQL1_UPDATE_DRAFT_CALCULATION, params)
