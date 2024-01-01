@@ -1,6 +1,7 @@
 import { useEffect, useState, lazy } from "react";
 import { useParams } from "react-router"
 import CampaignHeader from "../../Components/CampaignHeader";
+import RightArrow from '@mui/icons-material/ArrowForward'
 import KitKatServer from "../../Server";
 import RuleIcon from '@mui/icons-material/Rule';
 import GavelIcon from '@mui/icons-material/Gavel';
@@ -104,12 +105,30 @@ const Campaign = () => {
         }}>
             <CampaignHeader campaign={campaign} />
             <div style={{ textAlign: 'center' }}>
-
                 <SubmitButton campaign={campaign} />
                 <SubmissionListButton campaign={campaign} />
                 {hasCampaignRights && <SettingsButton campaign={campaign} />}
                 <AllButton campaign={campaign} />
+                
             </div>
+            <div style={{ display: 'flex', flexDirection: 'col', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Typography variant='body1' sx={{ m: 1, display: 'flex', flexDirection: 'row',  maxWidth : 'max-content', textAlign:'center' }} component='fieldset'>
+                <legend>Duration</legend>
+                <Typography variant='body1' sx={{ m: 1, textAlign: 'left',  }} component='fieldset'>
+                    <legend>Start Date</legend>
+                    {campaign.start_at}
+                </Typography>
+                <RightArrow sx={{
+                    m: 1,
+                    alignSelf: 'center'
+                }} />
+                <Typography variant='body1' sx={{ m: 1, textAlign: 'left',  }} component='fieldset'>
+                    <legend>End Date</legend>
+                    {campaign.end_at}
+                </Typography>
+            </Typography>
+            </div>
+            
             <Rules rules={campaign.rules} />
             {jury && <Jury jury={jury} />}
             {campaign.status === 'ended' && <CampaignResults campaign={campaign} />}
