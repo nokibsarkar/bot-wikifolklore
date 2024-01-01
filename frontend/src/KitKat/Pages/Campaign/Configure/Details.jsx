@@ -120,7 +120,9 @@ const CampainEditableDetails = ({ campaign, campaignDispatch , setNextPermittabl
 
                     }}
                     size="small"
-                    inputProps={{ type: 'date', min: new Date().toISOString().split('T')[0] }}
+                    inputProps={{ type: 'date',
+                    // min: new Date().toISOString().split('T')[0] 
+                }}
                     value={campaign.start_at}
                     onChange={(e) => {
                         campaignDispatch({ type: 'start_at', payload: e.target.value })
