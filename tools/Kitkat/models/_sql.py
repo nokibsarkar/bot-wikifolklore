@@ -1,18 +1,19 @@
 SQL1_SELECT_SUBMISSIONS = """
-SELECT * FROM `submission` WHERE `campaign_id` = :campaign_id
+SELECT * FROM `submission` WHERE `campaign_id` = :campaign_id ORDER BY `id`
 """
 SQL1_SELECT_SUBMISSIONS_EXCLUDING_USER_ID = """
 SELECT * FROM `submission` WHERE `submission`.`campaign_id` = :campaign_id AND `id` NOT IN (
     SELECT `submission_id` FROM `jury_vote` WHERE  `jury_vote`.`jury_id` = :exclude_judged_user_id AND  `jury_vote`.`campaign_id` = :campaign_id
-);
+) ORDER BY `submission`.`id`
 """
 SQL1_SELECT_SUBMISSIONS_JUDGED_BY_USER_ID = """
 SELECT * FROM `submission` WHERE `id` IN (
     SELECT `submission_id` FROM `jury_vote` WHERE  `jury_vote`.`jury_id` = :jury_id AND  `jury_vote`.`campaign_id` = :campaign_id
-);
+) ORDER BY `submission`.`id`
 """
 SQL1_SELECT_SUBMISSIONS_SUBMITTED_BY_USER_ID = """
 SELECT * FROM `submission` WHERE `submitted_by_id` = :submitted_by_id AND `campaign_id` = :campaign_id
+ORDER BY `submission`.`id`
 """
 SQL1_CREATE_CAMPAIGN = """
 INSERT INTO
@@ -224,21 +225,17 @@ SELECT
     `submission`.`submitted_by_id` AS `user_id`,
     `submission`.`submitted_by_username` AS `username`,
     SUM(`submission`.`points`) AS `total_points`,
-    SUM(`submission`.`total_votes`) AS `total_votes`,
-    SUM(`submission`.`positive_votes`) AS `total_positive_votes`,
-    SUM(`submission`.`negative_votes`) AS `total_negative_votes`,
+    SUM(`submission`.`newly_created`) AS `total_newly_created`,
     COUNT(*) AS `total_submissions`
 FROM
     `submission`
 WHERE
     `submission`.`campaign_id` = :campaign_id
 GROUP BY
-    `submission`.`submitted_by_id`, `submission`.`newly_created`
+    `submission`.`submitted_by_id`
 ORDER BY
     `total_points` DESC,
-    `total_votes` DESC,
-    `total_positive_votes` DESC,
-    `total_negative_votes` ASC,
+    `total_newly_created` DESC,
     `total_submissions` DESC;
 """
 SQL1_UPDATE_CAMPAIGN_STATUS_TO_ENDED = """

@@ -226,9 +226,15 @@ class CampaignResultScheme:
     username : str
     total_points : int
     total_submissions : int
-    total_votes : int
-    total_positive_votes : int
-    total_negative_votes : int
+    total_newly_created : int
+    total_expanded : int
+    def __init__(self, user_id : int, username : str, total_points : int, total_submissions : int, total_newly_created : int):
+        self.user_id = user_id
+        self.username = username
+        self.total_points = total_points
+        self.total_submissions = total_submissions
+        self.total_newly_created = total_newly_created
+        self.total_expanded = total_submissions - total_newly_created
 @dataclass
 class Statistics:
     """

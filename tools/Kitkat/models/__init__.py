@@ -153,7 +153,6 @@ class Campaign:
     def get_results(conn : sqlite3.Cursor, campaign_id : str):
         results = conn.execute(SQL1_GET_RESULTS_BY_CAMPAIGN_ID, {'campaign_id': campaign_id}).fetchall()
         data = [CampaignResultScheme(**r) for r in results]
-        print(data)
         return data
     @staticmethod
     def get_all(conn : sqlite3.Cursor, language : Language=None, status : list[CampaignStatus]=None, limit : int=50, offset : int= 0):
