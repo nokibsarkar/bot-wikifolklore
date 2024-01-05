@@ -125,7 +125,7 @@ export default function Description({ user }) {
             position: 'absolute',
             textAlign: 'center',
         }}>
-            {banner != '' && <img src={banner} style={{ maxHeight : '150px', textAlign:'center'}}/>}
+            {banner != '' && <img src={banner} style={{ maxHeight : '150px', maxWidth: '99%'}}/>}
             <Typography variant="title" component="h2" sx={{
                 textAlign: 'center',
                 m: 2
