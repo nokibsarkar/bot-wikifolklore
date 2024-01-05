@@ -95,7 +95,7 @@ const fetchWithErrorHandling = async (url: string, options?: RequestInit) => {
             const data = await res.json();
             err = data.detail
         } catch (error) {
-            err = await res.text();
+            err = error;
         }
         throw new Error(err);
     }
