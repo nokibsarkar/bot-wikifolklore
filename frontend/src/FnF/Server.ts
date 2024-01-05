@@ -83,6 +83,23 @@ const PERMISSIONS : {[key in PermissionKey] : Permission} = {
     GRANT : 1 << 4,
     CAMPAIGN : 1 << 5
 };
+const fetchWithErrorHandling = async (url: string, options?: RequestInit) => {
+    const res: Response = await fetchWithErrorHandling(url, options);
+    if(res.ok){
+        const data = await res.json();
+        if(data.success) return data;
+        throw new Error(data.detail);
+    } else {
+        var err = null;
+        try {
+            const data = await res.json();
+            err = data.detail
+        } catch (error) {
+            err = await res.text();
+        }
+        throw new Error(err);
+    }
+};
 class FnF {
     static baseURL = new URL(window.location.origin);
     static languages : Object | null = null;
@@ -103,7 +120,7 @@ class FnF {
         for (let cat of categories) {
             console.info("Adding subcategories for", cat.title)
             const url = new URL("api/subcat/" + cat.title, FnF.baseURL);
-            const response = await fetch(url.toString());
+            const response = await fetchWithErrorHandling(url.toString());
             const data: APIResponseMultiple<Category> = await response.json();
             subcats = subcats.concat(data.data);
             cat.subcat = false;
@@ -112,7 +129,7 @@ class FnF {
     }
     static async getCategories({country, topic} : {country : Country, topic : string}){
         const url = new URL(`api/topic/${topic.split("/")[0]}/${country}/categories`, FnF.baseURL);
-        const response = await fetch(url.toString());
+        const response = await fetchWithErrorHandling(url.toString())
         const responseData: APIResponseMultiple<Category> = await response.json();
         if (responseData.success) {
             return responseData.data
@@ -124,7 +141,7 @@ class FnF {
     static async submitTask(data : TaskCreate) {
         // Submit the task
         const url = new URL("api/task", FnF.baseURL);
-        const response = await fetch(url.toString(), {
+        const response = await fetchWithErrorHandling(url.toString(), {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -142,7 +159,7 @@ class FnF {
     }
     static async fetchCountries(topic : string){
         const url = new URL("api/topic/" + topic + "/country", FnF.baseURL);
-        const response = await fetch(url.toString());
+        const response = await fetchWithErrorHandling(url.toString())
         const responseData: APIResponseMultiple<CountryEntry> = await response.json();
         if (responseData.success) {
             const rawData = responseData.data;
@@ -160,7 +177,7 @@ class FnF {
     }
     static async exportResult(taskID : Number, format: TaskResultFormat = "json") {
         const url = new URL(`api/task/${taskID}/export/` + format, FnF.baseURL);
-        const response = await fetch(url.toString());
+        const response = await fetchWithErrorHandling(url.toString())
         const data : APIResponseSingle<TaskResult> = await response.json();
         
         return data.data;
@@ -168,7 +185,7 @@ class FnF {
     static async getTask(taskID: number) {
         const url = new URL("api/task/" + taskID, FnF.baseURL);
         // console.log(taskID)
-        const response = await fetch(url.toString());
+        const response = await fetchWithErrorHandling(url.toString())
         const responseData: APIResponseSingle<Task> = await response.json();
         if (responseData.success) {
             return responseData.data;
@@ -180,7 +197,7 @@ class FnF {
     static async getTasks() {
         const url = new URL("api/task", FnF.baseURL);
         // console.log(taskID)
-        const response = await fetch(url.toString());
+        const response = await fetchWithErrorHandling(url.toString())
         const responseData: APIResponseMultiple<Task> = await response.json();
         if (responseData.success) {
             return responseData.data;
@@ -192,7 +209,7 @@ class FnF {
     static async getMe(){
         const url = new URL("api/user/me", FnF.baseURL);
         // console.log(taskID)
-        const response = await fetch(url.toString());
+        const response = await fetchWithErrorHandling(url.toString())
         const responseData: APIResponseSingle<User> = await response.json();
         if (responseData.success) {
             return responseData.data;
@@ -203,7 +220,7 @@ class FnF {
     }
     static async getCountryMap(){
         const url = new URL("api/country", FnF.baseURL);
-        const countries = await fetch(url).then(res => res.json())
+        const countries = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json())
         return countries.data
     }
     static searchCategory(callback : (data : Category[]) => void, setSearching : (searching : boolean) => void){
@@ -224,7 +241,7 @@ class FnF {
                 "origin": "*"
             })
             url.search = params.toString();
-            const response = await fetch(url.toString());
+            const response = await fetchWithErrorHandling(url.toString())
             const data = await response.json();
             const categories = data.query.prefixsearch.map((cat : any) => {
                 return {
@@ -254,46 +271,45 @@ class FnF {
     }
     static async createTopic(topic : TopicCreate){
         const url = new URL("api/topic/", FnF.baseURL);
-        const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
+        const response : APIResponseSingle<Topic> = await fetchWithErrorHandling(url.toString(), {
             method: "POST",
             body: JSON.stringify(topic),
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then(res => res.json());
-        console.log(response)
+        }).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static async getTopic(topicID : string){
         const url = new URL("api/topic/" + topicID, FnF.baseURL);
-        const response : APIResponseSingle<Topic> = await fetch(url.toString()).then(res => res.json());
+        const response : APIResponseSingle<Topic> = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static async updateTopic({id, categories} : Topic){
         const url = new URL("api/topic/" + id, FnF.baseURL);
-        const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
+        const response : APIResponseSingle<Topic> = await fetchWithErrorHandling(url.toString(), {
             method: "POST",
             body: JSON.stringify({categories}),
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then(res => res.json());
+        }).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static async updateMe({username, rights} : User){
         const url = new URL("api/user/me", FnF.baseURL);
-        const response : APIResponseSingle<User> = await fetch(url.toString(), {
+        const response : APIResponseSingle<User> = await fetchWithErrorHandling(url.toString(), {
             method: "POST",
             body: JSON.stringify({username, rights}),
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then(res => res.json());
+        }).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static async getUsers(){
         const url = new URL("api/user/", FnF.baseURL);
-        const response : APIResponseMultiple<User> = await fetch(url.toString()).then(res => res.json());
+        const response : APIResponseMultiple<User> = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static toggleAccess(rights : number, permission : number){
@@ -301,25 +317,25 @@ class FnF {
     }
     static async getUser(id : number){
         const url = new URL("api/user/" + id, FnF.baseURL);
-        const response : APIResponseSingle<User> = await fetch(url.toString()).then(res => res.json());
+        const response : APIResponseSingle<User> = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static async updateUser({id, username, rights} : User){
         const url = new URL("api/user/" + id, FnF.baseURL);
-        const response : APIResponseSingle<User> = await fetch(url.toString(), {
+        const response : APIResponseSingle<User> = await fetchWithErrorHandling(url.toString(), {
             method: "POST",
             body: JSON.stringify({username, rights}),
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then(res => res.json());
+        }).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static async deleteTopic(id : string){
         const url = new URL("api/topic/" + id, FnF.baseURL);
-        const response : APIResponseSingle<Topic> = await fetch(url.toString(), {
+        const response : APIResponseSingle<Topic> = await fetchWithErrorHandling(url.toString(), {
             method: "DELETE",
-        }).then(res => res.json());
+        }).then((res : { json: () => any; }) => res.json());
         return response.data;
     }
     static getWikiList(exclude : string[] = []){
