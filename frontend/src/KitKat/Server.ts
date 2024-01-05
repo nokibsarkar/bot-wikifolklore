@@ -367,7 +367,25 @@ class KitKatServer {
         const url = new URL(window.location.href);
         return url.searchParams.get(key);
     }
-
+    static async getConfig(){
+        const searchParams = new URLSearchParams({
+            "action": "query",
+            "format": "json",
+            "prop": "revisions",
+            "titles": "User:Tiven2240/nkbToolConfig.json",
+            "formatversion": "2",
+            "rvprop": "content|contentmodel",
+            "rvslots": "main",
+            "rvlimit": "1",
+            "rvcontentformat-main": "application/json",
+            "origin" : "*"
+        });
+        const url = 'https://meta.wikimedia.org/w/api.php?' + searchParams.toString();
+        const res = await fetch(url);
+        const res_1 = await res.json();
+        const res_2 = res_1.query.pages[0].revisions[0].slots.main.content;
+        return JSON.parse(res_2);
+    }
     static addCSS(url: string) {
         const id = url.replace(/[^a-zA-Z0-9]/g, "");
         if (document.getElementById(id)) return;

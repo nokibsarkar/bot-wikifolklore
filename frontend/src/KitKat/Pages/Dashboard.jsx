@@ -5,8 +5,20 @@ import ListIcon from '@mui/icons-material/List';
 import SettingIcon from '@mui/icons-material/Settings';
 import PeopleIcon from '@mui/icons-material/People';
 import Server from "../Server";
+import { useEffect, useState } from "react";
+
 export default function Description({ user }) {
     const sections = [];
+    const [banner, setBanner] = useState('');
+    useEffect(() => {
+        Server.getConfig().then((res) => {
+            if(res?.kitkat?.dashboard?.banner)
+                setBanner(res.kitkat.dashboard.banner);
+        }
+        ).catch((err) => {
+            console.log(err);
+        });
+    }, []);
     // if(Server.hasAccess(user.rights, Server.RIGHTS.TASK))
     //     sections.push(
     //         <Box key="task" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
@@ -110,18 +122,19 @@ export default function Description({ user }) {
             border: 0,
             outline: 0,
             position: 'absolute',
+            textAlign: 'center',
         }}>
+            {banner != '' && <img src={banner} style={{ maxHeight : '200px', textAlign:'center'}}/>}
             <Typography variant="title" component="h2" sx={{
                 textAlign: 'center',
                 m: 2
             }}>
                 Welcome {user.username},<br />
             </Typography>
-            <Typography sx={{ mb: 1.5, textAlign: 'center' }} color="text.secondary">
-                Introducing a powerful tool that identifies articles in the English Wikipedia that are absent from your native language Wikipedia.
-                You can customize your selection criteria, and our tool will provide you with a table displaying the missing articles along with suggested titles.
-                You also have the option to download the list in both CSV and wikitables formats.
-                Explore the gap and enhance your language's Wikipedia with ease.
+            <Typography sx={{ mb: 1.5, textAlign: 'center', p:1 }} color="text.secondary">
+            Welcome to the Feminism and Folklore Writing Contest, an annual celebration of cultural diversity and gender inclusivity on Wikipedia.
+            This contest invites passionate contributors to embark on a journey of documenting local cultural events, folk-related activities, and the often overlooked but significant contributions of women.
+            As an integral part of the Wiki Loves Folklore (WLF) campaign, this project goes beyond the lens of photography, encouraging participants to craft compelling narratives through the creation and expansion of Wikipedia articles.
             </Typography>
             <hr />
 
