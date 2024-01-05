@@ -6,6 +6,7 @@ import SettingIcon from '@mui/icons-material/Settings';
 import PeopleIcon from '@mui/icons-material/People';
 import Server from "../Server";
 import { useEffect, useState } from "react";
+import CampaignList from "./Campaign";
 
 export default function Description({ user }) {
     const sections = [];
@@ -124,7 +125,7 @@ export default function Description({ user }) {
             position: 'absolute',
             textAlign: 'center',
         }}>
-            {banner != '' && <img src={banner} style={{ maxHeight : '200px', textAlign:'center'}}/>}
+            {banner != '' && <img src={banner} style={{ maxHeight : '150px', textAlign:'center'}}/>}
             <Typography variant="title" component="h2" sx={{
                 textAlign: 'center',
                 m: 2
@@ -138,7 +139,7 @@ export default function Description({ user }) {
             </Typography>
             <hr />
 
-            {sections}
+           <CampaignList />
             {/* <Footer /> */}
         </Paper>
     )
