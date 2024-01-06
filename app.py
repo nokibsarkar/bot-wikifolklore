@@ -42,6 +42,9 @@ async def home(request : Request):
         'stats' : stats,
         'login_url' : User.generate_login_url('/')
     })
+
+
+
 @app.get('/terms', response_class=responses.HTMLResponse)
 def terms(request : Request):
     # user = User.logged_in_user(request.cookies)
@@ -54,15 +57,26 @@ def privacy(request : Request):
     return app.templates.TemplateResponse("privacy.html", context= {
         'request' : request,
     })
+
+
+
 @app.get('/favicon.ico', response_class=responses.FileResponse)
 def favicon():
     return responses.FileResponse("static/favicon.ico")
+
+
+
 @app.get("/sitemap.xml", response_class=responses.FileResponse)
 def sitemap():
     return responses.FileResponse("static/sitemap.xml")
+
+
+
 @app.get("/robots.txt", response_class=responses.FileResponse)
 def robots():
     return responses.FileResponse("static/robots.txt")
+
+
 @app.get("/sitemap", response_class=responses.FileResponse)
 def sitemap():
     return responses.FileResponse("static/sitemap.xml")
@@ -71,12 +85,18 @@ def redirect_to(url, cookies : dict = {}):
     for key, value in cookies.items():
         response.set_cookie(key, value)
     return response
+
+
+
 @app.get("/user/callback", response_class=responses.RedirectResponse)
 def login(code : str, state : str = '/fnf'):
     cookie_name, cookie_value, redirect_uri = User.generate_access_token(code = code, state = state)
     return redirect_to(redirect_uri, {
         cookie_name : cookie_value
     })
+
+
+
 @app.route('/error')
 def error(request : Request, code : str = None):
     return app.templates.TemplateResponse("error.html", context= {
@@ -84,6 +104,15 @@ def error(request : Request, code : str = None):
         'code' : code,
         'error' : "Unknown Error"
     })
+
+@app.get('/login', response_class=responses.HTMLResponse)
+def login_prompt(request : Request, callback : str = '/'):
+    return app.templates.TemplateResponse("login.html", context= {
+        'request' : request,
+        'login_url' : User.generate_login_url(callback),
+        'callback' : callback
+    })
+
 @app.get('/manifest.json')
 def manifest():
     return responses.RedirectResponse("/static/manifest.json")
