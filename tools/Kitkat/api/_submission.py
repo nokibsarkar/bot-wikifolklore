@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Request, Query, HTTPException
+from fastapi import APIRouter, Request, Query, HTTPException, BackgroundTasks
 from ..models import *
-from pprint import pprint as print
+# from pprint import pprint as print
 submission_router = APIRouter(
     prefix="/submission",
     tags=["Submission"],
@@ -38,17 +38,19 @@ async def list_all_submissions(req : Request, campaignID: str, judgable : bool =
 
 
 @submission_router.post("/draft", response_model=ResponseSingle[DraftSubmissionScheme])
-async def create_draft(req : Request, draft_request : DraftCreateScheme):
+async def create_draft(req : Request, draft_request : DraftCreateScheme, background_tasks: BackgroundTasks):
     try:
         current_user = req.state.user
+
         campaign_id = draft_request.campaign_id
+
         with Server.get_parmanent_db() as conn:
             campaign = Campaign.update_status(conn, campaign_id)
             if not campaign:
                 raise HTTPException(status_code=400, detail="Campaign not found")
             statusError = None
             if campaign['status'] not in CampaignStatus.running.value:
-                pass
+                raise HTTPException(status_code=400, detail="Campaign is not running")
             if statusError:
                 raise HTTPException(status_code=400, detail=statusError)
             language : str = campaign['language'] # Language of the campaign
@@ -56,6 +58,13 @@ async def create_draft(req : Request, draft_request : DraftCreateScheme):
             # If the user is not in the database, add it, then get the user id
             users = User.get_username_map_guaranteed(conn, usernames, lang=language)
             submitted_by = users[draft_request.submitted_by_username]
+            if not campaign['allowJuryToParticipate']: # If jury is not allowed to participate in the campaign
+                # Check if the user is a jury
+                is_submitter_jury = Judgement.verify_judge(conn, campaign_id, submitted_by['id'])
+                if is_submitter_jury:
+                    # If the user is a jury, raise an error
+                    raise HTTPException(status_code=400, detail="Jury is not allowed to participate in the campaign")
+            
             errors, current_stat = Submission.fetch_stats(language, draft_request.title)
             if errors:
                 raise HTTPException(status_code=400, detail=errors)
@@ -76,12 +85,20 @@ async def create_draft(req : Request, draft_request : DraftCreateScheme):
                 added_words=current_stat['added_words'],
             )
             new_draft = Submission.create_draft(conn, new_draft)
-        Submission.async_calculate_addition(new_draft.id, language, current_stat['pageid'], campaign['start_at'], campaign['end_at'], submitted_by['username'])
+        async_calculation_params = {
+            'draft_id' : new_draft.id,
+            'lang' : language,
+            'pageid' : current_stat['pageid'],
+            'start_date' : campaign['start_at'],
+            'end_date' : campaign['end_at'],
+            'username' : submitted_by['username']
+        }
+        background_tasks.add_task(Submission.async_calculate_addition, **async_calculation_params)
         return ResponseSingle[DraftSubmissionScheme](success=True, data=new_draft)
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=f"Internal error: {e}")
     
 
 

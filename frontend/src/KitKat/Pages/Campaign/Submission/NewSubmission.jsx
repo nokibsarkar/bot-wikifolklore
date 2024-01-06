@@ -49,6 +49,7 @@ const ArticleSubmissionPage = () => {
         }).then(setCampaign);
     }, [campaignID]);
     const reset = useCallback(() => {
+        setError(null);
         setDraftID(null);
         setDraft(null);
         setPageInfo(null);
@@ -62,7 +63,7 @@ const ArticleSubmissionPage = () => {
         >
             Try Again
         </Button>
-    ), []);
+    ), [reset]);
     const createDraft = useCallback(async (article) => {
         setLoading(true);
         setArticle(article);
