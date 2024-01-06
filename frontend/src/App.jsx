@@ -36,7 +36,7 @@ Sentry.init({
     }
     // Check if it is an exception, and if so, show the report dialog
     if (event.exception) {
-      Sentry.showReportDialog({ eventId: event.event_id ,labelEmail: "Wikipedia Username", labelName: "Name", });
+      Sentry.showReportDialog({ eventId: event.event_id, labelEmail: "Wikipedia Username", labelName: "Name", });
     }
     return event;
 
@@ -62,6 +62,10 @@ Sentry.init({
   replaysSessionSampleRate: 0.005, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 0.005, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
 });
+const RedirectToLoginPage = ({ returnTo }) => {
+  const callback = window.location.pathname;
+  return <meta http-equiv="refresh" content={`0; url=/login/?return=${callback}`} />
+}
 const Routes = Sentry.withSentryReactRouterV6Routing(_Routes);
 function ToolSelector() {
   const url = new URL(window.location.href);
@@ -72,29 +76,26 @@ function ToolSelector() {
     case 'kitkat':
       return ['KitKat (development)', '/kitkat', KitKatRoutes]
     default:
-      return ['FnF', '', FnFRoutes ];
+      return ['FnF', '', FnFRoutes];
   }
 }
 
 const Tools = []
 function App() {
-  const [user, setUser] = React.useState(null);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const [toolName, toolPath, getRoutes] = ToolSelector();
-  React.useEffect(() => {
-    const decoded = Server.loginnedUser();
-    if (decoded) {
-      setUser(decoded);
-      Tools[0] = getRoutes(decoded);
-      // Tools[1] = KitKatRoutes(decoded);
-    } else {
-      console.log("Please login to continue")
-    }
-  }, []);
+  const user = Server.loginnedUser();
+  if (user) {
+    // setUser(decoded);
+    Tools[0] = getRoutes(user);
+    // Tools[1] = KitKatRoutes(decoded);
+  } else {
+    console.log("Please login to continue");
+    return <RedirectToLoginPage />
+  }
   const commonProps = {
     user,
-    setUser,
     toolName,
     toolPath,
     setOpen: setDrawerOpen,

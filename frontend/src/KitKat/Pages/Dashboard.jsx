@@ -68,53 +68,53 @@ export default function Description({ user }) {
     //         </Button>
     //     </Box>
     //     );
-    sections.push(
-        <Box key="campaign" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
-            <legend>Campaign Management</legend>
-            <Button variant="contained" color="primary" size="small" sx={{
-                padding: 1,
-                m: 1
-            }}
-                component={Link}
-                to="/kitkat/campaign/new"
-            >
-                <AddIcon /> &nbsp; Create New Campaign
-            </Button>
-            <Button variant="contained" color="secondary" size="small" sx={{
-                padding: 1,
-                m: 1
-            }}
-                component={Link}
-                to="/kitkat/campaign"
-            >
-                <ListIcon /> &nbsp; See All Campaigns
-            </Button>
-        </Box>
-    );
-    sections.push(
-        <Box key="user" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
-            <legend>User Management</legend>
-            <Button variant="contained" color="primary" size="small" sx={{
-                padding: 1,
-                m: 1
-            }}
-                component={Link}
-                to="/kitkat/setting"
-            >
-                <SettingIcon /> &nbsp; Settings
-            </Button>
-            {(Server.hasAccess(user.rights, Server.RIGHTS.STATS) || Server.hasAccess(user.rights, Server.RIGHTS.GRANT) ) && 
-            <Button variant="contained" color="secondary" size="small" sx={{
-                padding: 1,
-                m: 1
-            }}
-                component={Link}
-                to="/kitkat/user"
-            >
-                <PeopleIcon /> &nbsp; See All Users
-            </Button>}
-        </Box>
-    );
+    // sections.push(
+    //     <Box key="campaign" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
+    //         <legend>Campaign Management</legend>
+    //         <Button variant="contained" color="primary" size="small" sx={{
+    //             padding: 1,
+    //             m: 1
+    //         }}
+    //             component={Link}
+    //             to="/kitkat/campaign/new"
+    //         >
+    //             <AddIcon /> &nbsp; Create New Campaign
+    //         </Button>
+    //         <Button variant="contained" color="secondary" size="small" sx={{
+    //             padding: 1,
+    //             m: 1
+    //         }}
+    //             component={Link}
+    //             to="/kitkat/campaign"
+    //         >
+    //             <ListIcon /> &nbsp; See All Campaigns
+    //         </Button>
+    //     </Box>
+    // );
+    // sections.push(
+    //     <Box key="user" sx={{ display: 'flex', flexDirection: 'row', p: 1, alignItems: 'center', justifyContent: 'center' }} component="fieldset">
+    //         <legend>User Management</legend>
+    //         <Button variant="contained" color="primary" size="small" sx={{
+    //             padding: 1,
+    //             m: 1
+    //         }}
+    //             component={Link}
+    //             to="/kitkat/setting"
+    //         >
+    //             <SettingIcon /> &nbsp; Settings
+    //         </Button>
+    //         {(Server.hasAccess(user.rights, Server.RIGHTS.STATS) || Server.hasAccess(user.rights, Server.RIGHTS.GRANT) ) && 
+    //         <Button variant="contained" color="secondary" size="small" sx={{
+    //             padding: 1,
+    //             m: 1
+    //         }}
+    //             component={Link}
+    //             to="/kitkat/user"
+    //         >
+    //             <PeopleIcon /> &nbsp; See All Users
+    //         </Button>}
+    //     </Box>
+    // );
     return (
         <Paper sx={{
             height: "100%",
@@ -132,12 +132,11 @@ export default function Description({ user }) {
             }}>
                 Welcome {user?.username},<br />
             </Typography>
-            <Typography sx={{ mb: 1.5, textAlign: 'center', p:1 }} color="text.secondary">
+            <Typography sx={{ mb: 1, textAlign: 'center', p:1, pb:2, display:'block', overflow : 'hidden'}} color="text.secondary">
             Welcome to the Feminism and Folklore Writing Contest, an annual celebration of cultural diversity and gender inclusivity on Wikipedia.
             This contest invites passionate contributors to embark on a journey of documenting local cultural events, folk-related activities, and the often overlooked but significant contributions of women.
             As an integral part of the Wiki Loves Folklore (WLF) campaign, this project goes beyond the lens of photography, encouraging participants to craft compelling narratives through the creation and expansion of Wikipedia articles.
             </Typography>
-            <hr />
 
            <CampaignList />
             {/* <Footer /> */}
