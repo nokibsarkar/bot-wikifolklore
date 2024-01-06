@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to the Tool</title>
+    <link rel="stylesheet" href="static/index.css">
+</head>
+
+<body>
+    <div class="text-center p-5">
+        <p class="font-primary text-xl">
+            The page you were trying to use, is restricted to logged in users only.
+            Please, use any of the following methods to login.
+
+        </p>
+        <div class="flex justify-center mb-3 mt-3">
+            <a href="{{login_url}}"
+                class="p-2 w-max rounded bg-primary  text-white hover:bg-secondary  border-slate-400">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Wikipedia-w-white.svg" alt="" srcset=""
+                    class="w-6 inline-block">
+                Login with Wikipedia</a>
+        </div>
+        <div class="font-secondary text-lg">
+            Remember, you would be redirected to the following page after you login.
+            <pre class="font-bold font-mono bg-gray-400">{{callback}}</pre>
+
+            If you proceed to login, you are, legally, agreeing to our <a href="/terms">Terms of Service</a> and <a
+                href="/privacy">Privacy Policy</a>.
+            If you do not agree to these terms, please do not login and close this page.
+            Also, you can read our <a href="/faq">FAQ</a> for more information.
+        </div>
+    </div>
+</body>
+
+</html>
