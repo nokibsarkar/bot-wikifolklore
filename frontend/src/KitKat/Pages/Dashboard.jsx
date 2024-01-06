@@ -130,7 +130,7 @@ export default function Description({ user }) {
                 textAlign: 'center',
                 m: 2
             }}>
-                Welcome {user.username},<br />
+                Welcome {user?.username},<br />
             </Typography>
             <Typography sx={{ mb: 1.5, textAlign: 'center', p:1 }} color="text.secondary">
             Welcome to the Feminism and Folklore Writing Contest, an annual celebration of cultural diversity and gender inclusivity on Wikipedia.

@@ -17,10 +17,15 @@ const ListUser = lazy(() => import("./Pages/User/ListUser.jsx"));
 const EditUser = lazy(() => import("./Pages/User/EditUser.jsx"));
 const Statistics = lazy(() => import("./Pages/Statistics/index.jsx"));
 await KitKatServer.init();
+const RedirectToLoginPage = ({returnTo}) => {
+    return <meta http-equiv="refresh" content={`0; url=/login/?return=${returnTo}`} />
+}
 const KitKat = ({ user }) => {
     useEffect(() => {
         document.title = "KitKat"
     }, []);
+    if(!user)
+        return <RedirectToLoginPage returnTo={window.location.pathname} />
     const CampaignRoutes = (
         <Route path='campaign'>
             <Route path=":campaignID">
