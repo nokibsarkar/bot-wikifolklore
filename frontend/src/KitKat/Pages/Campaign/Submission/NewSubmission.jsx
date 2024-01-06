@@ -61,7 +61,7 @@ const ArticleSubmissionPage = () => {
             onClick={reset}
             sx={{m : 1}}
         >
-            Try Again
+            Submit Another
         </Button>
     ), [reset]);
     const createDraft = useCallback(async (article) => {
