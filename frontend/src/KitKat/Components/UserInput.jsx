@@ -35,7 +35,7 @@ export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', co
     return editing ? (
         <Box sx={{
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: { xs: 'column', sm: 'row' },
             alignItems: 'center',
             justifyContent: 'center',
             gap: '1px',
@@ -48,6 +48,7 @@ export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', co
         }}>
             <Typography variant='h5' sx={{ textAlign: 'center', m: 1, color: color }}>
                 {icon} {fieldName}</Typography>
+                <br/>
             <Autocomplete
                 freeSolo={false}
                 disablePortal
@@ -104,7 +105,6 @@ export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', co
             <Typography variant='h5' sx={{ textAlign: 'center', m: 1, color: color }}>
                 {icon} {fieldName}</Typography>
             <Chip sx={{ color: color }} label={user} />
-                
             <Button variant="contained" color="success" size="small" sx={{
                 m: 1
             }}
