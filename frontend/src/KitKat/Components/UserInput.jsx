@@ -46,7 +46,7 @@ export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', co
             color: color,
             maxWidth : '99%'
         }}>
-            <Typography variant='h5' sx={{ textAlign: 'center', m: 1, color: color }}>
+            <Typography variant='h6' sx={{ textAlign: 'center', m: 1, color: color }}>
                 {icon} {fieldName}</Typography>
                 <br/>
             <Autocomplete
@@ -102,7 +102,7 @@ export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', co
             backgroundColor: backgroundColor,
             color: color
         }}>
-            <Typography variant='h5' sx={{ textAlign: 'center', m: 1, color: color }}>
+            <Typography variant='h6' sx={{ textAlign: 'center', m: 1, color: color }}>
                 {icon} {fieldName}</Typography>
             <Chip sx={{ color: color }} label={user} />
             <Button variant="contained" color="success" size="small" sx={{
