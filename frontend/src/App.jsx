@@ -62,9 +62,9 @@ Sentry.init({
   replaysSessionSampleRate: 0.005, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 0.005, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
 });
-const RedirectToLoginPage = ({ returnTo }) => {
+const RedirectToLoginPage = () => {
   const callback = window.location.pathname;
-  return <meta http-equiv="refresh" content={`0; url=/login/?return=${callback}`} />
+  return <meta http-equiv="refresh" content={`0; url=/login/?callback=${callback}`} />
 }
 const Routes = Sentry.withSentryReactRouterV6Routing(_Routes);
 function ToolSelector() {
