@@ -8,7 +8,7 @@ const columns = [
     { field: 'total_newly_created', headerName: 'Created', minWidth: 100, flex: 1 },
     { field: 'total_expanded', headerName: 'Expanded', minWidth: 100, flex: 1 },
     // { field: 'total_negative_votes', headerName: 'Negative Votes', minWidth: 100, flex: 1 },
-    { field: 'total_points', headerName: 'Points', minWidth: 100, flex: 1 },
+    { field: 'total_points', headerName: 'Points', minWidth: 100, flex: 1 , renderCell: (params) => params.value / 10 },
 ];
 
 const CampaignResults = ({ campaign }) => {
