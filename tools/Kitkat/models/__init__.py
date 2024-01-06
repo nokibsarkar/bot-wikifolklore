@@ -390,7 +390,6 @@ class Submission:
                 added_word, added_bytes = calculate_addition(lang, pageid, start_date, end_date, username, title=draft['title'])
                 if added_word < campaign_minimum_added_words or added_bytes < campaign_minimum_added_bytes:
                     params['passed'] = False
-                
             else:
                 added_word, added_bytes = 0, 0
                 minimum_total_words = campaign['minimumTotalWords']

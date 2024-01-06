@@ -100,14 +100,11 @@ def _calculate_initial_difference(lang : str, revision_id : int) -> tuple[int, i
     }
     res = BaseServer.get(lang=lang, params=params)
     assert 'compare' in res, "Compare not found"
-    assert 'diffsize' in res['compare'], "Diffsize not found"
-    added_bytes = res['compare']['diffsize']
     difference = res['compare']['body']
     difference = UNIFIED_HEADER.sub("", difference)
     lines = _split_into_lines(difference)
     added_words = _calculate_added_words(lines)
-    print("From initial", added_words, added_bytes)
-    return added_words, added_bytes
+    return added_words
     
    
 def calculate_addition(lang: str, pageid : int , start_date : str, end_date : str, username : str, title : str) -> tuple[int, int]:
@@ -116,7 +113,6 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
     """
     start_date = dp.parse(start_date)
     end_date = dp.parse(end_date)
-    print("Calculating addition", lang, pageid, start_date, end_date, username, title)
     added_bytes = get_byte_added(lang, username, title, start_date, end_date)
 
 
@@ -146,7 +142,7 @@ def calculate_addition(lang: str, pageid : int , start_date : str, end_date : st
     revisions = page['revisions']
     assert len(revisions) > 0, "No revisions found"
     initial_revision = revisions[0]
-    added_words, added_bytes = _calculate_initial_difference(lang, initial_revision['revid'])
+    added_words= _calculate_initial_difference(lang, initial_revision['revid'])
     previous_content = initial_revision['slots']['main']['content']
     for revision in revisions[1:]:
         content = revision['slots']['main']['content']
