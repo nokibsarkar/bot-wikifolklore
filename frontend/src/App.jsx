@@ -63,7 +63,7 @@ Sentry.init({
   replaysOnErrorSampleRate: 0.005, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
 });
 const RedirectToLoginPage = () => {
-  const callback = window.location.toString();
+  const callback = encodeURIComponent(window.location.href);
   return <meta http-equiv="refresh" content={`0; url=/login/?callback=${callback}`} />
 }
 const Routes = Sentry.withSentryReactRouterV6Routing(_Routes);
