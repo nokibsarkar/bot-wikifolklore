@@ -77,7 +77,7 @@ const SubmissionList = () => {
                     // }}> {params.value}
                     //     ({scores})
                     // </span>
-                    return params.value
+                    return params.value / 10;
                 },
                 minWidth: 130, disableColumnMenu: true
             },
