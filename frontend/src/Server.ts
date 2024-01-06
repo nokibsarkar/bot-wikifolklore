@@ -108,7 +108,7 @@ class BaseServer {
         deleteCookie(AUTH_COOKIE_NAME);
         localStorage.removeItem(LANGUAGE_KEY);
         localStorage.removeItem(COUNTRY_KEY);
-        document.location.href = "/";
+        document.location.href = "/login/?callback=" + encodeURIComponent(document.location.href);
 
     }
 }
