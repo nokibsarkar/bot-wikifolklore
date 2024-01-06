@@ -337,6 +337,15 @@ type LanguageObject = {
     [key: string]: string;
 } | null;
 
+type StatTask = {
+    data : any;
+    title? : string;
+    color? : string;
+}
+type Statistics = {
+    tasks? : StatTask[]
+}
+
 class KitKatServer {
     static BaseServer = BaseServer;
     static Wiki = Wiki;
@@ -402,6 +411,18 @@ class KitKatServer {
         script.id = id;
         script.src = url;
         document.head.appendChild(script);
+    };
+    async getStats(type : string, params : any = {}) : Promise<Statistics> {
+        
+        const Statistics : Statistics = {
+            tasks : [
+                {
+                    data : [],
+                    title : '2023'
+                }
+            ]
+        }
+        return Statistics;
     }
     async init() {
         await BaseServer.init()
