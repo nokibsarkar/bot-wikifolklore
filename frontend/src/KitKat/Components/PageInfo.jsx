@@ -99,9 +99,11 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
     const fetchDraft = useCallback(async (draftId) => {
         const draft = await KitKatServer.Page.getDraft(draftId);
         if(!draft.calculated){
+            console.log("Not done yet")
             setTimeout(() => fetchDraft(draftId), 1000);
         } else {
             setInfo(draft);
+            console.log("Done");
         }
     });
     const fetchSubmission = useCallback(async (submissionId) => {
@@ -112,11 +114,13 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
     useEffect(() => {
         if (!submission) {
             if(draftId){
+                console.log("Fetching draft");
                 fetchDraft(draftId);
             } else if(submissionId){
                 fetchSubmission(submissionId);
             }
         } else {
+            submission.calculated = true;
             setInfo(submission);
         }
 
