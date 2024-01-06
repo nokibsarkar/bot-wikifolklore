@@ -56,6 +56,13 @@ async def create_draft(req : Request, draft_request : DraftCreateScheme):
             # If the user is not in the database, add it, then get the user id
             users = User.get_username_map_guaranteed(conn, usernames, lang=language)
             submitted_by = users[draft_request.submitted_by_username]
+            if not campaign['allowJuryToParticipate']: # If jury is not allowed to participate in the campaign
+                # Check if the user is a jury
+                is_submitter_jury = Judgement.verify_judge(conn, campaign_id, submitted_by['id'])
+                if is_submitter_jury:
+                    # If the user is a jury, raise an error
+                    raise HTTPException(status_code=400, detail="Jury is not allowed to participate in the campaign")
+            
             errors, current_stat = Submission.fetch_stats(language, draft_request.title)
             if errors:
                 raise HTTPException(status_code=400, detail=errors)
