@@ -28,8 +28,8 @@ const ArticleSubmissionSuccess = ({ campaignID, resetButton }) => {
 
     </div>
 }
-const SubmitterInput = ({ setSubmitter, submitter }) => {
-    return <UserInput fieldName="Submit on Behalf of" onChange={setSubmitter} user={submitter} />
+const SubmitterInput = ({ setSubmitter, submitter, language }) => {
+    return <UserInput fieldName="Submit on Behalf of" onChange={setSubmitter} user={submitter} language={language} />
 }
 const ArticleSubmissionPage = () => {
     const { campaignID } = useParams();
@@ -127,7 +127,7 @@ const ArticleSubmissionPage = () => {
             (
                 articleSubmitted ? <ArticleSubmissionSuccess campaignID={campaignID} resetButton={resetButton}/> :
                     <>
-                        {(campaign.am_i_judge)  && <SubmitterInput setSubmitter={setSubmitter} submitter={submitter} />}
+                        {(campaign.am_i_judge)  && <SubmitterInput setSubmitter={setSubmitter} submitter={submitter} language={campaign.language} />}
             
                         {!article && <ArticleInput language={campaign?.language} onNewArticle={createDraft} submitButtonLabel="Check" />}
                         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
