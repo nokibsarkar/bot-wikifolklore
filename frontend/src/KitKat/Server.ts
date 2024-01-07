@@ -145,7 +145,9 @@ class Wiki {
                 Wiki.frequentRequestQueued = false;
             }, Wiki.requestInterval);
             const response = await fetch(url).then(res => res.json());
-            return response.query.prefixsearch.map((entry: any) => entry.title);
+            return response.query.prefixsearch
+            .filter((entry: any) => namespace === "*" || entry.ns == namespace)
+            .map((entry: any) => entry.title);
         }
         return []
     }
