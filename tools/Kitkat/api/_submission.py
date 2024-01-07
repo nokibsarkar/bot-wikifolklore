@@ -40,8 +40,7 @@ async def list_all_submissions(req : Request, campaignID: str, judgable : bool =
 @submission_router.post("/draft", response_model=ResponseSingle[DraftSubmissionScheme])
 async def create_draft(req : Request, draft_request : DraftCreateScheme, background_tasks: BackgroundTasks):
     try:
-        current_user = req.state.user
-
+        
         campaign_id = draft_request.campaign_id
 
         with Server.get_parmanent_db() as conn:
@@ -161,6 +160,10 @@ async def create_submission(req: Request, submission: SubmissionCreateScheme):
             )
             newSubmission = Submission.submit(conn, draft)
         return ResponseSingle[SubmissionScheme](success=True, data=newSubmission)
+    except sqlite3.IntegrityError as e:
+        if "UNIQUE constraint failed" in str(e):
+            raise HTTPException(status_code=400, detail="Already submitted by another user")
+        raise HTTPException(status_code=400, detail=str(e))
     except HTTPException as e:
         raise e
     except Exception as e:
