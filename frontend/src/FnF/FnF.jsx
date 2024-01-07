@@ -123,7 +123,7 @@ const FnFTaskRoutes = {
 };
 export const FnFRoutes = (user) => {
     const routes = {
-        name: 'FnF',
+        name: 'FnF (beta)',
         icon: null,
         path: '/fnf',
         children: [
