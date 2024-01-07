@@ -13,6 +13,7 @@ META_OAUTH_ACCESS_TOKEN_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/acce
 META_PROFILE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/resource/profile'
 URL = "https://en.wikipedia.org/w/api.php"
 TG_BOT_AUTH_TOKEN = os.environ.get('TG_BOT_TOKEN')
+TG_GROUP_CHAT_ID = -4006740813
 WIKIPEDIA_ENDPOINT_FORMAT = "https://{lang}.wikipedia.org/w/api.php"
 #---------------------------- LOADED the constants ----------------------------
 VERSION = "1.0.0"
