@@ -120,7 +120,10 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                                 name: user?.username,
                                 email: user?.email
                             }
-                        })}>
+                        })}
+                        component={Link} to='https://github.com/nokibsarkar/bot-wikifolklore/issues'
+                        target='_blank'
+                        >
                             <ListItemIcon>
                                 <BugIcon />
                             </ListItemIcon>
