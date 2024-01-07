@@ -120,8 +120,7 @@ class FnF {
         for (let cat of categories) {
             console.info("Adding subcategories for", cat.title)
             const url = new URL("api/subcat/" + cat.title, FnF.baseURL);
-            const response = await fetchWithErrorHandling(url.toString());
-            const data: APIResponseMultiple<Category> = await response.json();
+            const data: APIResponseMultiple<Category> = await fetchWithErrorHandling(url.toString());
             subcats = subcats.concat(data.data);
             cat.subcat = false;
         }
@@ -129,8 +128,8 @@ class FnF {
     }
     static async getCategories({country, topic} : {country : Country, topic : string}){
         const url = new URL(`api/topic/${topic.split("/")[0]}/${country}/categories`, FnF.baseURL);
-        const response = await fetchWithErrorHandling(url.toString())
-        const responseData: APIResponseMultiple<Category> = await response.json();
+        
+        const responseData: APIResponseMultiple<Category> = await fetchWithErrorHandling(url.toString());
         if (responseData.success) {
             return responseData.data
         } else {
@@ -141,14 +140,13 @@ class FnF {
     static async submitTask(data : TaskCreate) {
         // Submit the task
         const url = new URL("api/task", FnF.baseURL);
-        const response = await fetchWithErrorHandling(url.toString(), {
+        const responseData: APIResponseSingle<Task> = await fetchWithErrorHandling(url.toString(), {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json"
             },
         });
-        const responseData: APIResponseSingle<Task> = await response.json();
         if (responseData.success) {
             return responseData.data;
         } else {
@@ -159,8 +157,8 @@ class FnF {
     }
     static async fetchCountries(topic : string){
         const url = new URL("api/topic/" + topic + "/country", FnF.baseURL);
-        const response = await fetchWithErrorHandling(url.toString())
-        const responseData: APIResponseMultiple<CountryEntry> = await response.json();
+        const responseData: APIResponseMultiple<CountryEntry> = await fetchWithErrorHandling(url.toString())
+        
         if (responseData.success) {
             const rawData = responseData.data;
             const countries = rawData.map((country) => {
@@ -177,16 +175,15 @@ class FnF {
     }
     static async exportResult(taskID : Number, format: TaskResultFormat = "json") {
         const url = new URL(`api/task/${taskID}/export/` + format, FnF.baseURL);
-        const response = await fetchWithErrorHandling(url.toString())
-        const data : APIResponseSingle<TaskResult> = await response.json();
+        const data : APIResponseSingle<TaskResult> = await fetchWithErrorHandling(url.toString());
         
         return data.data;
     }
     static async getTask(taskID: number) {
         const url = new URL("api/task/" + taskID, FnF.baseURL);
         // console.log(taskID)
-        const response = await fetchWithErrorHandling(url.toString())
-        const responseData: APIResponseSingle<Task> = await response.json();
+        const responseData: APIResponseSingle<Task> = await fetchWithErrorHandling(url.toString())
+        
         if (responseData.success) {
             return responseData.data;
         } else {
@@ -197,8 +194,8 @@ class FnF {
     static async getTasks() {
         const url = new URL("api/task", FnF.baseURL);
         // console.log(taskID)
-        const response = await fetchWithErrorHandling(url.toString())
-        const responseData: APIResponseMultiple<Task> = await response.json();
+        const responseData: APIResponseMultiple<Task> = await fetchWithErrorHandling(url.toString())
+        
         if (responseData.success) {
             return responseData.data;
         } else {
@@ -209,8 +206,8 @@ class FnF {
     static async getMe(){
         const url = new URL("api/user/me", FnF.baseURL);
         // console.log(taskID)
-        const response = await fetchWithErrorHandling(url.toString())
-        const responseData: APIResponseSingle<User> = await response.json();
+        const responseData: APIResponseSingle<User> = await fetchWithErrorHandling(url.toString())
+        
         if (responseData.success) {
             return responseData.data;
         } else {
@@ -241,8 +238,8 @@ class FnF {
                 "origin": "*"
             })
             url.search = params.toString();
-            const response = await fetchWithErrorHandling(url.toString())
-            const data = await response.json();
+            const data = await fetchWithErrorHandling(url.toString())
+            
             const categories = data.query.prefixsearch.map((cat : any) => {
                 return {
                     id : cat.pageid,
