@@ -129,11 +129,27 @@ async def get_submission(submission_id: int):
         return ResponseSingle[SubmissionScheme](success=True, data=result)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
+@submission_router.delete("/{submission_id}", response_model=ResponseSingle[SubmissionScheme])
+async def delete_submission(submission_id: int):
+    try:
+        with Server.get_parmanent_db() as conn:
+            submission = Submission.get_by_id(conn.cursor(), submission_id)
+            if not submission:
+                raise Exception("Submission not found")
+            campaign = Campaign.update_status(conn, submission['campaign_id'])
+            if campaign['status'] != CampaignStatus.running.value:
+                raise HTTPException(status_code=400, detail="Only running campaigns can be deleted")
+            Submission.delete(conn, submission_id)
+        return ResponseSingle[SubmissionScheme](success=True, data=SubmissionScheme(**submission))
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 
 
-@submission_router.post("/", response_model=ResponseSingle[SubmissionScheme])
+@submission_router.post("/", response_model=ResponseSingle[SubmissionScheme])  
 async def create_submission(req: Request, submission: SubmissionCreateScheme):
     try:
         with Server.get_parmanent_db() as conn:

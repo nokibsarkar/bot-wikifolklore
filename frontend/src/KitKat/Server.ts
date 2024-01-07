@@ -246,6 +246,13 @@ class CampaignServer {
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
+    static async deleteSubmission(submissionID: number): Promise<Submission> {
+        const url = '/api/kitkat/submission/' + submissionID;
+        const res = await fetchWithErrorHandling(url, {
+            method: 'DELETE'
+        })
+        return res.data;
+    }
 }
 class PageServer {
     static async getPageInfo({ language, submitted_by_username, title, submissionId }: PageInfoRequest): Promise<PageInfo> {

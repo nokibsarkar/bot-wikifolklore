@@ -200,6 +200,8 @@ class Campaign:
     @staticmethod
     def update_status(conn : sqlite3.Cursor, id : str, check_all_judged = False) -> CampaignScheme:
         campaign = Campaign._get_by_id(conn, id)
+        if campaign is None:
+            raise Exception("Campaign not found")
         now = datetime.utcnow()
         status = campaign['status']
         start_date = dp.parse(campaign['start_at'])
@@ -401,7 +403,11 @@ class Submission:
             params['added_words'] = added_word
             params['added_bytes'] = added_bytes
             conn.execute(SQL1_UPDATE_DRAFT_CALCULATION, params)
-            
+    @staticmethod
+    def delete(conn : sqlite3.Cursor, id : str):
+        conn.execute(SQL1_DELETE_SUBMISSION_BY_ID, {'id': id})
+        
+
 
     @staticmethod
     def get_all_by_campaign_id(conn : sqlite3.Cursor, campaign_id, judgable : bool=None, exclude_judged_user_id : int = None, only_judged_by : int = None):
@@ -476,5 +482,6 @@ class Judgement:
         return SubmissionScheme(**updated_submission)
     @staticmethod
     def verify_judge(conn: sqlite3.Cursor, campaign_id : str, user_id : int):
-        return conn.execute(SQL1_VERIFY_JUDGE, {'campaign_id': campaign_id, 'user_id': user_id}).fetchone()
+        v = conn.execute(SQL1_VERIFY_JUDGE, {'campaign_id': campaign_id, 'user_id': user_id}).fetchone()
+        return bool(v and v['allowed'])
     

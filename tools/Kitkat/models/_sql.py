@@ -210,7 +210,7 @@ UPDATE `submission` SET
 WHERE `id` = :id
 RETURNING *
 """
-SQL1_VERIFY_JUDGE = "SELECT * FROM `jury` WHERE `user_id` = :user_id AND `campaign_id` = :campaign_id LIMIT 1"
+SQL1_VERIFY_JUDGE = "SELECT `allowed` FROM `jury` WHERE `user_id` = :user_id AND `campaign_id` = :campaign_id LIMIT 1"
 SQL1_UPDATE_CAMPAIGN_STATUS = "UPDATE `campaign` SET `status` = :status WHERE `id` = :id RETURNING *"
 SQL1_UPDATE_DRAFT_CALCULATION = """
 UPDATE `draft` SET
@@ -255,3 +255,4 @@ WHERE
             `jury_vote`.`campaign_id` = :campaign_id
     )
 """
+SQL1_DELETE_SUBMISSION_BY_ID = "DELETE FROM `submission` WHERE `id` = :id"

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import KitKatServer from "../../../Server";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import { DataGrid } from "@mui/x-data-grid";
 import JudgeIcon from '@mui/icons-material/HowToVote';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { AllButton, DetailsButton, SubmitButton } from "../../../Components/CampaignButtons";
@@ -39,6 +40,10 @@ const SubmissionList = () => {
             setLoading(false);
         })()
     }, [campaignID, judgedByMe]);
+    const deleteSubmission = useCallback(async (submissionID) => {
+        await KitKatServer.Campaign.deleteSubmission(campaignID, submissionID);
+        setSubmissions(submissions.filter(submission => submission.id != submissionID));
+    }, [campaignID, submissions]);
     const columns = useMemo(() => {
         const columns = [
             { field: 'title', headerName: 'Title', flex: 1, minWidth: 200 },
@@ -88,7 +93,7 @@ const SubmissionList = () => {
                 {
                     field: 'action', headerName: 'Evaluate', renderCell: (params) => {
                         const url = `/kitkat/campaign/${campaignID}/submission/${params.row.id}`
-                        return <Button variant="contained" color="primary" size="small"
+                        return <><Button variant="contained" color="primary" size="small"
                             component={Link}
                             to={url}
                             target="_self"
@@ -96,6 +101,10 @@ const SubmissionList = () => {
                         >
                             <JudgeIcon fontSize='small' />
                         </Button>
+                        <Button variant="contained" color="error" size="small" onClick={() => deleteSubmission(params.row.id)}>
+                            <DeleteIcon fontSize='small' />
+                        </Button>
+                        </>
                     }
                 }
             )

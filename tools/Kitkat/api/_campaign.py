@@ -41,7 +41,6 @@ async def get_campaign(req : Request, campaign_id: int, check_judge : bool = Fal
             
             return ResponseSingle[CampaignScheme](success=True, data=result)
     except Exception as e:
-        
         raise HTTPException(status_code=404, detail=str(e))
 #------------------------------------------------------------------------------
 
