@@ -5,6 +5,7 @@ import ListIcon from '@mui/icons-material/List';
 import SettingIcon from '@mui/icons-material/Settings';
 import PeopleIcon from '@mui/icons-material/People';
 import Server from "../Server";
+import Footer from "../../Layout/Footer";
 import { useEffect, useState } from "react";
 import CampaignList from "./Campaign";
 
@@ -139,7 +140,7 @@ export default function Description({ user }) {
             </Typography>
 
            <CampaignList />
-            {/* <Footer /> */}
+            <Footer />
         </Paper>
     )
 }
