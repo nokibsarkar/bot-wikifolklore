@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import EditableCampaign from "./EditableCampaign"
 import { useParams } from "react-router";
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 import { CircularProgress } from "@mui/material";
 
 const CampaignEdit = () => {
@@ -14,8 +14,8 @@ const CampaignEdit = () => {
         (async () => {
             setLoading(true);
             try {
-                const campaign = await KitKatServer.Campaign.getCampaign(campaignID);
-                const jury = await KitKatServer.Campaign.getJury(campaignID);
+                const campaign = await CampWizServer.Campaign.getCampaign(campaignID);
+                const jury = await CampWizServer.Campaign.getJury(campaignID);
                 campaign.jury = jury;
                 setCampaign(campaign);
                 setError(null);
@@ -32,7 +32,7 @@ const CampaignEdit = () => {
         (async () => {
             setLoading(true);
             try {
-                await KitKatServer.Campaign.updateCampaign(campaign);
+                await CampWizServer.Campaign.updateCampaign(campaign);
                 setError(null);
             } catch (e) {
                 console.error(e);

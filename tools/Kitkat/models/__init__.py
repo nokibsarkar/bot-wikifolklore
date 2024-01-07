@@ -20,7 +20,7 @@ def notify_users(campaign_id : int, campaign_name : str, campaign_language : str
     Campaign Creator: {campaign_creator}
 
 
-    Click here to approve or reject the campaign: https://tools.wikilovesfolklore.org/kitkat/campaign/{campaign_id}/edit
+    Click here to approve or reject the campaign: https://tools.wikilovesfolklore.org/campwiz/campaign/{campaign_id}/edit
     """
     print(text)
     params = {

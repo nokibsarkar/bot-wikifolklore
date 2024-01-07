@@ -2,11 +2,11 @@ import { Route, Routes } from "react-router";
 import { lazy, useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Autocomplete, Box, Button, TextField, Typography } from "@mui/material";
-import KitKatServer from "../../Server";
+import CampWizServer from "../../Server";
 import SearchIcon from '@mui/icons-material/Search';
 import { Link } from "react-router-dom";
 import { CreateButton } from "../../Components/CampaignButtons";
-const wiki = KitKatServer.getWikiList();
+const wiki = CampWizServer.getWikiList();
 const CampaignFilter = ({ filter, setFilter }) => {
     const [language, setLanguage] = useState(filter.language)
     const [status, setStatus] = useState(filter.status);
@@ -88,7 +88,7 @@ const CampaignList = () => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const campaigns = await KitKatServer.Campaign.getCampaigns(filter);
+            const campaigns = await CampWizServer.Campaign.getCampaigns(filter);
             setCampaigns(campaigns);
             setLoading(false);
         })();
@@ -108,7 +108,7 @@ const CampaignList = () => {
                 columns={[
                     {
                         field: 'name', headerName: 'Name', flex: 1, minWidth: 300, renderCell: (params) => {
-                            return <Link to={`/kitkat/campaign/${params.row.id}`} style={{ textDecoration: 'none' }}>{params.value}</Link>
+                            return <Link to={`/campwiz/campaign/${params.row.id}`} style={{ textDecoration: 'none' }}>{params.value}</Link>
                         }
                     },
                     { headerAlign: 'center', field: 'language', headerName: 'Language', minWidth: 100, hideSortIcons: true, flex: 1 },
@@ -129,7 +129,7 @@ const CampaignList = () => {
                     //                 m: 1
                     //             }}
                     //                 component={Link}
-                    //                 to={`/kitkat/campaign/${params.row.id}/submission/new`}
+                    //                 to={`/campwiz/campaign/${params.row.id}/submission/new`}
                     //             >
                     //                 <AddIcon />
                     //             </Button>
@@ -138,7 +138,7 @@ const CampaignList = () => {
                     //                 m: 1
                     //             }}
                     //                 component={Link}
-                    //                 to={`/kitkat/campaign/${params.row.id}/submission`}
+                    //                 to={`/campwiz/campaign/${params.row.id}/submission`}
                     //             >
                     //                 <GavelIcon />
                     //             </Button>
@@ -147,7 +147,7 @@ const CampaignList = () => {
                     //                 m: 1
                     //             }}
                     //                 component={Link}
-                    //                 to={`/kitkat/campaign/${params.row.id}`}
+                    //                 to={`/campwiz/campaign/${params.row.id}`}
                     //             >
                     //                 <CampaignIcon />
                     //             </Button>

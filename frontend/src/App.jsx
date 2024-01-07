@@ -20,10 +20,10 @@ import {
 } from "react-router-dom";
 import theme from './Layout/theme';
 import { FnFRoutes } from './FnF/FnF.jsx';
-import { KitKatRoutes } from './KitKat/KitKat.jsx';
+import { CampWizRoutes } from './CampWiz/CampWiz.jsx';
 import UserfeedBackForm from './UserfeedBackForm.jsx';
 const FnF = React.lazy(() => import('./FnF/FnF.jsx'));
-const KitKat = React.lazy(() => import('./KitKat/KitKat.jsx'));
+const CampWiz = React.lazy(() => import('./CampWiz/CampWiz.jsx'));
 const dsn = "https://d5f72a7651486fb43aef6fded21f5385@o249367.ingest.sentry.io/4506264792727552";
 Server.init();
 Sentry.init({
@@ -73,8 +73,8 @@ function ToolSelector() {
   switch (tool) {
     case 'fnf':
       return ['FnF (beta)', '/fnf', FnFRoutes]
-    case 'kitkat':
-      return ['KitKat (development)', '/kitkat', KitKatRoutes]
+    case 'campwiz':
+      return ['CampWiz (development)', '/campwiz', CampWizRoutes]
     default:
       return ['FnF (beta)', '', FnFRoutes];
   }
@@ -89,7 +89,7 @@ function App() {
   if (user) {
     // setUser(decoded);
     Tools[0] = getRoutes(user);
-    // Tools[1] = KitKatRoutes(decoded);
+    // Tools[1] = CampWizRoutes(decoded);
   } else {
     console.log("Please login to continue");
     return <RedirectToLoginPage />
@@ -111,7 +111,7 @@ function App() {
           <React.Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/fnf/*" element={<FnF {...commonProps} />} title="FnF" />
-              <Route path="/kitkat/*" element={<KitKat {...commonProps} />} />
+              <Route path="/campwiz/*" element={<CampWiz {...commonProps} />} />
             </Routes>
           </React.Suspense>
         </BrowserRouter>

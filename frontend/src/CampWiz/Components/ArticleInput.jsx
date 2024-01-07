@@ -2,14 +2,14 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import KitKatServer from '../Server';
+import CampWizServer from '../Server';
 import { useState, useEffect } from 'react';
 const ArticleInput = ({ onNewArticle, language , submitButtonLabel = 'Submit'}) => {
     const [articles, setArticles] = useState([]); // [ { id, name } ]
     const [articleName, setArticleName] = useState('');
     const [prefix, setPrefix] = useState('');
     useEffect(() => {
-        KitKatServer.Wiki.suggestArticles(language, prefix, "0").then(setArticles);
+        CampWizServer.Wiki.suggestArticles(language, prefix, "0").then(setArticles);
     }, [prefix, language]);
     return <Box sx={{
         flex: 1,

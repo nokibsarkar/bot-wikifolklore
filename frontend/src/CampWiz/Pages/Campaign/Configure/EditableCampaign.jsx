@@ -10,7 +10,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ErrorPage from "../../../Components/ErrorPage";
 import LoadingPage from "../../../../Layout/Loader";
 import {DetailsButton} from "../../../Components/CampaignButtons";
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 const defaultCampaign = {
     name: '',
     description : null,
@@ -20,7 +20,7 @@ const defaultCampaign = {
         'All Participants must be registered in Wikipedia',
     ],
     jury: [
-        KitKatServer.BaseServer.loginnedUser().username
+        CampWizServer.BaseServer.loginnedUser().username
     ],
     start_at: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     end_at: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],

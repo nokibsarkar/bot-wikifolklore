@@ -5,7 +5,7 @@ import logging
 from _api import *
 from schema import *
 from models import *
-from tools.Kitkat import kitkat_router
+from tools.Kitkat import campwiz_router
 api = APIRouter(prefix="/api", dependencies=[Depends(authenticate)], tags=['api'])
 
 user_router = APIRouter(prefix="/user", tags=['user'])
@@ -353,6 +353,6 @@ def get_stats(req : Request):
 # ------------------------------------ Fetch Public Stats ------------------------------------
 
 
-api.include_router(kitkat_router)
+api.include_router(campwiz_router)
 api.include_router(user_router)
 api.include_router(topic_router)

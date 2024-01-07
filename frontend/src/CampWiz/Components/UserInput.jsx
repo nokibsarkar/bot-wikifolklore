@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import TextField from '@mui/material/TextField';
-import KitKatServer from "../Server";
+import CampWizServer from "../Server";
 export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', color = 'black', backgroundColor = 'rules.main' }) => {
     const [value, setValue] = useState('');
     const [suggestedUsers, setSuggestedUsers] = useState([]);
@@ -18,7 +18,7 @@ export const UserInput = ({ user, onChange, fieldName, icon, language = 'bn', co
                 return;
             setLoading(true);
             try {
-                await KitKatServer.User.searchUsersByPrefix(language, value, users => {
+                await CampWizServer.User.searchUsersByPrefix(language, value, users => {
                     const mappedUsers = users.map(u => ({
                         id: u.name,
                         label: u.name
@@ -128,7 +128,7 @@ const UserInputMultiple = ({ users, onChange, fieldName, icon, language = 'bn', 
                 return;
             setLoading(true);
             try {
-                await KitKatServer.User.searchUsersByPrefix(language, value, users => {
+                await CampWizServer.User.searchUsersByPrefix(language, value, users => {
                     const mappedUsers = users.map(u => ({
                         id: u.name,
                         label: u.name

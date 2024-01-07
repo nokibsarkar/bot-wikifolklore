@@ -14,7 +14,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Divider from '@mui/material/Divider';
 import DownloadIcon from '@mui/icons-material/Download';
 import Box from '@mui/material/Box';
-import KitKatServer from "../../Server.ts";
+import CampWizServer from "../../Server.ts";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -29,11 +29,11 @@ const columns = [
     { field: 'rights', headerName: 'Rights', flex : 1, renderCell: (params) => {
         const rights = params.value;
         const chips = [];
-        if (KitKatServer.BaseServer.hasAccess(rights, KitKatServer.BaseServer.RIGHTS.GRANT))
+        if (CampWizServer.BaseServer.hasAccess(rights, CampWizServer.BaseServer.RIGHTS.GRANT))
             chips.push(<Chip label="G" color="error" key="grant" size='small' />);
-        if (KitKatServer.BaseServer.hasAccess(rights, KitKatServer.BaseServer.RIGHTS.STATS))
+        if (CampWizServer.BaseServer.hasAccess(rights, CampWizServer.BaseServer.RIGHTS.STATS))
             chips.push(<Chip label="S" color="success" key="stats" size='small'/>);
-        if (KitKatServer.BaseServer.hasAccess(rights, KitKatServer.BaseServer.RIGHTS.CAMPAIGN))
+        if (CampWizServer.BaseServer.hasAccess(rights, CampWizServer.BaseServer.RIGHTS.CAMPAIGN))
             chips.push(<Chip label="C" color="success" key="topic" size='small'/>);
         return <div>{chips}</div>
     }, minWidth: 130},
@@ -42,11 +42,11 @@ const columns = [
 ];
 const ListUser = ({ user }) => {
     const [users, setUsers] = useState([]);
-    const hasStatAccess = KitKatServer.hasAccess(user.rights, KitKatServer.RIGHTS.STATS);
-    const hasGrantAccess = KitKatServer.hasAccess(user.rights, KitKatServer.RIGHTS.GRANT);
+    const hasStatAccess = CampWizServer.hasAccess(user.rights, CampWizServer.RIGHTS.STATS);
+    const hasGrantAccess = CampWizServer.hasAccess(user.rights, CampWizServer.RIGHTS.GRANT);
     const hasAccess = hasStatAccess || hasGrantAccess;
     useState(() => {
-        KitKatServer.User.getUsers().then(users => {
+        CampWizServer.User.getUsers().then(users => {
             setUsers(users)
         })
     }, [])
@@ -57,7 +57,7 @@ const ListUser = ({ user }) => {
                 id: user.id,
                 username: user.username,
                 rights: user.rights,
-                action: <Link to={ hasGrantAccess ? `/kitkat/user/edit?id=${user.id}` : ''}>
+                action: <Link to={ hasGrantAccess ? `/campwiz/user/edit?id=${user.id}` : ''}>
                     <Button color="primary" variant="contained" disabled={!hasGrantAccess} size="small">
                         <EditIcon />
                     </Button>

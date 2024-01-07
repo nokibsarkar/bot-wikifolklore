@@ -142,11 +142,11 @@ async def fnf(req : Request, optional_path : str = ''):
     return responses.FileResponse("static/index.html", headers = {
         'Document-Policy' : 'js-profiling'
     })
-@app.get("/kitkat/{optional_path:path}", response_class=responses.HTMLResponse)
-async def kitkat(req : Request, optional_path : str = ''):
+@app.get("/campwiz/{optional_path:path}", response_class=responses.HTMLResponse)
+async def campwiz(req : Request, optional_path : str = ''):
     user = User.logged_in_user(req.cookies)
     if user is None:
-        redirect_uri = User.generate_login_url('/kitkat')
+        redirect_uri = User.generate_login_url('/campwiz')
         return redirect_to(redirect_uri)
     return responses.FileResponse("static/index.html", headers = {
         'Document-Policy' : 'js-profiling'

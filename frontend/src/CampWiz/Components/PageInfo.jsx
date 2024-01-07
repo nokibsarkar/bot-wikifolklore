@@ -4,7 +4,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import CrossIcon from '@mui/icons-material/Close';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
-import KitKatServer from '../Server';
+import CampWizServer from '../Server';
 import { useCallback, useEffect, useState } from 'react';
 import { Typography } from '@mui/material';
 const StatementWithStatus = ({ statement, status }) => {
@@ -97,7 +97,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
             setRestrictions(calculateRestriction(draft, campaign, restrictions, setRestricted));
     }, []);
     const fetchDraft = useCallback(async (draftId) => {
-        const draft = await KitKatServer.Page.getDraft(draftId);
+        const draft = await CampWizServer.Page.getDraft(draftId);
         if(!draft.calculated){
             console.log("Not done yet")
             setTimeout(() => fetchDraft(draftId), 1000);
@@ -107,7 +107,7 @@ const PageInfo = ({ title, campaign, submitter, setPageInfo, submissionId = null
         }
     });
     const fetchSubmission = useCallback(async (submissionId) => {
-        const submission = await KitKatServer.Campaign.getSubmission(submissionId);
+        const submission = await CampWizServer.Campaign.getSubmission(submissionId);
         submission.calculated = true;
         setInfo(submission);
     }, []);
