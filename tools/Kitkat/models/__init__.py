@@ -5,7 +5,29 @@ import dateparser as dp
 from ._draft import *
 class Server(BaseServer):
     pass
+def notify_users(campaign_id : int, campaign_name : str, campaign_language : str, campaign_start_date : str, campaign_end_date : str, campaign_creator : str):
+    """
+    This will send a notification to all the users
+    """
+    BOT_AUTH_TOKEN = os.environ.get('TG_BOT_TOKEN')
+    url = f'https://api.telegram.org/bot{BOT_AUTH_TOKEN}/sendMessage'
+    text = f"""
+    A new campaign has been created and pending for approval.
+    Campaign ID: {campaign_id}
+    Campaign Name: {campaign_name}
+    Campaign Language: {campaign_language}
+    Campaign Start Date: {campaign_start_date}
+    Campaign End Date: {campaign_end_date}
+    Campaign Creator: {campaign_creator}
 
+
+    Click here to approve or reject the campaign: https://tools.wikilovesfolklore.org/kitkat/campaign/{campaign_id}/edit
+    """
+    params = {
+        'chat_id': 747127819,
+        'text': text,
+    }
+    r = sess.post(url, json=params)
 class User(BaseUser):
     @staticmethod
     def get_all(conn : sqlite3.Cursor):

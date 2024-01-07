@@ -84,6 +84,14 @@ async def create_campaign(req : Request, campaign: CampaignCreate):
         with Server.get_parmanent_db() as conn:
             new_campaign = Campaign.create(conn.cursor(), campaign)
         result = CampaignScheme.from_dict(new_campaign)
+        notify_users(
+            campaign_id=new_campaign['id'],
+            campaign_name=new_campaign['name'],
+            campaign_language=new_campaign['language'],
+            campaign_start_date=new_campaign['start_at'],
+            campaign_end_date=new_campaign['end_at'],
+            campaign_creator=req.state.user['username'],
+        )
         return ResponseSingle[CampaignScheme](success=True, data=result)
     except sqlite3.IntegrityError as e:
         raise HTTPException(status_code=400, detail=str(e))
