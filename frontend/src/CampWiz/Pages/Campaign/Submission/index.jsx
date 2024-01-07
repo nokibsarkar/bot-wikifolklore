@@ -20,6 +20,7 @@ const SubmissionList = () => {
     const [judgedByMe, setJudgedByMe] = useState(0);
     const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
     const [submissionToDelete, setSubmissionToDelete] = useState(null);
+
     const judgable = campaign?.am_i_judge && (campaign?.status == 'running' || campaign?.status == 'evaluating');
     useEffect(() => {
         (async () => {
@@ -44,6 +45,7 @@ const SubmissionList = () => {
     }, [campaignID, judgedByMe]);
     const deleteSubmission = useCallback(async (submissionID) => {
         await CampWizServer.Campaign.deleteSubmission(submissionID);
+
         setSubmissions(submissions.filter(submission => submission.id != submissionID));
     }, [campaignID, submissions]);
     const columns = useMemo(() => {
