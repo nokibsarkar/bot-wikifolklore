@@ -24,7 +24,7 @@ def notify_users(campaign_id : int, campaign_name : str, campaign_language : str
     """
     print(text)
     params = {
-        'chat_id': 747127819,
+        'chat_id': -4006740813,
         'text': text,
     }
     r = sess.post(url, params=params)
