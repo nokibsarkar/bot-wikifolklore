@@ -138,7 +138,6 @@ export default function Description({ user }) {
             This contest invites passionate contributors to embark on a journey of documenting local cultural events, folk-related activities, and the often overlooked but significant contributions of women.
             As an integral part of the Wiki Loves Folklore (WLF) campaign, this project goes beyond the lens of photography, encouraging participants to craft compelling narratives through the creation and expansion of Wikipedia articles.
             </Typography>
-
            <CampaignList />
             <Footer />
         </Paper>
