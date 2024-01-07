@@ -109,9 +109,9 @@ const SubmissionList = () => {
                         >
                             <JudgeIcon fontSize='small' />
                         </Button>
-                        <Button variant="contained" size="small" onClick={() => setSubmissionToDelete(params.row.id)}  style={{ color: 'white' }}>
+                        {/* <Button variant="contained" size="small" onClick={() => setSubmissionToDelete(params.row.id)}  style={{ color: 'white' }}>
                             <DeleteIcon color="error" fontSize='small' />
-                        </Button>
+                        </Button> */}
                     </span>
                     }
                 }
