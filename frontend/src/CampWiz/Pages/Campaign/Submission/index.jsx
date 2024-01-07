@@ -18,6 +18,9 @@ const SubmissionList = () => {
     const [loading, setLoading] = useState(false);
     const [campaign, setCampaign] = useState(null);
     const [judgedByMe, setJudgedByMe] = useState(0);
+    const [openDeletConfirmation, setOpenDeleteConfirmation] = useState(false);
+    const [submissionToDelete, setSubmissionToDelete] = useState(null);
+
     const judgable = campaign?.am_i_judge && (campaign?.status == 'running' || campaign?.status == 'evaluating');
     useEffect(() => {
         (async () => {
@@ -41,7 +44,8 @@ const SubmissionList = () => {
         })()
     }, [campaignID, judgedByMe]);
     const deleteSubmission = useCallback(async (submissionID) => {
-        await CampWizServer.Campaign.deleteSubmission(campaignID, submissionID);
+        await CampWizServer.Campaign.deleteSubmission(submissionID);
+
         setSubmissions(submissions.filter(submission => submission.id != submissionID));
     }, [campaignID, submissions]);
     const columns = useMemo(() => {
@@ -93,7 +97,11 @@ const SubmissionList = () => {
                 {
                     field: 'action', headerName: 'Evaluate', renderCell: (params) => {
                         const url = `/campwiz/campaign/${campaignID}/submission/${params.row.id}`
-                        return <><Button variant="contained" color="primary" size="small"
+                        return <span style={{
+                            display: 'flex',
+                            margin: '10px'
+                        }}>
+                        <Button variant="contained" color="primary" size="small"
                             component={Link}
                             to={url}
                             target="_self"
@@ -101,10 +109,10 @@ const SubmissionList = () => {
                         >
                             <JudgeIcon fontSize='small' />
                         </Button>
-                        <Button variant="contained" color="error" size="small" onClick={() => deleteSubmission(params.row.id)}>
-                            <DeleteIcon fontSize='small' />
+                        <Button variant="contained" size="small" onClick={() => setSubmissionToDelete(params.row.id)}  style={{ color: 'white' }}>
+                            <DeleteIcon color="error" fontSize='small' />
                         </Button>
-                        </>
+                    </span>
                     }
                 }
             )

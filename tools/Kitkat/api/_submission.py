@@ -133,6 +133,7 @@ async def delete_submission(submission_id: int):
     try:
         with Server.get_parmanent_db() as conn:
             submission = Submission.get_by_id(conn.cursor(), submission_id)
+            print(submission)
             if not submission:
                 raise Exception("Submission not found")
             campaign = Campaign.update_status(conn, submission['campaign_id'])
