@@ -448,6 +448,7 @@ class Submission:
         return results
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str) -> SubmissionScheme:
+        print(id)
         return conn.execute(SQL1_GET_SUBMISSION_BY_ID, {'id': id}).fetchone()
 class Judgement:
     @staticmethod
