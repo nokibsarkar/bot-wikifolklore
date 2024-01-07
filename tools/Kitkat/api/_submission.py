@@ -27,8 +27,6 @@ async def list_all_submissions(req : Request, campaignID: str, judgable : bool =
             # if submission.get('judged_by_me') is None:
             #     submission['judged_by_me'] = judge_by_me
             results.append(SubmissionScheme(**submission))
-        print("Results")
-        print(results)
         return ResponseMultiple[SubmissionScheme](success=True, data=results)
     except Exception as e:
         print(e)
@@ -97,6 +95,7 @@ async def create_draft(req : Request, draft_request : DraftCreateScheme, backgro
     except HTTPException as e:
         raise e
     except Exception as e:
+        raise e
         raise HTTPException(status_code=400, detail=f"Internal error: {e}")
     
 

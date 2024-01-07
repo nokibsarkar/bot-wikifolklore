@@ -394,7 +394,6 @@ class Submission:
         """
         Calculate the addition of the article
         """
-        print("Calculating addition")
         with Server.get_parmanent_db() as conn:
             draft = Submission.get_draft_by_id(conn, draft_id)
             campaign = Campaign.get_by_id(conn, draft['campaign_id'])
@@ -443,8 +442,6 @@ class Submission:
             params['exclude_judged_user_id'] = exclude_judged_user_id 
             sql = SQL1_SELECT_SUBMISSIONS_EXCLUDING_USER_ID
         results = conn.execute(sql, params).fetchall()
-        print(sql, params)
-        print(results)
         return results
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id : str) -> SubmissionScheme:
@@ -475,7 +472,6 @@ class Judgement:
         """
         all_judgements = Judgement._get_judgements(conn, submission_id)
         all_jury = Judgement._get_all_jury(conn, submission_id)
-        print(all_jury)
         total_votes = 0
         negative_votes = 0
         positive_votes = 0
