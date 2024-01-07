@@ -72,11 +72,11 @@ function ToolSelector() {
   const tool = url.searchParams.get('tool') || url.pathname.split('/')[1];
   switch (tool) {
     case 'fnf':
-      return ['FnF', '/fnf', FnFRoutes]
+      return ['FnF (beta)', '/fnf', FnFRoutes]
     case 'kitkat':
       return ['KitKat (development)', '/kitkat', KitKatRoutes]
     default:
-      return ['FnF', '', FnFRoutes];
+      return ['FnF (beta)', '', FnFRoutes];
   }
 }
 
