@@ -14,8 +14,8 @@ export default function Description({ user }) {
     const [banner, setBanner] = useState('');
     useEffect(() => {
         Server.getConfig().then((res) => {
-            if(res?.kitkat?.dashboard?.banner)
-                setBanner(res.kitkat.dashboard.banner);
+            if(res?.campwiz?.dashboard?.banner)
+                setBanner(res.campwiz.dashboard.banner);
         }
         ).catch((err) => {
             console.log(err);
@@ -30,7 +30,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/task/create"
+    //             to="/campwiz/task/create"
     //         >
     //             <AddIcon /> &nbsp; Add Task
     //         </Button>
@@ -39,7 +39,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/task"
+    //             to="/campwiz/task"
     //         >
     //             <ListIcon /> &nbsp; List Tasks
     //         </Button>
@@ -54,7 +54,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/topic/create"
+    //             to="/campwiz/topic/create"
     //         >
     //             <AddIcon /> &nbsp; Create New Topic
     //         </Button>
@@ -63,7 +63,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/topic"
+    //             to="/campwiz/topic"
     //         >
     //             <ListIcon /> &nbsp; See All Topics
     //         </Button>
@@ -77,7 +77,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/campaign/new"
+    //             to="/campwiz/campaign/new"
     //         >
     //             <AddIcon /> &nbsp; Create New Campaign
     //         </Button>
@@ -86,7 +86,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/campaign"
+    //             to="/campwiz/campaign"
     //         >
     //             <ListIcon /> &nbsp; See All Campaigns
     //         </Button>
@@ -100,7 +100,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/setting"
+    //             to="/campwiz/setting"
     //         >
     //             <SettingIcon /> &nbsp; Settings
     //         </Button>
@@ -110,7 +110,7 @@ export default function Description({ user }) {
     //             m: 1
     //         }}
     //             component={Link}
-    //             to="/kitkat/user"
+    //             to="/campwiz/user"
     //         >
     //             <PeopleIcon /> &nbsp; See All Users
     //         </Button>}

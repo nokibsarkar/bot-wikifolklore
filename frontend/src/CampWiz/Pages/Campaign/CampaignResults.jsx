@@ -1,7 +1,7 @@
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import KitKatServer from "../../Server";
+import CampWizServer from "../../Server";
 const columns = [
     { field: 'username', headerName: 'Username', minWidth: 100, flex: 1 },
     { field: 'total_submissions', headerName: 'Submissions', minWidth: 100, flex: 1 },
@@ -17,7 +17,7 @@ const CampaignResults = ({ campaign }) => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const results = await KitKatServer.Campaign.getResults(campaign.id);
+            const results = await CampWizServer.Campaign.getResults(campaign.id);
             setResults(results);
             setLoading(false);
         })();

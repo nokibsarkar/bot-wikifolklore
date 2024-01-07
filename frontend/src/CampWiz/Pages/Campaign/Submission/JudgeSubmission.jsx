@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 import PageInfo from "../../../Components/PageInfo";
 import CheckIcon from '@mui/icons-material/Check';
 import CrossIcon from '@mui/icons-material/Close';
@@ -96,7 +96,7 @@ const JudgeMentBox = ({ judge, campaignID, submissionID }) => {
                             color: 'white'
                         }}
                         component={Link}
-                        to={`/kitkat/campaign/${campaignID}/submission`}
+                        to={`/campwiz/campaign/${campaignID}/submission`}
                     >
                         <ListIcon fontSize='small' />
                         Judge Another Submission
@@ -181,7 +181,7 @@ const Preview = ({ title, language }) => {
     const styleSheet = `${wikipediaURL}/w/load.php?debug=false&lang=${language}&modules=ext.cite.styles|ext.echo.badgeicons|ext.echo.styles.badge|ext.flaggedRevs.basic|ext.gadget.logo|ext.math.scripts,styles|ext.tmh.thumbnail.styles|ext.uls.nojs|ext.wikimediaBadges|mediawiki.legacy.commonPrint,shared|mediawiki.page.gallery.styles|mediawiki.sectionAnchor|mediawiki.skinning.interface|site.styles|skins.vector.styles|wikibase.client.init|ext.kartographer.style&only=styles&skin=vector`;
     useEffect(() => {
         (async () => {
-            const preview = await KitKatServer.Wiki.getParsedWikiText(language, title);
+            const preview = await CampWizServer.Wiki.getParsedWikiText(language, title);
             setPreviewText(preview);
         })();
     }, [title, language]);
@@ -254,12 +254,12 @@ const JudgeSubmission = () => {
         return <Preview title={title} language={submission.target_wiki} />
     }, [submissionID, submission]);
     const judge = useCallback(async (point) => {
-        const judgement = await KitKatServer.Page.judgeSubmission(submission.id, point)
+        const judgement = await CampWizServer.Page.judgeSubmission(submission.id, point)
     }, [submission]);
     useEffect(() => {
         // create a new base element and set it's href to the intended url
         (async () => {
-            const [subm, camp] = await Promise.all([KitKatServer.Page.getSubmission(submissionID), KitKatServer.Campaign.getCampaign(campaignID, {check_judge : true})])
+            const [subm, camp] = await Promise.all([CampWizServer.Page.getSubmission(submissionID), CampWizServer.Campaign.getCampaign(campaignID, {check_judge : true})])
             setSubmission(subm);
             setTitle(subm.title);
             // setLanguage(subm.language);

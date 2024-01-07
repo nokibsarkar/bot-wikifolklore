@@ -1,11 +1,11 @@
 import { Autocomplete, Box, CircularProgress, TextField, Typography } from "@mui/material";
 import { useRef, useState } from "react";
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 import EditIcon from '@mui/icons-material/Edit';
 import RightArrow from '@mui/icons-material/ArrowForward'
 import ImageSearcher from "../../../Components/ImageInput";
 import LoadingPage from "../../../../Layout/Loader";
-const wiki = KitKatServer.BaseServer.getWikiList();
+const wiki = CampWizServer.BaseServer.getWikiList();
 
 const Rules = ({ rules, setRules }) => {
     const [editing, setEditing] = useState(false);

@@ -15,7 +15,7 @@ export const DetailsButton = ({ campaign }) => (
         m: 1
     }}
         component={Link}
-        to={`/kitkat/campaign/${campaign.id}`}
+        to={`/campwiz/campaign/${campaign.id}`}
     >
         <CampaignIcon />&nbsp; See Details
     </Button>
@@ -27,7 +27,7 @@ export const SubmitButton = ({ campaign }) => campaign?.status == 'running' && (
         m: 1
     }}
         component={Link}
-        to={`/kitkat/campaign/${campaign.id}/submission/new`}
+        to={`/campwiz/campaign/${campaign.id}/submission/new`}
     >
         <AddIcon /> &nbsp; Submit new Article
     </Button>
@@ -38,7 +38,7 @@ export const AllButton = () => (
         m: 1
     }}
         component={Link}
-        to={`/kitkat/campaign`}
+        to={`/campwiz/campaign`}
     >
         <ListIcon /> &nbsp; All Campaigns
     </Button>
@@ -49,7 +49,7 @@ export const SettingsButton = ({ campaign }) => !(['cancelled', 'rejected', 'end
         m: 1
     }}
         component={Link}
-        to={`/kitkat/campaign/${campaign.id}/edit`}
+        to={`/campwiz/campaign/${campaign.id}/edit`}
     >
         <SettingsIcon /> &nbsp; Settings
     </Button>
@@ -60,7 +60,7 @@ export const SubmissionListButton = ({ campaign }) => (
         m: 1
     }}
         component={Link}
-        to={`/kitkat/campaign/${campaign.id}/submission`}
+        to={`/campwiz/campaign/${campaign.id}/submission`}
         disabled={(['scheduled', 'rejected', 'pending'].includes(campaign?.status))}
     >
         <GavelIcon /> &nbsp; Submissions
@@ -72,7 +72,7 @@ export const CreateButton = () => (
         m: 1
     }}
         component={Link}
-        to={`/kitkat/campaign/new`}
+        to={`/campwiz/campaign/new`}
     >
         <AddIcon /> &nbsp; Create New Campaign
     </Button>

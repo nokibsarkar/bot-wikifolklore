@@ -1,6 +1,6 @@
 import { createRef, forwardRef, useCallback, useEffect, useRef, useState, useMemo } from "react";
 import ArticleInput from "../../../Components/ArticleInput";
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 import Loader from "../../../../Layout/Loader";
 import PageInfo from "../../../Components/PageInfo";
 import CheckIcon from '@mui/icons-material/Check';
@@ -20,7 +20,7 @@ const ArticleSubmissionSuccess = ({ campaignID, resetButton }) => {
         <Button variant="outlined" color="primary" size="small"
             sx={{ mr: 2 }}
             component={Link}
-            to={`/kitkat/campaign/${campaignID}`}
+            to={`/campwiz/campaign/${campaignID}`}
         >
             Back to Campaign
         </Button>
@@ -42,9 +42,9 @@ const ArticleSubmissionPage = () => {
     const [article, setArticle] = useState(null);
     const [submitDisabled, setSubmitDisabled] = useState(false); // [allowSubmit, setAllowSubmit
     const [articleSubmitted, setArticleSubmitted] = useState(false);
-    const [submitter, setSubmitter] = useState(KitKatServer.BaseServer.loginnedUser().username);
+    const [submitter, setSubmitter] = useState(CampWizServer.BaseServer.loginnedUser().username);
     useEffect(() => {
-        KitKatServer.Campaign.getCampaign(campaignID, {
+        CampWizServer.Campaign.getCampaign(campaignID, {
             check_judge : true
         }).then(setCampaign);
     }, [campaignID]);
@@ -73,7 +73,7 @@ const ArticleSubmissionPage = () => {
             campaign_id: campaign.id.toString()
         }
         try {
-            const draft = await KitKatServer.Page.createDraft(draftRequest);
+            const draft = await CampWizServer.Page.createDraft(draftRequest);
             setDraft(draft);
             setDraftID(draft.id);
             setPageInfo(draft);
@@ -89,7 +89,7 @@ const ArticleSubmissionPage = () => {
             draft_id: draftID.toString(),
         }
         try{
-            const submission = await KitKatServer.Campaign.submitArticle(submissionRequest)
+            const submission = await CampWizServer.Campaign.submitArticle(submissionRequest)
             setPageInfo(null);
             setArticleSubmitted(true);
         } catch (e) {
@@ -105,7 +105,7 @@ const ArticleSubmissionPage = () => {
         <Button variant="outlined" color="primary" size="small"
             sx={{ mr: 2 }}
             component={Link}
-            to={`/kitkat/campaign/${campaignID}`}
+            to={`/campwiz/campaign/${campaignID}`}
         >
             Back to Campaign
         </Button>

@@ -14,7 +14,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Divider from '@mui/material/Divider';
 import DownloadIcon from '@mui/icons-material/Download';
 import Box from '@mui/material/Box';
-import KitKatServer from "../../Server.ts";
+import CampWizServer from "../../Server.ts";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -34,13 +34,13 @@ const EditUser = ({ user: currentUser }) => {
     useState(() => {
         if (!id)
             return;
-        KitKatServer.User.getUser(id).then(u => {
+        CampWizServer.User.getUser(id).then(u => {
             setUser(u);
             setRights(u.rights);
         })
     }, [id, refreshKey])
     const save = useCallback(() => {
-        KitKatServer.User.updateUser({ id, rights }).then((user) => {
+        CampWizServer.User.updateUser({ id, rights }).then((user) => {
             setUser(user);
             setRights(user.rights);
             setRefreshKey(refreshKey + 1);
@@ -50,7 +50,7 @@ const EditUser = ({ user: currentUser }) => {
     }, [id, rights, refreshKey])
     if (!user)
         return <LinearProgress />
-    if (KitKatServer.hasAccess(currentUser.rights, KitKatServer.RIGHTS.GRANT) === false)
+    if (CampWizServer.hasAccess(currentUser.rights, CampWizServer.RIGHTS.GRANT) === false)
         return <h1>Access Denied</h1>;
 
     return (
@@ -69,16 +69,16 @@ const EditUser = ({ user: currentUser }) => {
                     <List>
                     <ListItem>
                             <ListItemText primary="Campaign Rights" />
-                            <CheckBox sx={{ cursor: 'pointer' }} checked={KitKatServer.hasAccess(rights, KitKatServer.RIGHTS.CAMPAIGN)} onClick={() => setRights(KitKatServer.toggleAccess(rights, KitKatServer.RIGHTS.CAMPAIGN))} />
+                            <CheckBox sx={{ cursor: 'pointer' }} checked={CampWizServer.hasAccess(rights, CampWizServer.RIGHTS.CAMPAIGN)} onClick={() => setRights(CampWizServer.toggleAccess(rights, CampWizServer.RIGHTS.CAMPAIGN))} />
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Stats Rights" />
-                            <CheckBox sx={{ cursor: 'pointer' }} checked={KitKatServer.hasAccess(rights, KitKatServer.RIGHTS.STATS)} onClick={() => setRights(KitKatServer.toggleAccess(rights, KitKatServer.RIGHTS.STATS))} />
+                            <CheckBox sx={{ cursor: 'pointer' }} checked={CampWizServer.hasAccess(rights, CampWizServer.RIGHTS.STATS)} onClick={() => setRights(CampWizServer.toggleAccess(rights, CampWizServer.RIGHTS.STATS))} />
                         </ListItem>
 
                         <ListItem>
                             <ListItemText primary="Grant Rights" />
-                            <CheckBox sx={{ cursor: 'pointer' }} checked={KitKatServer.hasAccess(rights, KitKatServer.RIGHTS.GRANT)} onClick={() => setRights(KitKatServer.toggleAccess(rights, KitKatServer.RIGHTS.GRANT))} />
+                            <CheckBox sx={{ cursor: 'pointer' }} checked={CampWizServer.hasAccess(rights, CampWizServer.RIGHTS.GRANT)} onClick={() => setRights(CampWizServer.toggleAccess(rights, CampWizServer.RIGHTS.GRANT))} />
                         </ListItem>
                     </List>
                     <Snackbar open={saved} autoHideDuration={6000} anchorOrigin={{vertical : 'bottom', horizontal : 'center'}}>

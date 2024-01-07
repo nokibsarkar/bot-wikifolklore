@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useCallback, useEffect, useState } from "react";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import RightArrow from '@mui/icons-material/ArrowForward'
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 const ApproveButton = ({ onApprove, disabled }) => (
     <Button variant="contained" color="success" size="small" sx={{
         m: 1
@@ -108,7 +108,7 @@ const CancelPrompt = ({ onCancel }) => {
 const Buttons = ({ campaign, campaignDispatch, setError }) => {
     const updateStatus = useCallback(async (status) => {
         try {
-            const updatedCampaign = await KitKatServer.Campaign.updateCampaignStatus(campaign.id, status);
+            const updatedCampaign = await CampWizServer.Campaign.updateCampaignStatus(campaign.id, status);
             campaignDispatch({ type: 'status', payload: updatedCampaign.status });
             setError(null);
         } catch (e) {
@@ -139,7 +139,7 @@ const Buttons = ({ campaign, campaignDispatch, setError }) => {
 }
 const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) => {
     const [error, setError] = useState(null);
-    const hasCampaignRights = KitKatServer.BaseServer.hasRight(KitKatServer.RIGHTS.CAMPAIGN);
+    const hasCampaignRights = CampWizServer.BaseServer.hasRight(CampWizServer.RIGHTS.CAMPAIGN);
     return (
         <Box component='div' sx={{ backgroundColor: 'rules.light', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Typography variant='h4' sx={{ m: 1 }}>

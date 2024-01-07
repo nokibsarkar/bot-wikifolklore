@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { BarChart } from '@mui/x-charts/BarChart';
-import KitKatServer from '../../Server';
+import CampWizServer from '../../Server';
 const TukTukStatistics = () => {
     const [entityCount, setEntityCount] = useState([]);
     const [taskStats, setTaskStats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     useEffect(() => {
-        // KitKatServer.
+        // CampWizServer.
     }, []);
     return <div>
     <BarChart
@@ -30,7 +30,7 @@ const TukTukStatistics = () => {
 
         </div>
 }
-const KitKatStatistics = () => {
+const CampWizStatistics = () => {
     return <TukTukStatistics />
 }
-export default KitKatStatistics
+export default CampWizStatistics

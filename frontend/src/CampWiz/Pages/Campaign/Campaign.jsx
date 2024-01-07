@@ -2,7 +2,7 @@ import { useEffect, useState, lazy } from "react";
 import { useParams } from "react-router"
 import CampaignHeader from "../../Components/CampaignHeader";
 import RightArrow from '@mui/icons-material/ArrowForward'
-import KitKatServer from "../../Server";
+import CampWizServer from "../../Server";
 import RuleIcon from '@mui/icons-material/Rule';
 import GavelIcon from '@mui/icons-material/Gavel';
 import LoadingPage from "../../../Layout/Loader";
@@ -76,17 +76,17 @@ const Campaign = () => {
     const [jury, setJury] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const hasCampaignRights = KitKatServer.BaseServer.hasRight(KitKatServer.RIGHTS.CAMPAIGN);
+    const hasCampaignRights = CampWizServer.BaseServer.hasRight(CampWizServer.RIGHTS.CAMPAIGN);
     useEffect(() => {
         (async () => {
             setLoading(true);
             try {
-                const campaign = await KitKatServer.Campaign.getCampaign(campaignID, {
+                const campaign = await CampWizServer.Campaign.getCampaign(campaignID, {
                     check_judge: true
                 })
                 if(!campaign) throw new Error("Campaign not found");
                 setCampaign(campaign);
-                const jury = await KitKatServer.Campaign.getJury(campaignID);
+                const jury = await CampWizServer.Campaign.getJury(campaignID);
                 setJury(jury);
                 setError(null);
             }

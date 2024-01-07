@@ -2,11 +2,11 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import KitKatServer from "../Server"
+import CampWizServer from "../Server"
 const CampaignHeader = ({ campaign }) => {
     const linkoptions = {};
     if(campaign.id){
-        linkoptions.to = `/kitkat/campaign/${campaign.id}`;
+        linkoptions.to = `/campwiz/campaign/${campaign.id}`;
         linkoptions.component = Link;
     }
     var statusBgColor = 'list.light';
@@ -48,7 +48,7 @@ const CampaignHeader = ({ campaign }) => {
                 {campaign.name}
             </Typography>
             <Typography variant="body1" component="h5" sx={{ flexGrow: 1, textAlign: 'center' }}>
-                {KitKatServer.BaseServer.languages[campaign.language]}
+                {CampWizServer.BaseServer.languages[campaign.language]}
             </Typography>
             {campaign?.image && <figure>
                 <img src={campaign.image} alt={campaign.name} style={{ width: '100%', maxHeight: '150px' }} />

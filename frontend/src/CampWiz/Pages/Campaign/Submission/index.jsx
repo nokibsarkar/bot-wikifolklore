@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 import CampaignHeader from "../../../Components/CampaignHeader";
 import { DataGrid } from "@mui/x-data-grid";
 import JudgeIcon from '@mui/icons-material/HowToVote';
@@ -22,7 +22,7 @@ const SubmissionList = () => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const campaign = await KitKatServer.Campaign.getCampaign(campaignID, {
+            const campaign = await CampWizServer.Campaign.getCampaign(campaignID, {
                 check_judge: true
             })
             setCampaign(campaign);
@@ -35,13 +35,13 @@ const SubmissionList = () => {
             const params = {}
             if (judgedByMe > 0)
                 params['judged_by_me'] = judgedByMe == 2;
-            const submissions = await KitKatServer.Campaign.getSubmissions(campaignID, params);
+            const submissions = await CampWizServer.Campaign.getSubmissions(campaignID, params);
             setSubmissions(submissions);
             setLoading(false);
         })()
     }, [campaignID, judgedByMe]);
     const deleteSubmission = useCallback(async (submissionID) => {
-        await KitKatServer.Campaign.deleteSubmission(campaignID, submissionID);
+        await CampWizServer.Campaign.deleteSubmission(campaignID, submissionID);
         setSubmissions(submissions.filter(submission => submission.id != submissionID));
     }, [campaignID, submissions]);
     const columns = useMemo(() => {
@@ -92,7 +92,7 @@ const SubmissionList = () => {
             columns.push(
                 {
                     field: 'action', headerName: 'Evaluate', renderCell: (params) => {
-                        const url = `/kitkat/campaign/${campaignID}/submission/${params.row.id}`
+                        const url = `/campwiz/campaign/${campaignID}/submission/${params.row.id}`
                         return <><Button variant="contained" color="primary" size="small"
                             component={Link}
                             to={url}

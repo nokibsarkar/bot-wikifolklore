@@ -162,20 +162,20 @@ class CampaignServer {
         if(language)
             query.append('language', language);
         
-        const url = '/api/kitkat/campaign/' + '?' + query.toString();
+        const url = '/api/campwiz/campaign/' + '?' + query.toString();
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
     static async getCampaign(id: number, params : any = {}): Promise<Campaign> {
         const qs = new URLSearchParams(params);
-        const url = '/api/kitkat/campaign/' + id + '?' + qs.toString();
+        const url = '/api/campwiz/campaign/' + id + '?' + qs.toString();
         const res = await fetchWithErrorHandling(url)
         const campaign = res.data;
         if(typeof campaign.rules === 'string') campaign.rules = campaign.rules.split('\n');
         return res.data;
     }
     static async submitArticle(req: SubmissionRequest): Promise<Submission> {
-        const url = '/api/kitkat/submission/';
+        const url = '/api/campwiz/submission/';
         const res = await fetchWithErrorHandling(url, {
             method: 'POST',
             headers: {
@@ -191,7 +191,7 @@ class CampaignServer {
             campaignID: campaignID.toString(),
             ...params
         });
-        const url = '/api/kitkat/submission/' + '?' + qs.toString();
+        const url = '/api/campwiz/submission/' + '?' + qs.toString();
        
         const res = await fetchWithErrorHandling(url)
         const submissions = res.data;
@@ -208,12 +208,12 @@ class CampaignServer {
         return submissions;
     }
     static async getJury(campaignID: number): Promise<string[]> {
-        const url = '/api/kitkat/campaign/' + campaignID + '/jury';
+        const url = '/api/campwiz/campaign/' + campaignID + '/jury';
         const res = await fetchWithErrorHandling(url)
         return res.data.map((user: any) => user.username);
     }
     static async createCampaign(campaign: Campaign): Promise<Campaign> {
-        const newCampaign = await fetchWithErrorHandling('/api/kitkat/campaign/', {
+        const newCampaign = await fetchWithErrorHandling('/api/campwiz/campaign/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -223,7 +223,7 @@ class CampaignServer {
         return newCampaign.data;
     }
     static async updateCampaign(campaign: Campaign): Promise<Campaign> {
-        const updatedCampaign = await fetchWithErrorHandling('/api/kitkat/campaign/' + campaign.id, {
+        const updatedCampaign = await fetchWithErrorHandling('/api/campwiz/campaign/' + campaign.id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -233,7 +233,7 @@ class CampaignServer {
         return updatedCampaign;
     }
     static async updateCampaignStatus(campaignID: number, status: CampaignStatus): Promise<Campaign> {
-        const updatedCampaign = await fetchWithErrorHandling('/api/kitkat/campaign/' + campaignID + '/status', {
+        const updatedCampaign = await fetchWithErrorHandling('/api/campwiz/campaign/' + campaignID + '/status', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -244,12 +244,12 @@ class CampaignServer {
     
     }
     static async getResults(campaignID: number): Promise<Submission[]> {
-        const url = '/api/kitkat/campaign/' + campaignID + '/result';
+        const url = '/api/campwiz/campaign/' + campaignID + '/result';
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
     static async deleteSubmission(submissionID: number): Promise<Submission> {
-        const url = '/api/kitkat/submission/' + submissionID;
+        const url = '/api/campwiz/submission/' + submissionID;
         const res = await fetchWithErrorHandling(url, {
             method: 'DELETE'
         })
@@ -261,12 +261,12 @@ class PageServer {
         return PageServer.getSubmission(submissionId)
     }
     static async getSubmission(submissionID: number): Promise<Submission> {
-        const url = '/api/kitkat/submission/' + submissionID;
+        const url = '/api/campwiz/submission/' + submissionID;
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
     static async createDraft({ campaign_id, submitted_by_username, title }: SubmissionRequest): Promise<Submission> {
-        const url = '/api/kitkat/submission/draft';
+        const url = '/api/campwiz/submission/draft';
         const res = await fetchWithErrorHandling(url, {
             method: 'POST',
             headers: {
@@ -277,13 +277,13 @@ class PageServer {
         return res.data;
     }
     static async getDraft(draftID: number): Promise<Submission> {
-        const url = '/api/kitkat/submission/draft/' + draftID;
+        const url = '/api/campwiz/submission/draft/' + draftID;
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
 
     static async judgeSubmission(submissionID: number, point: number, note?: string): Promise<Submission> {
-        const url = '/api/kitkat/submission/' + submissionID + '/judge';
+        const url = '/api/campwiz/submission/' + submissionID + '/judge';
         const res = await fetchWithErrorHandling(url, {
             method: 'POST',
             headers: {
@@ -320,17 +320,17 @@ class UserServer {
         callback(res.query.allusers);
     }
     static async getUsers() : Promise<User[]> {
-        const url = '/api/kitkat/user/';
+        const url = '/api/campwiz/user/';
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
     static async getUser(id : string) : Promise<User> {
-        const url = '/api/kitkat/user/' + id;
+        const url = '/api/campwiz/user/' + id;
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }
     static async updateUser({id, rights } : User) : Promise<User> {
-        const url = '/api/kitkat/user/' + id;
+        const url = '/api/campwiz/user/' + id;
         const res = await fetchWithErrorHandling(url, {
             method: 'POST',
             headers: {
@@ -355,7 +355,7 @@ type Statistics = {
     tasks? : StatTask[]
 }
 
-class KitKatServer {
+class CampWizServer {
     static BaseServer = BaseServer;
     static Wiki = Wiki;
     static Campaign = CampaignServer;
@@ -366,8 +366,8 @@ class KitKatServer {
     static countries: LanguageObject = {};
     static async init() {
         await BaseServer.init();
-        KitKatServer.languages = BaseServer.languages;
-        KitKatServer.countries = BaseServer.countries;
+        CampWizServer.languages = BaseServer.languages;
+        CampWizServer.countries = BaseServer.countries;
     }
     static getWikiList(exclude: string[] = []){
         return BaseServer.getWikiList(exclude);
@@ -379,7 +379,7 @@ class KitKatServer {
         return BaseServer.toggleAccess(rights, permissions);
     }
     static hasCampaignRight(){
-        return BaseServer.hasRight(KitKatServer.RIGHTS.CAMPAIGN);
+        return BaseServer.hasRight(CampWizServer.RIGHTS.CAMPAIGN);
     }
     static getParameter(key: string): string | null {
         const url = new URL(window.location.href);
@@ -437,7 +437,7 @@ class KitKatServer {
         await BaseServer.init()
     }
     static addWikiStyle() {
-        KitKatServer.addCSS("https://en.wikipedia.org/w/load.php?lang=en&modules=ext.cite.styles%7Cext.echo.styles.badge%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cjquery.makeCollapsible.styles%7Coojs-ui.styles.icons-alerts%7Cskins.vector.styles.legacy%7Cwikibase.client.init&only=styles&skin=vector");
+        CampWizServer.addCSS("https://en.wikipedia.org/w/load.php?lang=en&modules=ext.cite.styles%7Cext.echo.styles.badge%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cjquery.makeCollapsible.styles%7Coojs-ui.styles.icons-alerts%7Cskins.vector.styles.legacy%7Cwikibase.client.init&only=styles&skin=vector");
     }
 }
-export default KitKatServer;
+export default CampWizServer;

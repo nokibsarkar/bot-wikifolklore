@@ -1,6 +1,6 @@
 import { Routes as _Routes, Route } from "react-router-dom"
 import React, { lazy, useEffect } from "react"
-import KitKatServer from "./Server.ts"
+import CampWizServer from "./Server.ts"
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Dashboard from "./Pages/Dashboard.jsx"
 import ArticleSubmissionPage from "./Pages/Campaign/Submission/NewSubmission.jsx"
@@ -16,13 +16,13 @@ const CampaignCreate = lazy(() => import("./Pages/Campaign/Configure/Create.jsx"
 const ListUser = lazy(() => import("./Pages/User/ListUser.jsx"));
 const EditUser = lazy(() => import("./Pages/User/EditUser.jsx"));
 const Statistics = lazy(() => import("./Pages/Statistics/index.jsx"));
-await KitKatServer.init();
+await CampWizServer.init();
 const RedirectToLoginPage = ({returnTo}) => {
     return <meta http-equiv="refresh" content={`0; url=/login/?return=${returnTo}`} />
 }
-const KitKat = ({ user }) => {
+const CampWiz = ({ user }) => {
     useEffect(() => {
-        document.title = "KitKat"
+        document.title = "CampWiz"
     }, []);
     if(!user)
         return <RedirectToLoginPage returnTo={window.location.pathname} />
@@ -56,38 +56,38 @@ const KitKat = ({ user }) => {
         </Routes>
     )
 }
-const KitKatUserRoutes = {
+const CampWizUserRoutes = {
     name: 'Users',
     icon: <PeopleIcon />,
-    path: '/kitkat/user',
+    path: '/campwiz/user',
     children: [
         {
             name: 'Edit',
             icon: null,
-            path: '/kitkat/user/:id/edit'
+            path: '/campwiz/user/:id/edit'
         },
         {
             name: 'List',
             icon: null,
-            path: '/kitkat/user'
+            path: '/campwiz/user'
         }
     ]
 };
-export const KitKatRoutes = (user) => {
+export const CampWizRoutes = (user) => {
     const routes = {
-        name: 'KitKat (development)',
+        name: 'CampWiz (development)',
         icon: null,
-        path: '/kitkat',
+        path: '/campwiz',
         children: [
             {
                 name: 'Campaign',
                 icon: <CampaignIcon />,
-                path: '/kitkat/campaign',
+                path: '/campwiz/campaign',
                 children: []
             },
-            KitKatUserRoutes
+            CampWizUserRoutes
         ]
     }
     return routes;
 }
-export default KitKat
+export default CampWiz

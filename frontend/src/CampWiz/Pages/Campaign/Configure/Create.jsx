@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 import EditableCampaign from "./EditableCampaign"
-import KitKatServer from "../../../Server";
+import CampWizServer from "../../../Server";
 import ErrorPage from "../../../Components/ErrorPage";
 
 const CampaignCreate = () => {
@@ -9,8 +9,8 @@ const CampaignCreate = () => {
         (async () => {
             setLoading(true);
             try {
-                const newCampaign = await KitKatServer.Campaign.createCampaign(campaign);
-                const url = new URL("/kitkat/campaign/" + newCampaign.id, window.location.origin);
+                const newCampaign = await CampWizServer.Campaign.createCampaign(campaign);
+                const url = new URL("/campwiz/campaign/" + newCampaign.id, window.location.origin);
                 setLoading(false);
                 document.location.href = url;
                 setError(null);
