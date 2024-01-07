@@ -16,7 +16,7 @@ TG_BOT_AUTH_TOKEN = os.environ.get('TG_BOT_TOKEN')
 TG_GROUP_CHAT_ID = -4006740813
 WIKIPEDIA_ENDPOINT_FORMAT = "https://{lang}.wikipedia.org/w/api.php"
 #---------------------------- LOADED the constants ----------------------------
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 try:
     with open("VERSION", "r") as f:
         VERSION = f.read().strip()
