@@ -14,7 +14,7 @@ import CampWizServer from "../../../Server";
 const defaultCampaign = {
     name: '',
     description : '',
-    language: 'bn',
+    language: '',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Feminism_and_Folklore_2024_logo.svg/640px-Feminism_and_Folklore_2024_logo.svg.png',
     rules: [
         // 'All Participants must be registered in Wikipedia',
@@ -111,12 +111,12 @@ const StepSelector = ({ step, props }) => {
     }
 
 }
-const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null, showGotoDetailsButton = false}) => {
+const EditableCampaign = ({ error = null, defaultStep = 0, initialCampaign = defaultCampaign, minimumStep = 0, linear = true, showActions = false, onSave = null, showGotoDetailsButton = false, initialEditablity = false}) => {
 
     const [campaign, dispatchCampaign] = useReducer(campaignReducer, initialCampaign);
     const [step, setStep] = useState(defaultStep);
     const [loading, setLoading] = useState(false);
-    const [nextPermittable, setNextPermittable] = useState(true);
+    const [nextPermittable, setNextPermittable] = useState(initialEditablity);
     if (loading)
         return <LoadingPage title="Loading, please wait..." />
     if (error)

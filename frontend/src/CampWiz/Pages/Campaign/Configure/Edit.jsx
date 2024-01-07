@@ -59,6 +59,7 @@ const CampaignEdit = () => {
                 onSave={handleSave}
                 initialCampaign={campaign}
                 showGotoDetailsButton
+                initialEditablity={true}
             />
         </div>
     )

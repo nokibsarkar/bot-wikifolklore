@@ -24,7 +24,7 @@ const CampaignCreate = () => {
     return (
         <div>
             <h1>Create Campaign</h1>
-            <EditableCampaign error={error} minimumStep={0} linear={true} defaultStep={0} showActions={false} onSave={handleSave} />
+            <EditableCampaign error={error} minimumStep={0} linear={true} defaultStep={0} showActions={false} onSave={handleSave} initialEditablity={false} />
 
         </div>
     )

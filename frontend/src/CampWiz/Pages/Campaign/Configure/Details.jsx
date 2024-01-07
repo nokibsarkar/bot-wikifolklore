@@ -93,6 +93,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch , setNextPermittabl
                     isOptionEqualToValue={(option, value) => option.id === value}
                     onChange={(event, newValue) => {
                         if (newValue) {
+                            setNextPermittable(newValue !== "" && campaign.start_at !== "" && campaign.end_at !== "" && campaign.image !== "" && campaign.name !== "")
                             campaignDispatch({ type: 'language', payload: newValue.id })
                         }
                     }}
@@ -106,7 +107,7 @@ const CampainEditableDetails = ({ campaign, campaignDispatch , setNextPermittabl
                     variant="outlined"
                     value={campaign.name}
                     onChange={(e) => {
-                        setNextPermittable(e.target.value !== "" && campaign.start_at !== "" && campaign.end_at !== "" && campaign.image !== "")
+                        setNextPermittable(e.target.value !== "" && campaign.start_at !== "" && campaign.end_at !== "" && campaign.image !== "" && campaign.language !== "")
                         campaignDispatch({ type: 'name', payload: e.target.value })
                     }}
                 />
