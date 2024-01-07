@@ -313,7 +313,7 @@ class UserServer {
             origin: "*"
         });
         const url = `https://${language}.wikipedia.org/w/api.php?${params.toString()}`;
-        UserServer.fetching = true;
+        //UserServer.fetching = true;
         const res = await fetch(url).then(res => res.json());
         UserServer.fetching = false;
         console.log(res.query.allusers)
