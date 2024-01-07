@@ -183,7 +183,7 @@ async def judge_submission(req: Request, submission_id: int, judgement : Judgeme
             assert campaign['status'] in [CampaignStatus.running.value, CampaignStatus.evaluating.value], "Campaign is not in judging mode"
             jury = Judgement.verify_judge(conn,  submission['campaign_id'], jury_id,)
             assert jury, "Sorry, you are not a judge for this campaign"
-            assert jury['allowed'] == True, "Sorry, you are not allowed to judge this campaign"
+            
             Judgement.add(conn, submission_id, jury_id, judgement.vote, campaign_id=campaign['id'])
             Judgement.calculate_points(conn, submission_id)
             submission = Submission.get_by_id(conn.cursor(), submission_id)
