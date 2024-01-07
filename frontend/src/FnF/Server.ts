@@ -84,7 +84,7 @@ const PERMISSIONS : {[key in PermissionKey] : Permission} = {
     CAMPAIGN : 1 << 5
 };
 const fetchWithErrorHandling = async (url: string, options?: RequestInit) => {
-    const res: Response = await fetchWithErrorHandling(url, options);
+    const res: Response = await fetch(url, options);
     if(res.ok){
         const data = await res.json();
         if(data.success) return data;
@@ -220,7 +220,7 @@ class FnF {
     }
     static async getCountryMap(){
         const url = new URL("api/country", FnF.baseURL);
-        const countries = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json())
+        const countries = await fetchWithErrorHandling(url.toString())
         return countries.data
     }
     static searchCategory(callback : (data : Category[]) => void, setSearching : (searching : boolean) => void){
@@ -277,12 +277,12 @@ class FnF {
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then((res : { json: () => any; }) => res.json());
+        });
         return response.data;
     }
     static async getTopic(topicID : string){
         const url = new URL("api/topic/" + topicID, FnF.baseURL);
-        const response : APIResponseSingle<Topic> = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json());
+        const response : APIResponseSingle<Topic> = await fetchWithErrorHandling(url.toString());
         return response.data;
     }
     static async updateTopic({id, categories} : Topic){
@@ -293,7 +293,7 @@ class FnF {
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then((res : { json: () => any; }) => res.json());
+        });
         return response.data;
     }
     static async updateMe({username, rights} : User){
@@ -304,12 +304,12 @@ class FnF {
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then((res : { json: () => any; }) => res.json());
+        });
         return response.data;
     }
     static async getUsers(){
         const url = new URL("api/user/", FnF.baseURL);
-        const response : APIResponseMultiple<User> = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json());
+        const response : APIResponseMultiple<User> = await fetchWithErrorHandling(url.toString());
         return response.data;
     }
     static toggleAccess(rights : number, permission : number){
@@ -317,7 +317,7 @@ class FnF {
     }
     static async getUser(id : number){
         const url = new URL("api/user/" + id, FnF.baseURL);
-        const response : APIResponseSingle<User> = await fetchWithErrorHandling(url.toString()).then((res : { json: () => any; }) => res.json());
+        const response : APIResponseSingle<User> = await fetchWithErrorHandling(url.toString());
         return response.data;
     }
     static async updateUser({id, username, rights} : User){
@@ -328,14 +328,14 @@ class FnF {
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then((res : { json: () => any; }) => res.json());
+        });
         return response.data;
     }
     static async deleteTopic(id : string){
         const url = new URL("api/topic/" + id, FnF.baseURL);
         const response : APIResponseSingle<Topic> = await fetchWithErrorHandling(url.toString(), {
             method: "DELETE",
-        }).then((res : { json: () => any; }) => res.json());
+        });
         return response.data;
     }
     static getWikiList(exclude : string[] = []){
