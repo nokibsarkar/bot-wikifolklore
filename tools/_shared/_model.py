@@ -12,6 +12,7 @@ META_OAUTH_AUTHORIZE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/authori
 META_OAUTH_ACCESS_TOKEN_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/access_token'
 META_PROFILE_URL = 'https://meta.wikimedia.org/w/rest.php/oauth2/resource/profile'
 URL = "https://en.wikipedia.org/w/api.php"
+TG_BOT_AUTH_TOKEN = os.environ.get('TG_BOT_TOKEN')
 WIKIPEDIA_ENDPOINT_FORMAT = "https://{lang}.wikipedia.org/w/api.php"
 #---------------------------- LOADED the constants ----------------------------
 VERSION = "1.0.0"

@@ -9,8 +9,7 @@ def notify_users(campaign_id : int, campaign_name : str, campaign_language : str
     """
     This will send a notification to all the users
     """
-    BOT_AUTH_TOKEN = os.environ.get('TG_BOT_TOKEN')
-    url = f'https://api.telegram.org/bot{BOT_AUTH_TOKEN}/sendMessage'
+    url = f'https://api.telegram.org/bot{TG_BOT_AUTH_TOKEN}/sendMessage'
     text = f"""
     A new campaign has been created and pending for approval.
     Campaign ID: {campaign_id}
@@ -23,11 +22,13 @@ def notify_users(campaign_id : int, campaign_name : str, campaign_language : str
 
     Click here to approve or reject the campaign: https://tools.wikilovesfolklore.org/kitkat/campaign/{campaign_id}/edit
     """
+    print(text)
     params = {
         'chat_id': 747127819,
         'text': text,
     }
-    r = sess.post(url, json=params)
+    r = sess.post(url, params=params)
+    print(r.text)
 class User(BaseUser):
     @staticmethod
     def get_all(conn : sqlite3.Cursor):
