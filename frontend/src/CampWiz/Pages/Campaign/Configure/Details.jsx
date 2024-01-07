@@ -150,10 +150,30 @@ const CampainEditableDetails = ({ campaign, campaignDispatch , setNextPermittabl
                 defaultImageURL={campaign.image}
                 setImageURL={url => campaignDispatch({ type: 'image', payload: url })}
             />
-            <Rules
+            {/* <fieldset style={{
+                padding: '1em',
+                margin : '1em',
+            }}>
+                <legend>Description</legend> */}
+            <TextField
+                label="Description"
+                variant="outlined"
+                // fullWidth
+                multiline
+                sx={{
+                    m: 1,
+                    width: '95%'
+                }}
+                value={campaign.description}
+                onChange={(e) => {
+                    campaignDispatch({ type: 'description', payload: e.target.value })
+                }}
+            />
+            {/* </fieldset> */}
+            {/* <Rules
                 rules={campaign.rules}
                 setRules={rules => campaignDispatch({ type: 'rules', payload: rules })}
-            />
+            /> */}
         </Box>
     )
 };

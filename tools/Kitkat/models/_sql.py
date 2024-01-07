@@ -208,7 +208,7 @@ UPDATE `submission` SET
     `total_votes` = :total_votes,
     `points` = :points
 WHERE `id` = :id
-RETURNING *
+RETURNING *cv  
 """
 SQL1_VERIFY_JUDGE = "SELECT `allowed` FROM `jury` WHERE `user_id` = :user_id AND `campaign_id` = :campaign_id LIMIT 1"
 SQL1_UPDATE_CAMPAIGN_STATUS = "UPDATE `campaign` SET `status` = :status WHERE `id` = :id RETURNING *"

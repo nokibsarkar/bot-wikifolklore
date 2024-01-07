@@ -173,12 +173,8 @@ const CampaignOverview = ({ campaign, campaignDispatch, showActions = false }) =
                 {campaign.blackListedUsers?.map((judge, index) => <Chip key={index} label={judge} />)}
             </Typography> */}
             <Typography variant='body1' sx={{ m: 1,  maxWidth : '99%' }} component='fieldset'>
-                <legend>Rules</legend>
-                <ol style={{ textAlign: 'left' }}>
-                    {campaign.rules?.map((rule, index) => (
-                        <li key={index}>{rule}</li>
-                    ))}
-                </ol>
+                <legend>Description</legend>
+                {campaign.description}
             </Typography>
 
         </Box>

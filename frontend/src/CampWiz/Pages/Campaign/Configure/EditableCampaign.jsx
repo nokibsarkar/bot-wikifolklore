@@ -13,11 +13,11 @@ import {DetailsButton} from "../../../Components/CampaignButtons";
 import CampWizServer from "../../../Server";
 const defaultCampaign = {
     name: '',
-    description : null,
+    description : '',
     language: 'bn',
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Feminism_and_Folklore_2024_logo.svg/640px-Feminism_and_Folklore_2024_logo.svg.png',
     rules: [
-        'All Participants must be registered in Wikipedia',
+        // 'All Participants must be registered in Wikipedia',
     ],
     jury: [
         CampWizServer.BaseServer.loginnedUser().username
@@ -74,6 +74,8 @@ const campaignReducer = (state, action) => {
             return { ...state, status: action.payload };
         case 'image':
             return { ...state, image: action.payload };
+        case 'description':
+            return { ...state, description: action.payload };
         default:
             return state;
     }

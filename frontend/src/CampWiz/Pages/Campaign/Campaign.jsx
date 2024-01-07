@@ -129,7 +129,10 @@ const Campaign = () => {
             </Typography>
             </div>
             
-            <Rules rules={campaign.rules} />
+            <Typography variant='body1' sx={{ m: 1,  maxWidth : '99%' }} component='fieldset'>
+                <legend>Description</legend>
+                {campaign.description}
+            </Typography>
             {jury && <Jury jury={jury} />}
             {campaign.status === 'ended' && <CampaignResults campaign={campaign} />}
         </Box>
