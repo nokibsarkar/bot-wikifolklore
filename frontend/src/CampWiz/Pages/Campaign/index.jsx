@@ -109,11 +109,12 @@ const CampaignList = () => {
                     {
                         field: 'name', headerName: 'Name', flex: 1, minWidth: 300, renderCell: (params) => {
                             return <Link to={`/campwiz/campaign/${params.row.id}`} style={{ textDecoration: 'none' }}>{params.value}</Link>
-                        }
+                        },
+                        align: 'center', headerAlign: 'center'
                     },
-                    { headerAlign: 'center', field: 'language', headerName: 'Language', minWidth: 100, hideSortIcons: true, flex: 1 },
-                    { headerAlign: 'center', field: 'start_at', headerName: 'Start Date', minWidth: 200, flex: 1 },
-                    { headerAlign: 'center', field: 'end_at', headerName: 'Finish Date', minWidth: 200, flex: 1 },
+                    { align: 'center',headerAlign: 'center', field: 'language', headerName: 'Language', minWidth: 100, hideSortIcons: true, flex: 1 },
+                    { align: 'center',headerAlign: 'center', field: 'start_at', headerName: 'Start Date', minWidth: 200, flex: 1 },
+                    { align: 'center',headerAlign: 'center', field: 'end_at', headerName: 'Finish Date', minWidth: 200, flex: 1 },
                     // {
                     //     field: 'actions', headerName: 'Actions', flex: 1, renderCell: (params) => {
                     //         return <Box sx={{
@@ -154,7 +155,7 @@ const CampaignList = () => {
                     //         </Box>
                     //     }
                     // },
-                    { headerAlign: 'center', field: 'status', headerName: 'Status', flex: 0.5, minWidth: 150 },
+                    { align: 'center', headerAlign: 'center', field: 'status', headerName: 'Status', flex: 0.5, minWidth: 150 },
 
 
                 ]}
