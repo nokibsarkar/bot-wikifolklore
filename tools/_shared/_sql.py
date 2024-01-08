@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `category` (
 );
 
 -- This Table would be used to store the task
-CREATE TABLE IF NOT EXISTS `task` (
+CREATE TABLE `task` (
     `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     `submitted_by` INTEGER NOT NULL,
     `status`	TEXT NOT NULL,
@@ -163,9 +163,9 @@ CREATE TABLE IF NOT EXISTS `task` (
     `target_wiki`    TEXT NOT NULL,
     `article_count`    INTEGER NOT NULL DEFAULT 0,
     `country`    TEXT NOT NULL,
+    `pagepile_id`    INTEGER NULL DEFAULT NULL,
     FOREIGN KEY(`topic_id`) REFERENCES `topic`(`id`),
     FOREIGN KEY(`submitted_by`) REFERENCES `user`(`id`)
-
 );
 -- This Table would be used to store categories for a topic
 CREATE TABLE IF NOT EXISTS `topic_category` (
