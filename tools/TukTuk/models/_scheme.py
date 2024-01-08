@@ -4,6 +4,7 @@ from enum import Enum
 from datetime import datetime, timedelta
 from ..._shared._countries import Country
 from ..._shared._wiki import Language
+from ..._shared._model import *
 class TaskResultFormat(Enum):
     json : str = "json"
     wikitext : str = "wikitext"
@@ -21,7 +22,7 @@ class ArticleSceme:
 class CategoryScheme(ArticleSceme):
     pass
 @dataclass
-class UserScheme:
+class UserScheme(BaseUserScheme):
     """
      `id` INTEGER PRIMARY KEY,
     `username` TEXT NOT NULL,
