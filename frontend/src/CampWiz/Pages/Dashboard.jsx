@@ -118,7 +118,7 @@ export default function Description({ user }) {
     // );
     return (
         <Paper sx={{
-            height: "100%",
+            // height: "100%",
             width: "100%",
             m: 0,
             border: 0,
