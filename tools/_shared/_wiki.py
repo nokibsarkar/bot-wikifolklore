@@ -5,7 +5,6 @@ class Language(Enum):
         result = {}
         for c in Language:
             result[c.value.replace("_", "-")] = c.name
-        print(result)
         return result
     German_Wikipedia = "de"
     French_Wikipedia = "fr"
