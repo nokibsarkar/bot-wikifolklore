@@ -322,3 +322,4 @@ GROUP BY
 ORDER BY
     DATE(`submission`.`submitted_at`) ASC
 """
+

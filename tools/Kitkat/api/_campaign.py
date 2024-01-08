@@ -133,6 +133,7 @@ async def update_campaign(req : Request, campaign_id: int, campaign: CampaignUpd
 #---------------------------------- GET RESULTS OF A CAMPAIGN ----------------------------------#
 @campaign_router.get("/{campaign_id}/result", response_model=ResponseSingle[CampaignStatistics])
 async def get_campaign_result(req : Request, campaign_id: int, exclude_submissions : bool = False):
+
     """
     This endpoint is used to get a campaign by id.
     """
