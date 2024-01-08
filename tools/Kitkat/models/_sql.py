@@ -298,12 +298,15 @@ SQL1_GET_SUBMISSION_TIMELINE_BY_LANGUAGE = """
 SELECT
     `submission`.`submitted_at` AS `date`,
     COUNT(*) AS `count`,
+
     (`submission`.`campaign_id` || '|' || (SELECT `name` FROM `campaign` WHERE `id` = `submission`.`campaign_id`)) AS `color`
+
 FROM
     `submission`
 
 GROUP BY
     `submission`.`submitted_at`, `submission`.`campaign_id`
+
 ORDER BY
     `submission`.`submitted_at` ASC
 """

@@ -6,6 +6,7 @@ const CampWizStatistics = () => {
   const [campaignID, setCampaignID] = useState(2);
     return <div>
       {campaignID ? <LanguageStatistics campaignID={campaignID} /> : <YearStatistics />}
+
     </div>
 }
 export default CampWizStatistics
