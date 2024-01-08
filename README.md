@@ -1,4 +1,4 @@
-# TukTukBot (code name)
+# Collaboration between Wikiloves folklore and Project Korikath
 
 [![Deploy to Server](https://github.com/nokibsarkar/bot-wikifolklore/actions/workflows/deploy.yml/badge.svg)](https://github.com/nokibsarkar/bot-wikifolklore/actions/workflows/deploy.yml)
 
