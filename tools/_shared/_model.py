@@ -99,6 +99,7 @@ class BaseUserScheme:
     created_at : str = None
     campaign_count : int = 0
     jury_count : int = 0
+    jury_vote_count : int = 0
     submission_count : int = 0
     points : int = 0
     wiki_registered_at : datetime | str = None
