@@ -19,7 +19,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import Footer from '../../../Layout/Footer.jsx';
 const columns = [
@@ -40,6 +40,14 @@ const columns = [
     { field: 'action', headerName: 'Action', width: 130, renderCell: (params) => params.value },
     { field: 'campaign_count', headerName: 'Campaign Count', minWidth: 130, flex: 1 },
 ];
+function CustomToolbar() {
+    return (
+      <GridToolbarContainer style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <GridToolbarFilterButton />
+        <GridToolbarExport />
+      </GridToolbarContainer>
+    );
+  }
 const ListUser = ({ user }) => {
     const [users, setUsers] = useState([]);
     const hasStatAccess = CampWizServer.hasAccess(user.rights, CampWizServer.RIGHTS.STATS);
@@ -103,6 +111,12 @@ const ListUser = ({ user }) => {
                         disableSelectionOnClick
                         hideFooterSelectedRowCount
                         density='compact'
+                        slots={
+                            {
+                                toolbar: CustomToolbar,
+                            
+                            }
+                        }
                     />
                     {/* <Footer /> */}
                 </CardContent>
