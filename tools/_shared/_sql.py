@@ -314,3 +314,12 @@ FROM
 WHERE
     `task_id` = :task_id
 """
+SQL1_INSERT_FEEDBACK = """
+UPDATE
+    `user` SET
+        `feedback_ui_score` = :feedback_ui_score,
+        `feedback_speed_score` = :feedback_speed_score,
+        `feedback_note` = :feedback_note
+WHERE `id` = :user_id
+RETURNING *
+"""

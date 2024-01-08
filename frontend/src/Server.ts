@@ -29,10 +29,10 @@ const checkToken = (token: string) => {
     }
 }
 type Feedback = {
-    uiScore: number;
-    performanceScore : number;
-    whyBetterFeedback : string;
-    newFeatureFeedbac : string;
+    ui_score: number;
+    speed_score : number;
+    why_better : string;
+    feature_request : string;
 }
 const fetchWithErrorHandling = async (url: string, options?: RequestInit) => {
     const res = await fetch(url, options);

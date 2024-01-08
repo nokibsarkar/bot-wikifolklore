@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import Collapse from '@mui/material/Collapse';
 import BugIcon from '@mui/icons-material/BugReport';
 import HomeIcon from '@mui/icons-material/Home';
-import { showReportDialog } from '@sentry/react';
+import StarIcon from '@mui/icons-material/Star';
 const Tool = (comp, user) => {
     const [expanded, setExpanded] = React.useState(true);
     return <List>
@@ -129,7 +129,7 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                         <ListItemButton onClick={e => setFeedbackOpen(true)}
                         >
                             <ListItemIcon>
-                                <BugIcon />
+                                <StarIcon />
                             </ListItemIcon>
                             <ListItemText primary='Give us Feedback' />
                         </ListItemButton>

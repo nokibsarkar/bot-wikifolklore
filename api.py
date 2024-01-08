@@ -350,7 +350,17 @@ def get_stats(req : Request):
         data=Statistics(**stats)
     )
 # ------------------------------------ Fetch Public Stats ------------------------------------
-
+@api.post('/feedback', response_model=ResponseSingle[BaseUserScheme])
+def create_feedback(req : Request, feedback : FeedbackCreate = Body(...)):
+    user_id = req.state.user['id']
+    with Server.get_parmanent_db() as conn:
+        cur = conn.cursor()
+        saved_feedback = Feedback.create(cur, user_id, feedback.ui_score, feedback.speed_score, feedback.why_better, feedback.feature_request)
+        
+    return ResponseSingle[BaseUserScheme](
+        success=True,
+        data=BaseUserScheme(**saved_feedback)
+    )
 
 api.include_router(campwiz_router)
 api.include_router(user_router)

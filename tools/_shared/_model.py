@@ -279,3 +279,30 @@ class BaseUser:
     def update_username(conn : sqlite3.Cursor, id, username):
         return conn.execute("UPDATE `user` SET `username` = ? WHERE `id` = ? RETURNING *", (username, id)).fetchone()
 
+
+class Feedback:
+    @staticmethod
+    def create(conn : sqlite3.Cursor, user_id,  ui_score, speed_score, why_better, feature_request):
+        cur = conn.execute(SQL1_INSERT_FEEDBACK, {
+            'user_id': user_id,
+            'feedback_ui_score': ui_score,
+            'feedback_speed_score': speed_score,
+            'feedback_note' : why_better,
+            'why_better': why_better,
+            'feature_request': feature_request
+        })
+        return cur.fetchone()
+@dataclass
+class FeedbackCreate:
+    ui_score : int = 0
+    speed_score : int = 0
+    why_better : str = ''
+    feature_request : str = ''
+    @staticmethod
+    def from_dict(d):
+        return FeedbackCreate(
+            ui_score = d['ui_score'],
+            speed_score = d['speed_score'],
+            why_better = d['why_better'],
+            feature_request = d['feature_request']
+        )
