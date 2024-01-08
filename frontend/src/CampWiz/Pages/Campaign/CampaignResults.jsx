@@ -1,7 +1,8 @@
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarExport, GridToolbarContainer, GridToolbarFilt, GridToolbarContainererButton, GridToolbarFilterButton } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import CampWizServer from "../../Server";
+
 const columns = [
     { field: 'username', headerName: 'Username', minWidth: 100, flex: 1 },
     { field: 'total_submissions', headerName: 'Submissions', minWidth: 100, flex: 1 },
@@ -10,7 +11,15 @@ const columns = [
     // { field: 'total_negative_votes', headerName: 'Negative Votes', minWidth: 100, flex: 1 },
     { field: 'total_points', headerName: 'Points', minWidth: 100, flex: 1 , renderCell: (params) => params.value / 10 },
 ];
-
+function CustomToolbar() {
+    return (
+      <GridToolbarContainer style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <GridToolbarFilterButton />
+        <GridToolbarExport />
+      </GridToolbarContainer>
+    );
+  }
+  
 const CampaignResults = ({ campaign }) => {
     const [loading, setLoading] = useState(true);
     const [results, setResults] = useState([]);
@@ -36,6 +45,11 @@ const CampaignResults = ({ campaign }) => {
                 density="compact"
                 hideFooterSelectedRowCount
                 getRowId={row => row.username}
+                slots={
+                    {
+                        toolbar: CustomToolbar,
+                    }
+                }
             />
         </div>
     )
