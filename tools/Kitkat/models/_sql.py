@@ -294,6 +294,31 @@ WHERE
     )
 """
 SQL1_DELETE_SUBMISSION_BY_ID = "DELETE FROM `submission` WHERE `id` = :id"
-SQL1_UPDATE_CAMPAIGN_STATS = """
+SQL1_GET_SUBMISSION_TIMELINE_BY_LANGUAGE = """
 SELECT
+    `submission`.`submitted_at` AS `date`,
+    COUNT(*) AS `count`,
+    `submission`.`target_wiki` AS `color`
+FROM
+    `submission`
+
+GROUP BY
+    `submission`.`submitted_at`, `submission`.`target_wiki`
+ORDER BY
+    `submission`.`submitted_at` ASC
+"""
+SQL1_GET_SUBMISSION_TIMELINE_BY_SUBMITTED_BY_ID = """
+SELECT
+    DATE(`submission`.`submitted_at`) AS `date`,
+    COUNT(*) AS `count`,
+    `submission`.`submitted_by_username` AS `color`
+FROM
+    `submission`
+WHERE
+    `submission`.`campaign_id` = :campaign_id
+GROUP BY
+    DATE(`submission`.`submitted_at`), `submission`.`submitted_by_username`
+
+ORDER BY
+    DATE(`submission`.`submitted_at`) ASC
 """

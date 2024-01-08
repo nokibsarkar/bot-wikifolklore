@@ -255,6 +255,15 @@ class CampaignServer {
         })
         return res.data;
     }
+    static async getTimeline(groupBy : string, campaignID: number = 0): Promise<any[]> {
+        const params = new URLSearchParams({
+            group_by : groupBy,
+            campaign_id : campaignID.toString()
+        });
+        const url = '/api/campwiz/campaign/timeline?' + params.toString();
+        const res = await fetchWithErrorHandling(url)
+        return res.data;
+    }
 }
 class PageServer {
     static async getPageInfo({ language, submitted_by_username, title, submissionId }: PageInfoRequest): Promise<PageInfo> {
@@ -347,12 +356,15 @@ type LanguageObject = {
 } | null;
 
 type StatTask = {
-    data : any;
-    title? : string;
-    color? : string;
+    
 }
 type Statistics = {
-    tasks? : StatTask[]
+    id : string | number;
+    submissions : Submission[];
+    total_points : number;
+    total_submissions : number;
+    total_newly_created : number;
+    total_expanded : number;
 }
 
 class CampWizServer {
@@ -423,14 +435,7 @@ class CampWizServer {
     };
     async getStats(type : string, params : any = {}) : Promise<Statistics> {
         
-        const Statistics : Statistics = {
-            tasks : [
-                {
-                    data : [],
-                    title : '2023'
-                }
-            ]
-        }
+        const Statistics : Statistics = {"id":1,"submissions":[],"total_points":10,"total_submissions":1,"total_newly_created":1,"total_expanded":0}
         return Statistics;
     }
     async init() {
