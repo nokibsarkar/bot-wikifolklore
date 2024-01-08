@@ -194,4 +194,5 @@ async def judge_submission(req: Request, submission_id: int, judgement : Judgeme
     except HTTPException as e:
         raise e
     except Exception as e:
+        raise e
         raise HTTPException(status_code=400, detail=str(e))
