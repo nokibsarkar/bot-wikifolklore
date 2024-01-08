@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `category` (
 );
 
 -- This Table would be used to store the task
-CREATE TABLE `task` (
+CREATE TABLE IF NOT EXISTS `task` (
     `id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     `submitted_by` INTEGER NOT NULL,
     `status`	TEXT NOT NULL,
