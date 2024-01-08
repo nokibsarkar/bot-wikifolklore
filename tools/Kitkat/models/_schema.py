@@ -236,6 +236,22 @@ class CampaignResultScheme:
         self.total_newly_created = total_newly_created
         self.total_expanded = total_submissions - total_newly_created
 @dataclass
+class CampaignStatistics:
+    id : int | str
+    submissions : list[CampaignResultScheme]
+    total_points : int = 0
+    total_submissions : int = 0
+    total_newly_created : int = 0
+    total_expanded : int = 0
+    def __init__(self, id : int | str, submissions : list[CampaignResultScheme]):
+        self.id = id
+        self.submissions = submissions
+        for submission in submissions:
+            self.total_points += submission.total_points
+            self.total_submissions += submission.total_submissions
+            self.total_newly_created += submission.total_newly_created
+            self.total_expanded += submission.total_expanded
+@dataclass
 class Statistics:
     """
     "registered_user_count": 1,

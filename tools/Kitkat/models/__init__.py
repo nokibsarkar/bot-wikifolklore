@@ -175,8 +175,9 @@ class Campaign:
     @staticmethod
     def get_results(conn : sqlite3.Cursor, campaign_id : str):
         results = conn.execute(SQL1_GET_RESULTS_BY_CAMPAIGN_ID, {'campaign_id': campaign_id}).fetchall()
-        data = [CampaignResultScheme(**r) for r in results]
-        return data
+        submissions = [CampaignResultScheme(**r) for r in results]
+        statistics = CampaignStatistics(campaign_id, submissions=submissions)
+        return statistics
     @staticmethod
     def get_all(conn : sqlite3.Cursor, language : Language=None, status : list[CampaignStatus]=None, limit : int=50, offset : int= 0):
         params = {

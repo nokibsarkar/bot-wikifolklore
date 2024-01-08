@@ -42,6 +42,11 @@ CREATE TABLE IF NOT EXISTS `campaign` (
     `secretBallot`  BOOLEAN NOT NULL DEFAULT TRUE,
     `allowJuryToParticipate`    BOOLEAN NOT NULL DEFAULT TRUE,
     `allowMultipleJudgement`    BOOLEAN NOT NULL DEFAULT TRUE,
+
+    `total_submissions` INTEGER NOT NULL DEFAULT 0,
+    `total_newly_created` INTEGER NOT NULL DEFAULT 0,
+    `total_points` INTEGER NOT NULL DEFAULT 0,
+    `total_new_users` INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT `campaign_approved_by_fkey` FOREIGN KEY(`approved_by`) REFERENCES `user`(`id`),
     CONSTRAINT `campaign_created_by_id_fkey` FOREIGN KEY(`created_by_id`) REFERENCES `user`(`id`),
     CONSTRAINT `campaign_start_end_check` CHECK(NOT `start_at` > `end_at`),
