@@ -68,7 +68,7 @@ const Tool = (comp, user) => {
         </Collapse>
     </List>
 }
-const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, components }) => {
+const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, components, setFeedbackOpen }) => {
 
     const gotoHome = () => {
         window.location.href = '/';
@@ -115,19 +115,23 @@ const AppDrawer = ({ open = true, setOpen, anchor = 'left', user, toolName, comp
                 <Divider />
                 <List>
                     <ListItem key='report' disablePadding>
-                        <ListItemButton onClick={e => showReportDialog({
-                            user: {
-                                name: user?.username,
-                                email: user?.email
-                            }
-                        })}
-                        component={Link} to='https://github.com/nokibsarkar/bot-wikifolklore/issues'
-                        target='_blank'
+                        <ListItemButton 
+                            component={Link} to='https://github.com/nokibsarkar/bot-wikifolklore/issues'
+                            target='_blank'
                         >
                             <ListItemIcon>
                                 <BugIcon />
                             </ListItemIcon>
                             <ListItemText primary='Report Bug' />
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem key='feedback' disablePadding>
+                        <ListItemButton onClick={e => setFeedbackOpen(true)}
+                        >
+                            <ListItemIcon>
+                                <BugIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='Give us Feedback' />
                         </ListItemButton>
                     </ListItem>
                 </List>

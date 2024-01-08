@@ -85,6 +85,7 @@ function App() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const [toolName, toolPath, getRoutes] = ToolSelector();
+  const [feedbackOpen, setFeedbackOpen] = React.useState(false);
   const user = Server.loginnedUser();
   if (user) {
     // setUser(decoded);
@@ -99,15 +100,17 @@ function App() {
     toolName,
     toolPath,
     setOpen: setDrawerOpen,
-    open: drawerOpen
+    open: drawerOpen,
   }
   return (
     <Sentry.ErrorBoundary fallback={<div>Something went wrong</div>} showDialog>
       {/* <UserfeedBackForm user={user}  projectId={Sentry.getCurrentHub().getClient().getDsn().projectId} /> */}
       <ThemeProvider theme={theme}>
+      {/* user={user} dsn={dsn} projectId={Sentry.getCurrentHub().getClient().getDsn().projectId} */}
+        {feedbackOpen && <UserfeedBackForm  setFeedbackOpen={setFeedbackOpen} />}
         <BrowserRouter>
           <AppBar {...commonProps} />
-          <AppDrawer {...commonProps} components={Tools} />
+          <AppDrawer {...commonProps} components={Tools} setFeedbackOpen={setFeedbackOpen} />
           <React.Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/fnf/*" element={<FnF {...commonProps} />} title="FnF" />

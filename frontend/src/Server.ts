@@ -28,6 +28,29 @@ const checkToken = (token: string) => {
         return null;
     }
 }
+type Feedback = {
+    uiScore: number;
+    performanceScore : number;
+    whyBetterFeedback : string;
+    newFeatureFeedbac : string;
+}
+const fetchWithErrorHandling = async (url: string, options?: RequestInit) => {
+    const res = await fetch(url, options);
+    if(res.ok){
+        const data = await res.json();
+        if(data.success) return data;
+        throw new Error(data.detail);
+    } else {
+        var err = null;
+        try {
+            const data = await res.json();
+            err = data.detail
+        } catch (error) {
+            err = error;
+        }
+        throw new Error(err);
+    }
+};
 const deleteCookie = (name: string) => {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
@@ -103,6 +126,16 @@ class BaseServer {
         }
         languages.sort((a, b) => a.label.localeCompare(b.label));
         return languages;
+    }
+    static async sendFeedback(feedback : Feedback){
+        return await fetchWithErrorHandling("/api/feedback", {
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify(feedback)
+        });
+
     }
     static logout() {
         deleteCookie(AUTH_COOKIE_NAME);
