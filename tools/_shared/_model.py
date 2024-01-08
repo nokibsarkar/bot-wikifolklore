@@ -78,16 +78,6 @@ class Permission(Enum):
                 return prev_right_int
         else:
             return Permission.rights_to_int(grantee_rights)
-"""
-`jury_count`	INTEGER DEFAULT 0,
-    `jury_vote_count`	INTEGER DEFAULT 0,
-    `submission_count`	INTEGER DEFAULT 0,
-    `points`	INTEGER DEFAULT 0,
-    `wiki_registered_at`	TIMESTAMP NULL DEFAULT NULL,
-    `feedback_ui_score`	INTEGER DEFAULT 0,
-    `feedback_speed_score`	INTEGER DEFAULT 0,
-    `feedback_note`	TEXT DEFAULT ''
-"""
 @dataclass
 class BaseUserScheme:
     id : int
