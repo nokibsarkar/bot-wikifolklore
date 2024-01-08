@@ -165,6 +165,11 @@ def get_language_list():
         success=True,
         data=countries
     )
+@app.get('/feedback', response_class=responses.HTMLResponse)
+def feedback_list(req : Request):
+    return responses.TemplateResponse("feedback.html", 
+                                      context = {'request' : req}
+                                     ) 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="", port=5000)
