@@ -3,8 +3,7 @@ from fastapi import Body, APIRouter, Depends, Request, status, HTTPException, Ba
 from authentication import authenticate
 import logging
 from _api import *
-from schema import *
-from models import *
+from tools.TukTuk.models import *
 from tools.Kitkat import campwiz_router
 api = APIRouter(prefix="/api", dependencies=[Depends(authenticate)], tags=['api'])
 

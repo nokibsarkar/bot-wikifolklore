@@ -1,8 +1,8 @@
 from requests import Session
 import time, csv, io, os, logging
-from models import *
+from tools.TukTuk.models import *
 from translation import translate
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 try:
     with open("VERSION", "r") as f:
         VERSION = f.read().strip()

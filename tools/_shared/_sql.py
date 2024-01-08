@@ -1,4 +1,3 @@
-
 SQL1_INIT = """
 CREATE TABLE IF NOT EXISTS `user` (
     `id`	INTEGER NOT NULL PRIMARY KEY,
@@ -7,8 +6,17 @@ CREATE TABLE IF NOT EXISTS `user` (
     `created_at`	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `article_count`	INTEGER DEFAULT 0,
     `category_count`	INTEGER DEFAULT 0,
-    `task_count`	INTEGER DEFAULT 0
-);
+    `task_count`	INTEGER DEFAULT 0,
+    `campaign_count`	INTEGER DEFAULT 0,
+    `jury_count`	INTEGER DEFAULT 0,
+    `jury_vote_count`	INTEGER DEFAULT 0,
+    `submission_count`	INTEGER DEFAULT 0,
+    `points`	INTEGER DEFAULT 0,
+    `wiki_registered_at`	TIMESTAMP NULL DEFAULT NULL,
+    `feedback_ui_score`	INTEGER DEFAULT 0,
+    `feedback_speed_score`	INTEGER DEFAULT 0,
+    `feedback_note`	TEXT DEFAULT ''
+);    
 CREATE TABLE IF NOT EXISTS `campaign` (
     `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     `name`    TEXT NOT NULL,
@@ -160,7 +168,6 @@ CREATE TABLE IF NOT EXISTS `topic_category` (
     `category_id`	INTEGER NOT NULL,
     PRIMARY KEY(`topic_id`,`category_id`)
 );
-
 """
 SQL2_INIT = """
 -- This Table would be used to store the article
@@ -259,7 +266,7 @@ FROM
 WHERE
     `topic_category`.`topic_id` = :topic_id;
 """
-SQL1_INSERT_USER = "INSERT INTO `user` (`id`, `username`,`rights`) VALUES (:id, :username, :rights)"
+SQL1_INSERT_USER = "INSERT INTO `user` (`id`, `username`,`rights`, `wiki_registered_at`) VALUES (:id, :username, :rights, :wiki_registered_at)"
 SQL1_GET_STATISTICS_FROM_USER="""
 SELECT
     COUNT(*) AS `registered_user_count`,
