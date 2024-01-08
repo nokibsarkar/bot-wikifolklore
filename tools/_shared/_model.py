@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
+from datetime import datetime
 import jwt, os, requests, time, sqlite3
 from ._sql import *
 #---------------------------- LOAD the constants ----------------------------
@@ -145,6 +146,7 @@ class BaseUser:
     def generate_access_token(code, state) -> (str, str, str):
         COOKIE_NAME = 'auth'
         redirect_uri = state
+        print(redirect_uri)
         endpoint = META_OAUTH_ACCESS_TOKEN_URL
         params = {
             'grant_type' : 'authorization_code',
@@ -163,6 +165,8 @@ class BaseUser:
             return COOKIE_NAME, '', '/error?code=' + profile['error']
         user_id = profile['sub']
         username = profile['username']
+        registered_at = datetime.strptime(profile['registered'], '%Y%m%d%H%M%S').isoformat()
+        
         with BaseServer.get_parmanent_db() as conn:
             user = BaseUser.get_by_id(conn.cursor(), user_id)
             if user is None:
@@ -230,13 +234,14 @@ class BaseUser:
         return Permission.has_access(rights, right)
 
     @staticmethod
-    def create(conn : sqlite3.Cursor, user_id, username, rights : int):
+    def create(conn : sqlite3.Cursor, user_id, username, rights : int, registered_at):
         if type(rights) == dict:
             rights = BaseUser.rights_to_int(rights)
         conn.execute(SQL1_INSERT_USER, {
             'username': username,
             'rights': rights,
-            'id': user_id
+            'id': user_id,
+            'wiki_registered_at': registered_at
         })
     @staticmethod
     def get_by_id(conn : sqlite3.Cursor, id):

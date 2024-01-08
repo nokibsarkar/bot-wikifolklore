@@ -211,7 +211,45 @@ WHERE `id` = :id
 RETURNING *  
 """
 SQL1_VERIFY_JUDGE = "SELECT `allowed` FROM `jury` WHERE `user_id` = :user_id AND `campaign_id` = :campaign_id LIMIT 1"
-SQL1_UPDATE_CAMPAIGN_STATUS = "UPDATE `campaign` SET `status` = :status WHERE `id` = :id RETURNING *"
+SQL1_UPDATE_CAMPAIGN_STATUS = """
+UPDATE
+    `campaign`
+    SET
+        `status` = :status,
+        `total_points` = IFNULL((
+            SELECT
+                SUM(`points`)
+            FROM
+                `submission`
+            WHERE
+                `campaign_id` = :id
+        ), 0),
+        `total_newly_created` = IFNULL((
+            SELECT
+                SUM(`newly_created`)
+            FROM
+                `submission`
+            WHERE
+                `campaign_id` = :id
+        ), 0),
+        `total_submissions` = IFNULL((
+            SELECT
+                COUNT(*)
+            FROM
+                `submission`
+            WHERE
+                `campaign_id` = :id
+        ), 0),
+        `total_new_users` = IFNULL((
+            SELECT
+                COUNT(DISTINCT `submitted_by_id`)
+            FROM
+                `submission`
+            WHERE
+                `campaign_id` = :id
+        ), 0)
+    WHERE `id` = :id RETURNING *
+"""
 SQL1_UPDATE_DRAFT_CALCULATION = """
 UPDATE `draft` SET
     `calculated` = true,
@@ -256,3 +294,6 @@ WHERE
     )
 """
 SQL1_DELETE_SUBMISSION_BY_ID = "DELETE FROM `submission` WHERE `id` = :id"
+SQL1_UPDATE_CAMPAIGN_STATS = """
+SELECT
+"""

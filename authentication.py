@@ -1,6 +1,6 @@
 from fastapi.security import HTTPAuthorizationCredentials, http
 from fastapi import Depends, HTTPException, status, Request
-from models import User
+from tools._shared._model import BaseUser
 UNAUTHORISED_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Invalid authentication credentials",
@@ -8,7 +8,7 @@ UNAUTHORISED_EXCEPTION = HTTPException(
 )
 def authenticate(req : Request) -> dict | None:
     try:
-        logged_in_user = User.logged_in_user(req.cookies)
+        logged_in_user = BaseUser.logged_in_user(req.cookies)
         req.state.user = logged_in_user
         if logged_in_user:
             return logged_in_user

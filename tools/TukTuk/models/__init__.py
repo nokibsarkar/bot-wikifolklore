@@ -1,6 +1,7 @@
-from sql import *
-from schema import *
-import sqlite3, time, os, jwt, requests
+from ..._shared._model import *
+from ._scheme import *
+
+
 #---------------------------- LOAD the constants ----------------------------
 VERIFIER_OAUTH_CLIENT_ID        =   os.environ['VERIFIER_OAUTH_CLIENT_ID']
 VERIFIER_OAUTH_CLIENT_SECRET    =   os.environ['VERIFIER_OAUTH_CLIENT_SECRET']
@@ -91,13 +92,14 @@ class User:
             return COOKIE_NAME, '', '/error?code=' + profile['error']
         user_id = profile['sub']
         username = profile['username']
+        registered_at = datetime.strptime(profile['registered'], '%Y%m%d%H%M%S').isoformat()
         with Server.get_parmanent_db() as conn:
             user = User.get_by_id(conn.cursor(), user_id)
             if user is None:
                 # Create new user
                 User.create(conn, user_id, username, {
                     'task': True,
-                })
+                }, registered_at)
                 conn.commit()
         jwt_token = jwt.encode({
             'id': user_id,
@@ -180,13 +182,14 @@ class User:
         return bool(rights & (1 << right))
 
     @staticmethod
-    def create(conn : sqlite3.Cursor, user_id, username, rights : int):
+    def create(conn : sqlite3.Cursor, user_id, username, rights : int, registered_at : int):
         if type(rights) == dict:
             rights = User.rights_to_int(rights)
         conn.execute(SQL1_INSERT_USER, {
             'username': username,
             'rights': rights,
-            'id': user_id
+            'id': user_id,
+            'wiki_registered_at': registered_at
         })
         conn.commit()
     @staticmethod
@@ -430,4 +433,5 @@ class Topic:
     # def update_title(conn : sqlite3.Cursor, topic_id, new_title):
     #     conn.execute(SQL1_UPDATE_TOPIC_TITLE, {'topic_id': topic_id, 'title': new_title})
     #     conn.commit()
+
 

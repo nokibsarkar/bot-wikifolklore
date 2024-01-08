@@ -2,6 +2,7 @@ import { DataGrid, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToo
 import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import CampWizServer from "../../Server";
+import { Box } from "@mui/material";
 
 const columns = [
     { field: 'username', headerName: 'Username', minWidth: 100, flex: 1 },
@@ -22,7 +23,7 @@ function CustomToolbar() {
   
 const CampaignResults = ({ campaign }) => {
     const [loading, setLoading] = useState(true);
-    const [results, setResults] = useState([]);
+    const [results, setResults] = useState(null);
     useEffect(() => {
         (async () => {
             setLoading(true);
@@ -34,9 +35,15 @@ const CampaignResults = ({ campaign }) => {
     return (
         <div>
             <Typography variant='h5' sx={{ textAlign: 'center', m: 2 }}>Results</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1px', p: 1, m: 1, flexWrap: 'wrap' }}>
+                <Typography variant='body1' sx={{ textAlign: 'center', m: 1 }}>Total Submissions: {results?.total_submissions}</Typography>
+                <Typography variant='body1' sx={{ textAlign: 'center', m: 1 }}>Total New Submissions: {results?.total_newly_created}</Typography>
+                <Typography variant='body1' sx={{ textAlign: 'center', m: 1 }}>Total Expanded Submissions: {results?.total_expanded}</Typography>
+                <Typography variant='body1' sx={{ textAlign: 'center', m: 1 }}>Total Points: {results?.total_points / 10}</Typography>
+            </Box>
             <DataGrid
                 loading={loading}
-                rows={results}
+                rows={results?.submissions || []}
                 autoHeight
                 disableColumnMenu
                 columns={columns}
