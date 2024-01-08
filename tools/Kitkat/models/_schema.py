@@ -252,6 +252,11 @@ class CampaignStatistics:
             self.total_newly_created += submission.total_newly_created
             self.total_expanded += submission.total_expanded
 @dataclass
+class Timeline:
+    color : str
+    date : datetime | date
+    count : int
+@dataclass
 class Statistics:
     """
     "registered_user_count": 1,

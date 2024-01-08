@@ -21,7 +21,17 @@ async def list_campaigns(language : Language = None, status : Annotated[list[Cam
         raise HTTPException(status_code=404, detail=str(e))
 
 
-
+@campaign_router.get('/timeline', response_model=ResponseMultiple[Timeline])
+def timeline(req : Request, group_by : str, campaign_id : str | None = None):
+    """
+    This endpoint is used to get all campaigns.
+    """
+    try:
+        with Server.get_parmanent_db() as conn:
+            result = Campaign.get_submission_timeline(conn.cursor(), group_by=group_by, campaign_id=campaign_id)
+        return ResponseMultiple[CampaignScheme](success=True, data=result)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
 #---------------------------------- GET A CAMPAIGN ----------------------------------#
 @campaign_router.get("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def get_campaign(req : Request, campaign_id: int, check_judge : bool = False):
@@ -122,7 +132,8 @@ async def update_campaign(req : Request, campaign_id: int, campaign: CampaignUpd
     
 #---------------------------------- GET RESULTS OF A CAMPAIGN ----------------------------------#
 @campaign_router.get("/{campaign_id}/result", response_model=ResponseSingle[CampaignStatistics])
-async def get_campaign_result(req : Request, campaign_id: int):
+async def get_campaign_result(req : Request, campaign_id: int, exclude_submissions : bool = False):
+
     """
     This endpoint is used to get a campaign by id.
     """
@@ -131,7 +142,7 @@ async def get_campaign_result(req : Request, campaign_id: int):
             campaign = Campaign.get_by_id(conn.cursor(), campaign_id)
             if not campaign:
                 raise Exception("Campaign not found")
-            results = Campaign.get_results(conn.cursor(), campaign_id)
+            results = Campaign.get_results(conn.cursor(), campaign_id, exclude_submissions=exclude_submissions)
             return ResponseSingle[CampaignStatistics](success=True, data=results)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))

@@ -173,11 +173,32 @@ class Campaign:
         updated_campaign = cur.fetchone()
         return updated_campaign
     @staticmethod
-    def get_results(conn : sqlite3.Cursor, campaign_id : str):
-        results = conn.execute(SQL1_GET_RESULTS_BY_CAMPAIGN_ID, {'campaign_id': campaign_id}).fetchall()
-        submissions = [CampaignResultScheme(**r) for r in results]
-        statistics = CampaignStatistics(campaign_id, submissions=submissions)
+    def get_results(conn : sqlite3.Cursor, campaign_id : str, exclude_submissions : bool = False):
+        statistics = None
+        if not exclude_submissions:
+            results = conn.execute(SQL1_GET_RESULTS_BY_CAMPAIGN_ID, {'campaign_id': campaign_id}).fetchall()
+            submissions = [CampaignResultScheme(**r) for r in results]
+            statistics = CampaignStatistics(campaign_id, submissions=submissions)
+        else:
+            submissions = []
+            campaign = Campaign.get_by_id(conn, campaign_id)
+            statistics = CampaignStatistics(campaign_id, submissions=submissions)
+            statistics.total_submissions = campaign['total_submissions']
+            statistics.total_points = campaign['total_points']
+            statistics.total_newly_created = campaign['total_newly_created']
+            statistics.total_expanded = statistics.total_submissions - statistics.total_newly_created
         return statistics
+    @staticmethod
+    def get_submission_timeline(conn : sqlite3.Cursor, group_by : str = 'language', campaign_id : str = None, ):
+        timeline = []
+        if group_by == 'language':
+            timeline = conn.execute(SQL1_GET_SUBMISSION_TIMELINE_BY_LANGUAGE).fetchall()
+        elif group_by == 'user' and campaign_id is not None:
+            timeline = conn.execute(SQL1_GET_SUBMISSION_TIMELINE_BY_SUBMITTED_BY_ID, {'campaign_id': campaign_id}).fetchall()
+        timeline = list(map(lambda x: Timeline(**x), timeline))
+        return timeline
+
+
     @staticmethod
     def get_all(conn : sqlite3.Cursor, language : Language=None, status : list[CampaignStatus]=None, limit : int=50, offset : int= 0):
         params = {

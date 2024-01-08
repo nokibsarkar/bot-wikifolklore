@@ -78,6 +78,16 @@ class Permission(Enum):
                 return prev_right_int
         else:
             return Permission.rights_to_int(grantee_rights)
+"""
+`jury_count`	INTEGER DEFAULT 0,
+    `jury_vote_count`	INTEGER DEFAULT 0,
+    `submission_count`	INTEGER DEFAULT 0,
+    `points`	INTEGER DEFAULT 0,
+    `wiki_registered_at`	TIMESTAMP NULL DEFAULT NULL,
+    `feedback_ui_score`	INTEGER DEFAULT 0,
+    `feedback_speed_score`	INTEGER DEFAULT 0,
+    `feedback_note`	TEXT DEFAULT ''
+"""
 @dataclass
 class BaseUserScheme:
     id : int
@@ -87,6 +97,16 @@ class BaseUserScheme:
     category_count : int = 0
     task_count : int = 0
     created_at : str = None
+    campaign_count : int = 0
+    jury_count : int = 0
+    submission_count : int = 0
+    points : int = 0
+    wiki_registered_at : datetime | str = None
+    feedback_ui_score : int = 0
+    feedback_speed_score : int = 0
+    feedback_note : str = None
+
+
 
 class BaseServer:
     PERMANENT_DB = 'data.db'
