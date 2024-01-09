@@ -351,7 +351,7 @@ def get_stats(req : Request):
     )
 # ------------------------------------ Fetch Public Stats ------------------------------------
 @api.post('/feedback', response_model=ResponseSingle[BaseUserScheme])
-def create_feedback(req : Request, feedback : FeedbackCreate = Body(...)):
+def create_feedback(req : Request, feedback : FeedbackScheme = Body(...)):
     user_id = req.state.user['id']
     with Server.get_parmanent_db() as conn:
         cur = conn.cursor()

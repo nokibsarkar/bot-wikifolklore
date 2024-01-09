@@ -4,7 +4,7 @@ if not load_dotenv():
     raise Exception("Failed to load .env file")
 #------------------------------------ .env file loaded------------------------------------
 from settings import *
-from api import api, Server, User, ResponseSingle, Country, Language
+from api import api, Server, User, ResponseSingle, Country, Language, Feedback
 from fastapi import FastAPI, responses, Request, staticfiles
 from fastapi.templating import Jinja2Templates
 class FnF(FastAPI):
@@ -168,23 +168,16 @@ def get_language_list():
     )
 @app.get('/feedback', response_class=responses.HTMLResponse)
 def feedback_list(req : Request):
+    with Server.get_parmanent_db() as db:
+        feedbacks = Feedback.get_all(db)
+    print(feedbacks)
     return app.templates.TemplateResponse("feedback.html", 
-                                      context = {'request' : req, 
-                                                 'feedbacks' : [
-                                                     {'username' : 'Nokib',
-                                                      'feedback_ui_score' : 8,
-                                                      'feedback_speed_score' :9,
-                                                      'feedback_note' : 'Testing'
-                                                     },
-                                                     {'username' : 'Nokib2',
-                                                      'feedback_ui_score' : 8,
-                                                      'feedback_speed_score' :9,
-                                                      'feedback_note' : 'Testing'
-    }
-                                                 ]
-                                                },
+        context = {
+            'request' : req, 
+            'feedbacks' : feedbacks
+        },
                                           
-                                     ) 
+    ) 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="", port=5000)

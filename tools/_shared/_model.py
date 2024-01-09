@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import jwt, os, requests, time, sqlite3
 from ._sql import *
+from ._scheme import *
 #---------------------------- LOAD the constants ----------------------------
 VERIFIER_OAUTH_CLIENT_ID        =   os.environ['VERIFIER_OAUTH_CLIENT_ID']
 VERIFIER_OAUTH_CLIENT_SECRET    =   os.environ['VERIFIER_OAUTH_CLIENT_SECRET']
@@ -78,34 +79,7 @@ class Permission(Enum):
                 return prev_right_int
         else:
             return Permission.rights_to_int(grantee_rights)
-"""
-`jury_count`	INTEGER DEFAULT 0,
-    `jury_vote_count`	INTEGER DEFAULT 0,
-    `submission_count`	INTEGER DEFAULT 0,
-    `points`	INTEGER DEFAULT 0,
-    `wiki_registered_at`	TIMESTAMP NULL DEFAULT NULL,
-    `feedback_ui_score`	INTEGER DEFAULT 0,
-    `feedback_speed_score`	INTEGER DEFAULT 0,
-    `feedback_note`	TEXT DEFAULT ''
-"""
-@dataclass
-class BaseUserScheme:
-    id : int
-    username : str
-    rights : int = 0
-    article_count : int = 0
-    category_count : int = 0
-    task_count : int = 0
-    created_at : str = None
-    campaign_count : int = 0
-    jury_count : int = 0
-    jury_vote_count : int = 0
-    submission_count : int = 0
-    points : int = 0
-    wiki_registered_at : datetime | str = None
-    feedback_ui_score : int = 0
-    feedback_speed_score : int = 0
-    feedback_note : str = None
+
 
 
 
@@ -292,17 +266,9 @@ class Feedback:
             'feature_request': feature_request
         })
         return cur.fetchone()
-@dataclass
-class FeedbackCreate:
-    ui_score : int = 0
-    speed_score : int = 0
-    why_better : str = ''
-    feature_request : str = ''
     @staticmethod
-    def from_dict(d):
-        return FeedbackCreate(
-            ui_score = d['ui_score'],
-            speed_score = d['speed_score'],
-            why_better = d['why_better'],
-            feature_request = d['feature_request']
-        )
+    def get_all(conn : sqlite3.Cursor):
+        data = conn.execute(SQL1_GET_ALL_FEEDBACKS).fetchall()
+        return [FeedbackScheme.from_dict(d) for d in data]
+        
+

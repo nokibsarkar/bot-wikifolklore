@@ -323,3 +323,16 @@ UPDATE
 WHERE `id` = :user_id
 RETURNING *
 """
+SQL1_GET_ALL_FEEDBACKS = """
+SELECT
+    `feedback_ui_score`,
+    `feedback_speed_score`,
+    `feedback_note`,
+    `username`
+FROM
+    `user`
+WHERE
+    `feedback_ui_score` != 0
+    OR `feedback_speed_score` != 0
+    OR `feedback_note` != ''
+"""
