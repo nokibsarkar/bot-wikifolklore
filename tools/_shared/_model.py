@@ -1,6 +1,6 @@
 from enum import Enum
 from datetime import datetime
-import jwt, os, requests, time, sqlite3, re
+import jwt, os, requests, time, sqlite3, re, random
 from ._sql import *
 from ._scheme import *
 #---------------------------- LOAD the constants ----------------------------
@@ -30,7 +30,8 @@ sess.headers = {
     "User-Agent": f"TukTukBot/{VERSION} ({HOSTNAME}) (python-requests) " ,
     "Authorization" : f"Bearer {BOT_AUTH_TOKEN}"
 }
-
+def get_random_hex_color():
+    return '#' + ''.join([random.choice('0123456789ABCDEF') for _ in range(6)])
 
 
 #-

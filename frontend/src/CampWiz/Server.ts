@@ -260,7 +260,7 @@ class CampaignServer {
             group_by : groupBy,
             campaign_id : campaignID.toString()
         });
-        const url = '/api/campwiz/campaign/timeline?' + params.toString();
+        const url = '/api/campwiz/campaign/timeline2?' + params.toString();
         const res = await fetchWithErrorHandling(url)
         return res.data;
     }

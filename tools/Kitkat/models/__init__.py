@@ -197,6 +197,80 @@ class Campaign:
             timeline = conn.execute(SQL1_GET_SUBMISSION_TIMELINE_BY_SUBMITTED_BY_ID, {'campaign_id': campaign_id}).fetchall()
         timeline = list(map(lambda x: Timeline(**x), timeline))
         return timeline
+    
+    @staticmethod
+    def get_submission_timeline_v2(conn : sqlite3.Cursor, group_by : str = 'language', campaign_id : str = None, ):
+        timeline = []
+        if group_by == 'language':
+            timeline = conn.execute(SQL1_GET_SUBMISSION_TIMELINE_BY_LANGUAGE).fetchall()
+            campaign_ids = set(map(lambda x: x['color'].split('|')[0], timeline))
+            id_placeholder = ','.join(map(lambda x: f"'{x}'", campaign_ids))
+            campaigns = conn.execute(SQL1_GET_ALL_CAMPAIGN_BY_IDS_FORMAT.format(id_placeholder=id_placeholder)).fetchall()
+            grand_total = StatisticsV2()
+            campaign_dict = {}
+            for campaign in campaigns:
+                k = CampaignStatisticsScheme(
+                    id = campaign['id'],
+                    name = campaign['name'],
+                    status = campaign['status'],
+                    start_at = campaign['start_at'],
+                    end_at = campaign['end_at'],
+                    total_submissions = campaign['total_submissions'],
+                    total_points = campaign['total_points'],
+                    total_newly_created = campaign['total_newly_created'],
+                    total_expanded = campaign['total_submissions'] - campaign['total_newly_created'],
+                    color = get_random_hex_color(),
+                )
+                grand_total.total_submissions += k.total_submissions
+                grand_total.total_points += k.total_points
+                grand_total.total_newly_created += k.total_newly_created
+                grand_total.total_expanded += k.total_expanded
+                campaign_dict[str(campaign['id'])] = k
+            dates = {}
+            for t in timeline:
+                d : str = str(int(dp.parse(t['date']).timestamp() * 1000))
+                if d not in dates:
+                    dates[d] = {'date' : d}
+                campaign_id = t['color'].split('|')[0]
+                submission_count = t['count']
+                dates[d][campaign_id] = submission_count
+                
+            grand_total.entities = campaign_dict
+            grand_total.timeline = list(dates.values())
+            return grand_total
+
+        elif group_by == 'user' and campaign_id is not None:
+            timeline = conn.execute(SQL1_GET_SUBMISSION_TIMELINE_BY_SUBMITTED_BY_ID, {'campaign_id': campaign_id}).fetchall()
+            campaign = Campaign.get_by_id(conn, campaign_id)
+
+            grand_total = StatisticsV2(
+                id=campaign['id'],
+                total_submissions = campaign['total_submissions'],
+                total_points = campaign['total_points'],
+                total_newly_created = campaign['total_newly_created'],
+                total_expanded = campaign['total_submissions'] - campaign['total_newly_created'],
+            )
+            user_dict : dict[str, UserStatistics] = {}
+            dates = {}
+            for t in timeline:
+                d : str = str(int(dp.parse(t['date']).timestamp() * 1000))
+                if d not in dates:
+                    dates[d] = {'date' : d}
+                user_id = t['color']
+                submission_count = t['count']
+                dates[d][user_id] = submission_count
+                if user_id not in user_dict:
+                    user_dict[user_id] = UserStatistics(
+                        id = user_id,
+                        name = user_id,
+                        color=get_random_hex_color(),
+                        total_submissions=0,
+                    )
+                user_dict[user_id].total_submissions += submission_count
+            grand_total.entities = user_dict
+            grand_total.timeline = list(dates.values())
+            return grand_total
+            
 
 
     @staticmethod

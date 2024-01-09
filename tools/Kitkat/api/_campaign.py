@@ -32,6 +32,18 @@ def timeline(req : Request, group_by : str, campaign_id : str | None = None):
         return ResponseMultiple[CampaignScheme](success=True, data=result)
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
+@campaign_router.get('/timeline2', response_model=ResponseSingle[StatisticsV2])
+def timeline(req : Request, group_by : str, campaign_id : str | None = None):
+    """
+    This endpoint is used to get all campaigns.
+    """
+    try:
+        with Server.get_parmanent_db() as conn:
+            result = Campaign.get_submission_timeline_v2(conn.cursor(), group_by=group_by, campaign_id=campaign_id)
+        return ResponseSingle[StatisticsV2](success=True, data=result)
+    except Exception as e:
+        raise e
+        raise HTTPException(status_code=404, detail=str(e))
 #---------------------------------- GET A CAMPAIGN ----------------------------------#
 @campaign_router.get("/{campaign_id}", response_model=ResponseSingle[CampaignScheme])
 async def get_campaign(req : Request, campaign_id: int, check_judge : bool = False):

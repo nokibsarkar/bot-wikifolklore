@@ -4,55 +4,58 @@ import CampWizServer from '../../Server';
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
+import Typography from "@mui/material/Typography"
 import { DataGrid } from '@mui/x-data-grid';
 export const generateRandomColor = () => '#' + Math.floor(Math.random()*16777200 + 200).toString(16);
-const processUserTimeline = (submissions) => {
-  const users = {}
-  const dates = {};
-  for(const submission of submissions){
-  const date = new Date(submission.date).getTime();
-    if(!dates[date]) dates[date] = {'date': date};
-    dates[date][submission.color] = submission.count;
-    if(!users[submission.color]) users[submission.color] = { id : submission.color};
-    users[submission.color].color = generateRandomColor();
-    users[submission.color].count = (users[submission.color].count || 0) + submission.count;
-  }
-  const series = [];
-  for(const user in users){
-    series.push({
-      dataKey: user,
-      label : user,
-      valueFormatter : v => (v || 0),
-      showMark : false,
-      type : 'line',
-      curve : 'linear',
-      color : users[user].color
-    });
-  }
-  return {users, dates : Object.values(dates), series};
-}
-const Statistics = ({campaignID, columns, groupBy = 'language', title = 'User Submissions', processTimeline}) => {
-      const [submissions, setSubmissions] = useState([]);
+
+
+const axis = [
+  {
+    dataKey: 'date',
+    valueFormatter: (v) => new Date(v).toLocaleDateString(),
+    type: 'category',
+    scaleType : 'time',
+  },
+];
+const Statistics = ({campaignID, columns, groupBy = 'language', title = 'User Submissions'}) => {
       const [series, setSeries] = useState([]);
-      const [colors, setColors] = useState({});
+      const [rows, setRows] = useState([]);
       const [dataset, setDataset] = useState([]);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(false);
-      const axis = [
-        {
-          dataKey: 'date',
-          valueFormatter: (v) => new Date(v).toDateString(),
-          scaleType : 'time',
-        },
-      ];
+      const [overview, setOverview] = useState({
+        total_submissions : 0,
+        total_newly_created : 0,
+        total_expanded : 0,
+      });
+      
       useEffect(() => {
           setLoading(true);
-          CampWizServer.Campaign.getTimeline(groupBy, campaignID).then((submissions) => {
-            const {users, dates, series} = processUserTimeline(submissions);
-            setSubmissions(dates);
+          CampWizServer.Campaign.getTimeline(groupBy, campaignID).then((statistics) => {
+            const {entities, timeline} = statistics;
+            const overview = {
+              total_submissions : statistics.total_submissions,
+              total_newly_created : statistics.total_newly_created,
+              total_expanded : statistics.total_expanded,
+            };
+            const series = [];
+            for(const entityID in entities){
+              const entity = entities[entityID];
+              series.push({
+                dataKey: entityID,
+                label : entity.name,
+                valueFormatter : v => (v || 0),
+                showMark : false,
+                type : 'line',
+                color : entity.color
+              });
+            }
+            setDataset(timeline);
             setSeries(series);
-            setColors(users);
+            setRows(Object.values(entities));
             setLoading(false);
+            setOverview(overview);
+            setError(null)
           }).catch((e) => {
               setError(e.message);
               setLoading(false);
@@ -61,33 +64,63 @@ const Statistics = ({campaignID, columns, groupBy = 'language', title = 'User Su
       return !loading && 
       <Card sx={{p : 2}}>
         <CardHeader title={title} />
-        <CardContent>
-         
+        <CardContent sx={{
+          display : 'flex',
+          flexDirection : 'column',
+          alignItems : 'center',
+          justifyContent : 'center',
+          p : 2,
+          mb : 2,
+        }}>
+         <Card component='fieldset' sx={{
+            display : 'flex',
+            flexDirection : 'column',
+            alignItems : 'flex-start',
+            justifyContent : 'center',
+            p : 2,
+            mb : 2,
+            width : 'max-content',
+            height : 'max-content',
+         }}>
+            <CardHeader title="Overview" component='legend' />
+            <Typography variant='body1' component='label'>
+              Total Submissions : {overview.total_submissions}
+            </Typography>
+            <Typography variant='body1' component='label'>
+              Total Newly Created : {overview.total_newly_created}
+            </Typography>
+            <Typography variant='body1' component='label'>
+              Total Expanded : {overview.total_expanded}
+            </Typography>
+         </Card>
         <LineChart
-        xAxis={axis}
-        series={series}
-        dataset={submissions}
-        height={400}
+          xAxis={axis}
+          series={series}
+          dataset={dataset}
+          height={400}
         
         
         margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20,
+          top: 50,
+          right: 50,
+          bottom: 50,
+          left: 50,
         
         }}
         slotProps={{
           legend: {
             hidden: true,
-
           },
+          lineHighlight: {
+            
+          },
+
         }}
         
     />
     <DataGrid
         loading={loading}
-        rows={Object.values(colors)}
+        rows={rows}
         autoHeight
         disableColumnMenu
         columns={columns}

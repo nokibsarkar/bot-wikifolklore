@@ -268,6 +268,45 @@ class Statistics:
     total_tasks : int
     total_articles_served : int
     total_categories : int
+# @dataclass
+# class CampaignTimeline:
+#     id : int | str = None # Campaign ID if level is campaign/language, user ID if level is user
+#     participant_count : int # How many users participated in this campaign?
+#     total_submissions : int # How many articles were submitted in this campaign?
+#     total_newly_created : int # How many articles were newly created in this campaign?
+#     total_expanded : int # How many articles were expanded in this campaign?
+#     total_points : int # How many points were given in this campaign?
+#     total_judges : int # How many judges participated in this campaign?
+#     timeline : list[Timeline] # Timeline of submission count per user per day
+@dataclass
+class UserStatistics:
+    id: str
+    name : str
+    color : str
+    total_submissions : int
+@dataclass
+class CampaignStatisticsScheme:
+    id : int | str
+    name : str
+    total_submissions : int
+    total_newly_created : int
+    total_expanded : int
+    total_points : int
+    color : str
+    status : CampaignStatus
+    start_at : datetime | date | str
+    end_at : datetime | date | str
+
+@dataclass
+class StatisticsV2:
+    id : int | str = None # Campaign ID if level is campaign/language, user ID if level is user
+    total_submissions : int = 0 # How many articles were submitted in this campaign?
+    total_newly_created : int = 0 # How many articles were newly created in this campaign?
+    total_expanded : int = 0 # How many articles were expanded in this campaign?
+    total_points : int = 0 # How many points were given in this campaign?
+    entities : dict[str, UserStatistics | CampaignStatisticsScheme] = None
+    timeline : list[dict[str, Union[str, int]]] = None
+
 @dataclass
 class JudgeScheme:
     user_id : int

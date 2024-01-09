@@ -75,6 +75,7 @@ VALUES
 )
 """
 SQL1_GET_ALL_CAMPAIGN = "SELECT * FROM `campaign` ORDER BY `id` DESC LIMIT :limit OFFSET :offset"
+SQL1_GET_ALL_CAMPAIGN_BY_IDS_FORMAT = "SELECT * FROM `campaign` WHERE `id` IN ({id_placeholder}) ORDER BY `id` DESC"
 SQL1_GET_ALL_CAMPAIGN_BY_LANGUAGE = "SELECT * FROM `campaign` WHERE `language` = :language ORDER BY `id` DESC LIMIT :limit OFFSET :offset"
 SQL1_GET_ALL_CAMPAIGN_BY_STATUS_FORMAT = "SELECT * FROM `campaign` WHERE `status` IN ({status_placeholder}) ORDER BY `id` DESC LIMIT :limit OFFSET :offset"
 SQL1_GET_ALL_CAMPAIGN_BY_STATUS_AND_LANGUAGE_FORMAT = "SELECT * FROM `campaign` WHERE `status` IN ({status_placeholder}) AND `language` = :language ORDER BY `id` DESC LIMIT :limit OFFSET :offset"
@@ -298,7 +299,6 @@ SQL1_GET_SUBMISSION_TIMELINE_BY_LANGUAGE = """
 SELECT
     DATE(`submission`.`submitted_at`) AS `date`,
     COUNT(*) AS `count`,
-
     (`submission`.`campaign_id` || '|' || (SELECT `name` FROM `campaign` WHERE `id` = `submission`.`campaign_id`)) AS `color`
 
 FROM
