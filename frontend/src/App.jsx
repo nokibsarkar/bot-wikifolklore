@@ -107,7 +107,7 @@ function App() {
       {/* <UserfeedBackForm user={user}  projectId={Sentry.getCurrentHub().getClient().getDsn().projectId} /> */}
       <ThemeProvider theme={theme}>
       {/* user={user} dsn={dsn} projectId={Sentry.getCurrentHub().getClient().getDsn().projectId} */}
-        {feedbackOpen && <UserfeedBackForm  setFeedbackOpen={setFeedbackOpen} />}
+        {feedbackOpen && <UserfeedBackForm  setFeedbackOpen={setFeedbackOpen} username={user?.username} />}
         <BrowserRouter>
           <AppBar {...commonProps} />
           <AppDrawer {...commonProps} components={Tools} setFeedbackOpen={setFeedbackOpen} />

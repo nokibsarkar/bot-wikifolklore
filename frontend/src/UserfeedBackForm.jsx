@@ -105,7 +105,7 @@ const PrettoSlider = styled(Slider)({
         },
     },
 });
-const FedbackResponse = ({stage = 'loading', setFeedbackOpen}) => {
+const FedbackResponse = ({stage = 'loading', setFeedbackOpen, username}) => {
     return (
         <DialogContent sx={{
             display: 'flex',
@@ -116,13 +116,14 @@ const FedbackResponse = ({stage = 'loading', setFeedbackOpen}) => {
                 stage === 'loading' ? <CircularProgress sx={{ color: 'blue', fontSize: 100 }}/> : stage === 'success' ? <CheckIcon sx={{ color: 'green', fontSize: 100 }} /> : <CrossIcon sx={{ color: 'red', fontSize: 100 }} />
            }
             <Typography variant="h5" sx={{ textAlign: 'center' }}>
-                {stage === 'loading' ? 'Submitting Feedback...' : stage === 'success' ? 'Thank you for your feedback!' : 'Something went wrong!'}
+                {stage === 'loading' ? 'Submitting Feedback...' : stage === 'success' ? 'Thank you for your feedback!' : 'Something went wrong!'}<br/>
+                {stage === 'success' && username && <a href={'/feedback#fb-' + username} title='See all the feedbacks'>Checkout your compliment</a>}
             </Typography>
             <Button color="success" variant="contained" onClick={e => setFeedbackOpen(false)} size="small">Close</Button>
         </DialogContent>
     )
 }
-const UserfeedBackForm = ({  setFeedbackOpen }) => {
+const UserfeedBackForm = ({  setFeedbackOpen, username }) => {
     const [uiScore, setUiScore] = useState(0);
     const [performanceScore, setPerformanceScore] = useState(0);
     const [whyBetterFeedback, setWhyBetterFeedback] = useState("");
@@ -143,7 +144,7 @@ const UserfeedBackForm = ({  setFeedbackOpen }) => {
         }}>
             <DialogTitle>User Feedback</DialogTitle>
 
-            {loading ? <FedbackResponse stage="loading" setFeedbackOpen={setFeedbackOpen}/> : success ? <FedbackResponse stage="success" setFeedbackOpen={setFeedbackOpen}/> :
+            {loading ? <FedbackResponse stage="loading" setFeedbackOpen={setFeedbackOpen}/> : success ? <FedbackResponse stage="success" setFeedbackOpen={setFeedbackOpen} username={username}/> :
             error ? <FedbackResponse stage="error" setFeedbackOpen={setFeedbackOpen}/> :
                 <DialogContent>
                     <fieldset style={{ display: 'flex', alignItems: 'center', padding: 25 }}>
