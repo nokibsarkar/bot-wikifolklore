@@ -114,7 +114,7 @@ function App() {
           <React.Suspense fallback={<Loading />}>
             <Routes>
               <Route path="/fnf/*" element={<FnF {...commonProps} />} title="FnF" />
-              <Route path="/campwiz/*" element={<CampWiz {...commonProps} />} />
+              <Route path="/campwiz/*" element={<CampWiz {...commonProps} />} title="CampWiz" />
             </Routes>
           </React.Suspense>
         </BrowserRouter>
