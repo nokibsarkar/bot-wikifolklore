@@ -16,11 +16,12 @@
     {% for feedback in feedbacks %}
     <article class="font-secondary shadow-md m-2 odd:bg-slate-100 even:bg-slate-200 p-3 border rounded-lg">
       <div class="text-sm flex justify-center flex-col">
+        
         <span>
-          UI rating: {{feedback.ui_score}}/10
+          UI rating: {{feedback.ui_score or 'Not given yet'}}/10
         </span>
         <span>
-          Performance rating: {{feedback.speed_score}}/10
+          Performance rating: {{feedback.speed_score or 'Not given yet'}}/10
         </span>
       </div>
       <p class="font-primary p-1">{{feedback.why_better}}</p>
