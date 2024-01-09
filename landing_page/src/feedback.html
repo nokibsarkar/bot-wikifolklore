@@ -8,13 +8,25 @@
 </head>
 <body>
 
-<ul class="p-5 flex bg-slate-100">
+
+<ul class="p-5 flex bg-slate-100 border m-2 text-primary">
+  {% if feedbacks is not None %}
+  {% for feedback in feedbacks %}
+
+
 <li>
 <section>
-<h1>Username</h1>
-<p>Feedback</p>
+<h1>{{feedback['username']}}</h1>
+  <span>
+    UI rating: {{feedback['feedback_ui_score']}} / 10
+  </span>
+  <span>
+    Performance rating: {{feedback['feedback_speed_score']}} / 10
+  </span>
+<p>{{feedback['feedback_note']}}</p>
 </section>
 </li>
+  {% endfor %}
 </ul>
 </body>
 
