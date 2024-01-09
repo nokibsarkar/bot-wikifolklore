@@ -266,6 +266,10 @@ class Feedback:
             feature_request = re.sub('\n+', '\n', feature_request)
         else:
             feature_request = ''
+        assert ui_score in range(0, 10), "ui_score must be in range 0-10"
+        assert speed_score in range(0, 10), "speed_score must be in range 0-10"
+        assert len(why_better) <= 1000, "why_better must be less than 1000 characters"
+        assert len(feature_request) <= 1000, "feature_request must be less than 1000 characters"
         feedback_note = why_better + '\n\n\n' + feature_request
         cur = conn.execute(SQL1_INSERT_FEEDBACK, {
             'user_id': user_id,

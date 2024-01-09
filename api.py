@@ -350,17 +350,23 @@ def get_stats(req : Request):
         data=Statistics(**stats)
     )
 # ------------------------------------ Fetch Public Stats ------------------------------------
+
+# Save Public Feedback
 @api.post('/feedback', response_model=ResponseSingle[BaseUserScheme])
 def create_feedback(req : Request, feedback : FeedbackScheme = Body(...)):
     user_id = req.state.user['id']
-    with Server.get_parmanent_db() as conn:
-        cur = conn.cursor()
-        saved_feedback = Feedback.create(cur, user_id, feedback.ui_score, feedback.speed_score, feedback.why_better, feedback.feature_request)
-        
-    return ResponseSingle[BaseUserScheme](
-        success=True,
-        data=BaseUserScheme(**saved_feedback)
-    )
+    try:
+        with Server.get_parmanent_db() as conn:
+            cur = conn.cursor()
+            saved_feedback = Feedback.create(cur, user_id, feedback.ui_score, feedback.speed_score, feedback.why_better, feedback.feature_request)
+            
+        return ResponseSingle[BaseUserScheme](
+            success=True,
+            data=BaseUserScheme(**saved_feedback)
+        )
+    except Exception as e:
+        logging.exception(e)
+        raise BAD_REQUEST_EXCEPTION(e)
 
 api.include_router(campwiz_router)
 api.include_router(user_router)
