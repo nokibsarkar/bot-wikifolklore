@@ -167,7 +167,7 @@ def get_language_list():
     )
 @app.get('/feedback', response_class=responses.HTMLResponse)
 def feedback_list(req : Request):
-    return responses.TemplateResponse("feedback.html", 
+    return app.templates.TemplateResponse("feedback.html", 
                                       context = {'request' : req}
                                      ) 
 if __name__ == "__main__":
