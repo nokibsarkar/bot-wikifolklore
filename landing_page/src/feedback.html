@@ -9,18 +9,18 @@
 <body>
 
 
-<ul class="list p-5 flex border m-2 text-primary flex-col">
+<ul class="list p-2 flex border m-2 text-primary flex-col">
   {% if feedbacks %}
   {% for feedback in feedbacks %}
 
 
 <li>
-<article class="shadow-md m-3 odd:bg-slate-50 even:bg-slate-100">
+<article class="shadow-md m-3 odd:bg-slate-50 even:bg-slate-100 p-2">
 
 <h2 class="text-lg">{{feedback['username']}}</h2>
 
 
-<div class="text-sm flex items-center flex-col">
+<div class="text-sm flex justify-center flex-col">
   <span>
     UI rating: {{feedback['feedback_ui_score']}}/10
   </span>
