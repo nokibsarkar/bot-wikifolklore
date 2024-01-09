@@ -287,7 +287,7 @@ class Feedback:
             'user_id': user_id,
             'feedback_ui_score': ui_score,
             'feedback_speed_score': speed_score,
-            'feedback_note' : why_better,
+            'feedback_note' : (why_better or '') + '\n\n\n' + (feature_request or ''),
             'why_better': why_better,
             'feature_request': feature_request
         })
