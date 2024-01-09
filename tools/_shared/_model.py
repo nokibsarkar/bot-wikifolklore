@@ -1,7 +1,6 @@
 from enum import Enum
-from dataclasses import dataclass
 from datetime import datetime
-import jwt, os, requests, time, sqlite3
+import jwt, os, requests, time, sqlite3, re
 from ._sql import *
 from ._scheme import *
 #---------------------------- LOAD the constants ----------------------------
@@ -256,12 +255,23 @@ class BaseUser:
 
 class Feedback:
     @staticmethod
-    def create(conn : sqlite3.Cursor, user_id,  ui_score, speed_score, why_better, feature_request):
+    def create(conn : sqlite3.Cursor, user_id : int,  ui_score : int, speed_score : int, why_better : str, feature_request : str):
+        if why_better:
+            why_better = why_better.strip()
+            why_better = re.sub('\n+', '\n', why_better)
+        else:
+            why_better = ''
+        if feature_request:
+            feature_request = feature_request.strip()
+            feature_request = re.sub('\n+', '\n', feature_request)
+        else:
+            feature_request = ''
+        feedback_note = why_better + '\n\n\n' + feature_request
         cur = conn.execute(SQL1_INSERT_FEEDBACK, {
             'user_id': user_id,
             'feedback_ui_score': ui_score,
             'feedback_speed_score': speed_score,
-            'feedback_note' : (why_better or '') + '\n\n\n' + (feature_request or ''),
+            'feedback_note' : feedback_note,
             'why_better': why_better,
             'feature_request': feature_request
         })
