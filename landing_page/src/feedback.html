@@ -20,9 +20,9 @@
   <div class="list p-2 flex border m-2 bg-slate-50  flex-col">
     {% if feedbacks %}
     {% for feedback in feedbacks %}
-    <article class="font-secondary shadow-md m-2 odd:bg-slate-100 even:bg-slate-200 p-3 border rounded-lg">
+    <article class="font-secondary shadow-md m-2 odd:bg-slate-100 even:bg-slate-200 p-3 border rounded-lg"
+      id="fb-{{feedback.username}}">
       <div class="text-sm flex justify-center flex-col">
-        
         <span>
           UI rating: {{feedback.ui_score or 'Not given yet'}}/10
         </span>
