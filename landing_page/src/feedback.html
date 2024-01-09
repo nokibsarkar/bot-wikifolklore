@@ -20,14 +20,15 @@
 <h1 class="text-lg">{{feedback['username']}}</h1>
 
 
-
+<div class="text-sm flex items-center flex-col">
   <span class="text-sm block">
-    UI rating: {{feedback['feedback_ui_score']}} / 10
+    UI rating: {{feedback['feedback_ui_score']}}/10
   </span>
   
   <span class="text-sm block">
-    Performance rating: {{feedback['feedback_speed_score']}} / 10
+    Performance rating: {{feedback['feedback_speed_score']}}/10
   </span>
+</div>
 <p>{{feedback['feedback_note']}}</p>
 </section>
 </li>
