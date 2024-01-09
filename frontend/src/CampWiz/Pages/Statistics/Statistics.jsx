@@ -24,6 +24,8 @@ const processUserTimeline = (submissions) => {
       label : user,
       valueFormatter : v => (v || 0),
       showMark : false,
+      type : 'line',
+      curve : 'linear',
       color : users[user].color
     });
   }
