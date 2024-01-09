@@ -173,7 +173,7 @@ const UserfeedBackForm = ({  setFeedbackOpen }) => {
                         />
                     </fieldset>
                     <TextField
-                        label="Why is this tool better than the others?"
+                        label="What makes the tool different from others?"
                         multiline
                         variant="outlined"
                         value={whyBetterFeedback}
@@ -184,7 +184,7 @@ const UserfeedBackForm = ({  setFeedbackOpen }) => {
                         disabled={loading}
                     />
                     <TextField
-                        label="What new features would you like to see?"
+                        label="Would you suggest any new feature?"
                         multiline
                         variant="outlined"
                         value={newFeatureFeedback}
