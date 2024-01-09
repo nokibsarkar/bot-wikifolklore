@@ -175,7 +175,12 @@ def feedback_list(req : Request):
                                                       'feedback_ui_score' : 8,
                                                       'feedback_speed_score' :9,
                                                       'feedback_note' : 'Testing'
-                                                     }
+                                                     },
+                                                     {'username' : 'Nokib2',
+                                                      'feedback_ui_score' : 8,
+                                                      'feedback_speed_score' :9,
+                                                      'feedback_note' : 'Testing'
+    }
                                                  ]
                                                 },
                                           
