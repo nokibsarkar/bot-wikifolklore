@@ -170,7 +170,7 @@ def get_language_list():
 def feedback_list(req : Request):
     return app.templates.TemplateResponse("feedback.html", 
                                       context = {'request' : req, 
-                                                 'feedback' : [
+                                                 'feedbacks' : [
                                                      {'username' : 'Nokib',
                                                       'feedback_ui_score' : 8,
                                                       'feedback_speed_score' :9,
