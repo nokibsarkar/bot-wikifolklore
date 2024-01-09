@@ -10,7 +10,13 @@
 
 <body>
 
-
+  <h2 class="block text-center text-xl bg-primary text-white p-2 w-full font-cursive">Feedbacks</h2>
+  <p class="text-center font-primary p-2">
+    This is a list of optional feedbacks from users of the tools.
+      This list is in ascending order of usernames.
+      No personal information is collected from the users other than their usernames.
+      No processing is done on the feedbacks other than sorting them by usernames.
+  </p>
   <div class="list p-2 flex border m-2 bg-slate-50  flex-col">
     {% if feedbacks %}
     {% for feedback in feedbacks %}
@@ -32,6 +38,12 @@
     {% endfor %}
     {% endif %}
   </div>
+  <footer class="text-center  mt-3">
+    <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a> |
+    <a href="/terms" alt="" class="text-primary hover:underline">Terms of Service</a> |
+    <a href="https://github.com/nokibsarkar/bot-wikifolklore/issues" alt=""
+        class="text-primary hover:underline">Report a Bug</a>
+</footer>
 </body>
 
 

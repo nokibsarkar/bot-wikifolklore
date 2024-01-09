@@ -10,26 +10,40 @@
 
 <body>
 
-
-  <div class="list p-2 flex border m-2 text-primary flex-col">
+  <h2 class="block text-center text-xl bg-primary text-white p-2 w-full font-cursive">Feedbacks</h2>
+  <p class="text-center font-primary p-2">
+    This is a list of optional feedbacks from users of the tools.
+      This list is in ascending order of usernames.
+      No personal information is collected from the users other than their usernames.
+      No processing is done on the feedbacks other than sorting them by usernames.
+  </p>
+  <div class="list p-2 flex border m-2 bg-slate-50  flex-col">
     {% if feedbacks %}
     {% for feedback in feedbacks %}
-    <article class="font-secondary shadow-md m-2 odd:bg-slate-50 even:bg-slate-200 p-3 rounded">
+    <article class="font-secondary shadow-md m-2 odd:bg-slate-100 even:bg-slate-200 p-3 border rounded-lg">
       <div class="text-sm flex justify-center flex-col">
+        
         <span>
-          UI rating: {{feedback.ui_score}}/10
+          UI rating: {{feedback.ui_score or 'Not given yet'}}/10
         </span>
         <span>
-          Performance rating: {{feedback.speed_score}}/10
+          Performance rating: {{feedback.speed_score or 'Not given yet'}}/10
         </span>
       </div>
       <p class="font-primary p-1">{{feedback.why_better}}</p>
+      <p class="font-primary p-1">{{feedback.feature_request}}</p>
       <h2 class="text-lg"> - {{feedback.username}}</h2>
     </article>
 
     {% endfor %}
     {% endif %}
   </div>
+  <footer class="text-center  mt-3">
+    <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a> |
+    <a href="/terms" alt="" class="text-primary hover:underline">Terms of Service</a> |
+    <a href="https://github.com/nokibsarkar/bot-wikifolklore/issues" alt=""
+        class="text-primary hover:underline">Report a Bug</a>
+</footer>
 </body>
 
 

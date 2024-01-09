@@ -335,4 +335,5 @@ WHERE
     `feedback_ui_score` != 0
     OR `feedback_speed_score` != 0
     OR `feedback_note` != ''
+ORDER BY `username` ASC
 """
