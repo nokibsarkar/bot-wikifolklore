@@ -121,13 +121,13 @@ const Statistics = ({campaignID, columns, groupBy = 'language', title = 'User Su
     <DataGrid
         loading={loading}
         rows={rows}
-        autoHeight
-        disableColumnMenu
+       // autoHeight
+      //  disableColumnMenu
         columns={columns}
-        checkboxSelection={false}
-        disableSelectionOnClick
-        density="compact"
-        hideFooterSelectedRowCount
+     //   checkboxSelection={false}
+     //   disableSelectionOnClick
+     //   density="compact"
+     //   hideFooterSelectedRowCount
         />
         </CardContent>
     </Card>
